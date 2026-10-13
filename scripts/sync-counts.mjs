@@ -118,17 +118,18 @@ const MINUTES = new Map(PART_FILES.map(([n]) => [n, readingMinutes(n)]));
 // after an edit the listening time moves with the prose, like the reading time.
 // Recalibrate when the voice or the narration rules change: the pre-render log
 // (scripts/warm-narration.mjs) prints each Part's audio length.
-// Source: production pre-render run 37721876537 (2026-10-08), voice ash,
-// gpt-4o-mini-tts-2025-12-15, the first run in which every chart caption is
-// narrated on every load (#207). Words = proseWords() at that commit, less the
-// Key takeaways box the narrator skips (only Part 1 had one then: 243 words).
+// Source: production pre-render run 38448932883 (2026-10-13), voice ash,
+// gpt-4o-mini-tts-2025-12-15, after the character pass (#211). Words =
+// proseWords() at that commit less the Key takeaways box the narrator skips,
+// i.e. NARRATED below. The previous calibration (run 37721876537, 2026-10-08)
+// predicted these recordings within 1% on every Part.
 const LISTEN_CALIBRATION = new Map([
-  [1, { words: 5075 - 243, minutes: 40 + 26 / 60 }],
-  [2, { words: 3031, minutes: 29 + 19 / 60 }],
-  [3, { words: 4709, minutes: 43 + 59 / 60 }],
-  [4, { words: 3739, minutes: 33 + 28 / 60 }],
-  [5, { words: 6536, minutes: 54 + 43 / 60 }],
-  [6, { words: 4586, minutes: 33 + 4 / 60 }],
+  [1, { words: 4901, minutes: 40 + 44 / 60 }],
+  [2, { words: 3088, minutes: 29 + 41 / 60 }],
+  [3, { words: 4794, minutes: 44 + 23 / 60 }],
+  [4, { words: 3847, minutes: 34 + 18 / 60 }],
+  [5, { words: 6662, minutes: 55 + 32 / 60 }],
+  [6, { words: 4624, minutes: 33 + 31 / 60 }],
 ]);
 const LISTEN = new Map(PART_FILES.map(([n]) => {
   const cal = LISTEN_CALIBRATION.get(n);
