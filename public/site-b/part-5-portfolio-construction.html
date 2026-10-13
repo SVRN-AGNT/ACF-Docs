@@ -203,7 +203,7 @@
       <header class="doc-header">
         <div class="measure">
           <div class="doc-signal" data-glyph-text>Framework Documentation</div>
-          <p class="doc-kicker">Part 5 of 6 &middot; &approx; 28 min read &middot; &approx; 55 min listen &middot; <a class="kicker-link" href="/framework-in-pictures#construction">In pictures &middot; 10 exhibits &rarr;</a></p>
+          <p class="doc-kicker">Part 5 of 6 &middot; &approx; 30 min read &middot; &approx; 56 min listen &middot; <a class="kicker-link" href="/framework-in-pictures#construction">In pictures &middot; 10 exhibits &rarr;</a></p>
           <h1 class="doc-title">Portfolio Construction &amp; Position Management</h1>
 
           <!-- Part action bar: Listen (convenience, JS-only) + Share. Shared component, identical on every part. -->
@@ -241,6 +241,26 @@
         <p class="section-eyebrow section-signal" data-glyph-text>The Operating System</p>
         <h2 class="section-title" id="postures-title">Three behaviors, one portfolio.</h2>
       </div>
+
+      <aside class="callout callout-info callout-collapse" aria-label="Key takeaways">
+        <details>
+          <summary class="callout-label callout-toggle">
+            <span>Key takeaways</span>
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M6 9l6 6 6-6"></path>
+            </svg>
+          </summary>
+        <ul>
+          <li>Every position except Bitcoin carries one of three postures, each with its own job: Torque takes deliberate risk on regime forces, Ballast is the reserve that buys the drawdown, and Hype is speculation under hard caps. Their aggregate ranges are 40 to 60 percent, 20 to 35 percent, and at most 10 percent.</li>
+          <li>The posture picks the sizing table and the CIS picks the band, read as a ceiling: a CIS of 70 sits in the 8 to 15 percent band in Torque and the 5 to 8 percent band in Ballast, and no posture sizes a score below 50. Across the household, one position may hold 15 percent by default and never more than the 18% absolute maximum with documented override.</li>
+          <li>Ballast qualifies by passing three of five tests, and yield is not one of them; aggregate Ballast never falls below its 15 percent floor. Trimming Torque after it runs and deploying Ballast into drawdowns the thesis still supports is how the framework buys low without outside cash or selling Bitcoin.</li>
+          <li>Hype exits on a stop 15 to 25 percent below entry, set when you buy, and it can never be reclassified as Torque to avoid one. The catastrophic failure mode is holding Hype while calling it Torque.</li>
+          <li>Six protocols run through the cycle, among them a 3 percent cap from five trading days before earnings, an exit when all three momentum dimensions turn negative, and no new capital without a confirming signal for any position 20 percent or more below cost. The dashboard records every trade and blocks none, so the discipline is yours.</li>
+          <li>Account placement matters because tax drag compounds: $100,000 earning 10 percent for 30 years ends at about $875,000 when each year&rsquo;s gains are taxed at a 25 percent blended rate, against about $1,745,000 in a Roth with qualified withdrawals. Any change to these rules is first classified as doctrine, parameter or override.</li>
+        </ul>
+        </details>
+      </aside>
+
       <div class="measure prose">
         <p class="prose-lead">Part 5 is where the framework stops describing and starts building: which positions to hold, how large, in which accounts, and under what rules they stay or go. <a class="part-ref" href="/part-6-convexity-framework-integrity-scoring#kernel">Part 6</a> supplies the two scores all of it depends on.</p>
         <p>Start with a distinction the industry blurs. Asset selection answers <em>what to own</em>. Portfolio construction answers <em>how each position should behave inside the whole</em>, and that behavior is what the framework classifies. Every position except Bitcoin carries exactly one of three behavioral <button type="button" class="gloss" data-gloss="posture" aria-expanded="false">postures</button>.</p>
@@ -269,7 +289,7 @@
             <span class="posture-card-eyebrow">Posture 03</span>
             <span class="posture-card-name">Hype</span>
             <span class="posture-card-role">Disciplined speculation</span>
-            <p class="posture-card-def">Narrative momentum with no capital commitment underneath: useful as a trade, unsafe as a foundation. Hype lives under hard caps and an exit committed to before entry, and it is never allowed to carry load.</p>
+            <p class="posture-card-def">Narrative momentum with no capital commitment underneath: useful as a trade, unsafe as a foundation. Hype lives under hard caps and an exit committed to before entry, and it is never allowed to become load-bearing.</p>
             <span class="posture-card-stats"><span><em>2&ndash;5%</em>per position</span> <span><em>&le;10%</em>hard cap</span></span>
           </a>
         </div>
@@ -277,7 +297,7 @@
 
       <div class="measure prose">
         <p>These aggregate ranges are doctrine; the dashboard does not build to them, and it measures posture drift against the targets your operating thesis implies (<a class="part-ref" href="/part-6-convexity-framework-integrity-scoring#failure">Part 6</a>).</p>
-        <p>Why three? Because removing any one breaks the portfolio in a predictable way. Strip out <button type="button" class="gloss" data-gloss="ballast" aria-expanded="false">Ballast</button> and every drawdown hands you a forced choice: sell <button type="button" class="gloss" data-gloss="torque" aria-expanded="false">Torque</button> at trough prices, or hold it with no dry powder. Strip out Torque and the portfolio keeps its capital and stops compounding: safe, and going nowhere. Let <button type="button" class="gloss" data-gloss="hype" aria-expanded="false">Hype</button> in without governance and reflexive narrative positions grow until one of them breaks the book.</p>
+        <p>Why three? Because removing any one breaks the portfolio in a predictable way. Strip out <button type="button" class="gloss" data-gloss="ballast" aria-expanded="false">Ballast</button> and every drawdown hands you a forced choice: sell <button type="button" class="gloss" data-gloss="torque" aria-expanded="false">Torque</button> at trough prices, or hold it with no dry powder. Strip out Torque and the portfolio keeps its capital and stops compounding: safe, and going nowhere. Let <button type="button" class="gloss" data-gloss="hype" aria-expanded="false">Hype</button> in without governance and reflexive narrative positions grow until one of them breaks the book. The difference between speculation and gambling is governance.</p>
         <p><span class="di-posture" data-posture="bitcoin">Bitcoin</span> sits outside all three. It is the convexity backbone from <a class="part-ref" href="/part-3-bitcoin-convexity-backbone#backbone">Part 3</a>, scored like every other holding, but the score does not size, gate or sell it. Part 3&rsquo;s rules govern it: accumulate only, pace set by valuation discipline, held outside the three postures and the concentration limits. Nothing in this part sells it or draws on it to fund anything else, though Ballast income may fund its purchases during a dislocation. The exhibit below runs all four through one market cycle.</p>
       </div>
 
@@ -295,7 +315,7 @@
       </figure>
 
       <div class="measure prose">
-        <p>Read the postures as jobs. Torque&rsquo;s job, turning a thesis into convex exposure, comes first, because the rest of the structure exists to carry it.</p>
+        <p>Read the postures as jobs. Torque turns a thesis into convex exposure. Ballast is the reserve that lets Torque be held through its own drawdowns. Hype&rsquo;s job description is mostly a list of things it may not do. Torque&rsquo;s job comes first, because the rest of the structure exists to carry it.</p>
       </div>
     </section>
 
@@ -424,7 +444,7 @@
       </div>
       <div class="measure prose">
         <p class="prose-lead">Torque that can fall 50 to 70 percent is holdable only if part of the portfolio refuses to fall with it. That is Ballast&rsquo;s job, and the reason aggressive Torque sizing is possible at all. Ballast businesses fund their dividends when credit tightens and keep operating without access to capital markets.</p>
-        <p>What earns Ballast its space is rotation. After Torque runs, trim any position that has grown past its concentration limit or past the size its score justifies, and move the proceeds into Ballast; deploy Ballast into Torque during drawdowns that momentum and the thesis still support, and into a position 20 percent or more below cost only after the confirming signal the freeze requires. That loop is the framework&rsquo;s primary way of buying low without raising outside cash or selling Bitcoin.</p>
+        <p>What earns Ballast its space is rotation. After Torque runs, trim any position that has grown past its concentration limit or past the size its score justifies, and move the proceeds into Ballast; deploy Ballast into Torque during drawdowns that momentum and the thesis still support, and into a position 20 percent or more below cost only after the confirming signal the freeze requires. That loop is the framework&rsquo;s primary way of buying low without raising outside cash or selling Bitcoin. Everyone plans to buy low; Ballast is the part of the plan that still has buying power when the low arrives.</p>
       </div>
 
       <!-- Chart island: p5-ballast-rotation "Ballast Preserves the Right to Buy": the rotation-cycle exhibit.
@@ -444,7 +464,7 @@
         <h3 class="sub-title">Five tests, three required.</h3>
       </div>
       <div class="measure prose">
-        <p>A position qualifies by passing at least three of the five tests below. Yield is deliberately not one of them: income can follow from qualifying, but it never qualifies a position on its own.</p>
+        <p>Qualification is a checklist, not an impression: a position must pass at least three of the five tests below. Yield is deliberately not one of them: income can follow from qualifying, but it never qualifies a position on its own.</p>
       </div>
 
       <div class="measure">
@@ -695,7 +715,7 @@
 
       <div class="measure">
         <ol class="architecture-list" data-stepper>
-          <li><p class="step-title">Inertia</p><p class="step-body">Positions in motion deserve patience. A position flat for 90 days deserves a fresh look at its thesis.</p></li>
+          <li><p class="step-title">Inertia</p><p class="step-body">Positions in motion deserve patience. A position at rest needs an outside force to justify holding it, and one flat for 90 days deserves a fresh look at its thesis.</p></li>
           <li><p class="step-title">Proportionality</p><p class="step-body">Larger positions need larger catalysts. A 12 percent Torque position trims on material fundamental change; a 3 percent probe can exit on technical deterioration alone.</p></li>
           <li><p class="step-title">Consequences</p><p class="step-body">Allocation is zero-sum. Before any action, name where the proceeds go and which position is implicitly underweighted.</p></li>
         </ol>
@@ -836,7 +856,7 @@
       </div>
       <div class="measure prose">
         <p class="prose-lead">Force-level allocation sets the portfolio&rsquo;s shape; rebalancing decides when the shape may change. The framework rejects mechanical rebalancing, on a calendar or back to fixed percentage bands. Drift past a threshold triggers a review, and the review decides; nothing trades on its own. Mechanical rules ignore what the price move is saying. A position up 50 percent may have appreciated for a reason, and trimming it on a schedule sells winners for winning. A position down 30 percent may be breaking, and adding to it on a schedule catches a falling knife.</p>
-        <p>So rebalancing follows conviction. On upward drift, recalculate CIS: if conviction is unchanged, let it run; if it has declined, trim. On downward drift, recalculate CIS: if conviction is intact and the decline temporary, add, after the confirming signal Protocol 04 requires once a position is 20 percent or more below cost; if conviction has declined, reduce or exit. Between weekly passes, a rebalancing review is called for when a position moves 15 percent or more in a single week, when the earnings protocol triggers, when a tripwire breaches, or when material news changes the thesis. <a class="part-ref" href="/part-6-convexity-framework-integrity-scoring#weekly">Part 6</a> sets out the weekly routine and the two other events that call for an early look: a single-day move of more than 5 percent (the dashboard lists any move of 5 percent or more on its Governance page) and a CIS update from new research.</p>
+        <p>So rebalancing follows conviction. On upward drift, recalculate CIS and ask one question: does conviction still support this allocation? If conviction is unchanged, let it run; if it has declined, trim. On downward drift, recalculate CIS and ask a different one: does this decline change the thesis? If conviction is intact and the decline temporary, add, after the confirming signal Protocol 04 requires once a position is 20 percent or more below cost; if conviction has declined, reduce or exit. Between weekly passes, a rebalancing review is called for when a position moves 15 percent or more in a single week, when the earnings protocol triggers, when a tripwire breaches, or when material news changes the thesis. <a class="part-ref" href="/part-6-convexity-framework-integrity-scoring#weekly">Part 6</a> sets out the weekly routine and the two other events that call for an early look: a single-day move of more than 5 percent (the dashboard lists any move of 5 percent or more on its Governance page) and a CIS update from new research.</p>
       </div>
 
       <div class="measure">
@@ -945,7 +965,7 @@
       <!-- Chapter-end transition -->
       <aside class="callout callout-transition" aria-label="End of part">
         <p class="callout-label">End of Part 5</p>
-        <p>Part 5 sorted every position except Bitcoin into one of three postures, sized and placed each one, and set the protocols that keep the structure honest through the cycle. The posture logic carries to other markets by substituting local proxies for the regime forces; the account rules do not, because they follow United States tax law.</p>
+        <p>Part 5 sorted every position except Bitcoin into one of three postures, sized and placed each one, and set the protocols that keep the structure honest through the cycle. The posture logic carries to other markets by substituting local proxies for the regime forces, and its core principle travels with it: classify each position by how it is expected to behave, not by its asset type, and govern it accordingly. The account rules do not travel, because they follow United States tax law.</p>
       </aside>
     </section>
 

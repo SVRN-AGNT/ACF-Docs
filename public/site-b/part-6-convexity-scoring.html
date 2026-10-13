@@ -202,7 +202,7 @@
       <header class="doc-header">
         <div class="measure">
           <div class="doc-signal" data-glyph-text>Framework Documentation</div>
-          <p class="doc-kicker">Part 6 of 6 &middot; &approx; 20 min read &middot; &approx; 33 min listen &middot; <a class="kicker-link" href="/framework-in-pictures#scoring">In pictures &middot; 5 exhibits &rarr;</a></p>
+          <p class="doc-kicker">Part 6 of 6 &middot; &approx; 21 min read &middot; &approx; 33 min listen &middot; <a class="kicker-link" href="/framework-in-pictures#scoring">In pictures &middot; 5 exhibits &rarr;</a></p>
           <h1 class="doc-title">Convexity &amp; Framework Integrity Scoring</h1>
 
           <!-- Part action bar: Listen (convenience, JS-only) + Share. Shared component, identical on every part. -->
@@ -240,6 +240,26 @@
         <p class="section-eyebrow section-signal" data-glyph-text>The Execution Kernel</p>
         <h2 class="section-title" id="kernel-title">The framework, measured.</h2>
       </div>
+
+      <aside class="callout callout-info callout-collapse" aria-label="Key takeaways">
+        <details>
+          <summary class="callout-label callout-toggle">
+            <span>Key takeaways</span>
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M6 9l6 6 6-6"></path>
+            </svg>
+          </summary>
+        <ul>
+          <li>CIS scores one position from 0 to 100, whatever else you hold, on four components weighted 40/25/25/10 at the reference weights: convexity and optionality, risk and fragility, macro alignment, and execution and sentiment. Each update is clamped by the confidence of its evidence: &plusmn;3 points at low, &plusmn;5 at medium and &plusmn;8 at high.</li>
+          <li>FIS starts the assembled portfolio at 100 and deducts capped, named penalties in five buckets: allocation (25), governance (15), dead capital (15), concentration (15) and complexity (10, hard cap). The caps sum to 80, so a valid FIS cannot fall below 20, and every lost point traces to a specific rule.</li>
+          <li>Both scores read one four-band register: 70 and above is Strong, 60 up to 70 Moderate, 50 up to 60 Caution, below 50 Weak. On FIS, 70 is the action line; on CIS, it is the Strong band&rsquo;s floor, a band boundary, not an action trigger.</li>
+          <li>CIS sizes a position within Part 5&rsquo;s bands: posture sets the band table and the score selects the band within it, and CIS below 50 removes allocation eligibility. Neither score compensates for the other; when both sit below 70, construction is repaired first.</li>
+          <li>Implementations decay slowly and look healthy on any single day, so both scores are read in a weekly pass: update CIS, calculate FIS, run the governance checks, act or deliberately hold, and log.</li>
+          <li>Action follows a fixed order: a tripwire, then an earnings window above the 3 percent cap, then FIS below 70, then a CIS move of 10 points or more. With no trigger the pass holds; a week in which everything was measured and nothing moved is the system working.</li>
+        </ul>
+        </details>
+      </aside>
+
       <div class="measure prose">
         <p class="prose-lead">The first five Parts set out what the framework believes and how a portfolio gets built. Part 6 adds the measurement rules: how the two scores are computed, what each penalty costs, and how often the loop runs. It does not change the construction rules of <a class="part-ref" href="/part-4-tax-architecture-roc-strategy#wrappers">Part 4</a> or <a class="part-ref" href="/part-5-portfolio-construction-position-management#postures">Part 5</a>.</p>
         <p>Rules that nobody measures drift into suggestions, so the framework measures two things. The <button type="button" class="gloss" data-gloss="cis" aria-expanded="false">Convexity Integrity Score</button> (CIS) rates each position on its own. The <button type="button" class="gloss" data-gloss="fis" aria-expanded="false">Framework Integrity Score</button> (FIS) rates how those positions have been put together. Each question belongs to exactly one of the two, and a weekly routine reads both. Position quality comes first.</p>
@@ -283,7 +303,7 @@
       <div class="measure">
         <ol class="architecture-list" data-stepper>
           <li><p class="step-title">Convexity &amp; Optionality (C) &middot; 40 percent</p><p class="step-body">measures <button type="button" class="gloss" data-gloss="tam" aria-expanded="false">TAM</button> headroom, optionality, catalyst density and scarcity, with headroom the largest of the four. It carries the largest share at the reference weights because <button type="button" class="gloss" data-gloss="convexity" aria-expanded="false">convexity</button> is what the framework is built to capture.</p></li>
-          <li><p class="step-title">Risk &amp; Fragility (R) &middot; 25 percent</p><p class="step-body">measures survivability under stress rather than price volatility: balance sheet, business-model fragility, factor correlation and tail exposure. A higher score means lower fragility.</p></li>
+          <li><p class="step-title">Risk &amp; Fragility (R) &middot; 25 percent</p><p class="step-body">measures survivability under stress rather than price volatility: balance sheet, business-model fragility, factor correlation and tail exposure. A higher score means lower fragility. Exceptional convexity that cannot survive a drawdown scores poorly here.</p></li>
           <li><p class="step-title">Macro Alignment (M) &middot; 25 percent</p><p class="step-body">measures fit to the forces of the current regime: regime fit (40 points), carry direction (30) and policy and flow (30), read against the <a class="part-ref" href="/part-2-lineage-macro-thesis#macro-thesis">Part 2</a> thesis. The dashboard also tilts regime fit, policy and carry by a few points from the current direction of rates, inflation and unemployment; <a class="part-ref" href="/framework-in-math#cis-math">the Math page</a> gives the rule.</p></li>
           <li><p class="step-title">Execution &amp; Sentiment (E) &middot; 10 percent</p><p class="step-body">measures whether reality is starting to validate the thesis. For a stock that means execution quality, read from three-month price momentum with a volatility adjustment, and market acceptance, read from trading turnover, fifty points each; funds, Bitcoin and crypto have their own inputs. It carries the least weight because execution follows quality.</p></li>
         </ol>
@@ -393,7 +413,7 @@
         <h3 class="sub-title">Subtractive scoring: every lost point has an owner.</h3>
       </div>
       <div class="measure prose">
-        <p>FIS starts the assembled portfolio at 100 and deducts capped, named penalties in five buckets: allocation (25), governance (15), dead capital (15), concentration (15) and complexity (10, hard cap). The caps sum to 80, so a valid FIS cannot fall below 20. A score built by addition invites argument about what deserves credit; a score built by subtraction has to name names. Every point below 100 traces to a specific departure from a specific rule, so the score reads as a repair list. Fix the violation and the points come back once the score can see the fix.</p>
+        <p>FIS starts the assembled portfolio at 100 and deducts capped, named penalties in five buckets: allocation (25), governance (15), dead capital (15), concentration (15) and complexity (10, hard cap). The caps sum to 80, so a valid FIS cannot fall below 20. A score built by addition invites argument about what deserves credit; a score built by subtraction has to name names. Every point below 100 traces to a specific departure from a specific rule, so the score reads as a repair list. Fix the penalty, recover the points; the score only has to be able to see the fix.</p>
         <p>Governance and dead-capital charges are multiplied by the position&rsquo;s share of the portfolio, counted between 0.2 and 12 percent, so a 6-point charge on a 5 percent position costs 0.3 points; the other three buckets charge flat amounts.</p>
         <p>The exhibit below walks an example portfolio down from 100, one deduction per bucket, to 83, in the Strong band.</p>
       </div>
@@ -438,7 +458,7 @@
 
       <div class="measure prose">
         <p>The floor of 20 is only a bound. Value weighting keeps governance and dead capital each under 10 points for any book of fewer than 200 positions, so a portfolio of that size that breaks every rule still scores above 30.</p>
-        <p>Two accounting notes. Tax architecture is not a separate bucket, and since the score sees only the aggregate wrapper mix, <a class="part-ref" href="/part-4-tax-architecture-roc-strategy#wrappers">Part 4</a>&rsquo;s placement rules stay your check: a book holding Torque that may rotate in taxable and return-of-capital Ballast in a Roth draws no wrapper penalty if its dollar split sits near 45/35/20. Those targets are FIS&rsquo;s own: Part 4 sets no fixed split, so a book routed by its sequence, with little or no pre-tax, shows some wrapper drift here.</p>
+        <p>Two accounting notes. Tax architecture is not a separate bucket, and since the score sees only the aggregate wrapper mix, <a class="part-ref" href="/part-4-tax-architecture-roc-strategy#wrappers">Part 4</a>&rsquo;s placement rules stay your check: a book holding Torque that may rotate in taxable and return-of-capital Ballast in a Roth draws no wrapper penalty if its dollar split sits near 45/35/20. Part 4 routes both the other way. Those targets are FIS&rsquo;s own: Part 4 sets no fixed split, so a book routed by its sequence, with little or no pre-tax, shows some wrapper drift here.</p>
         <p><button type="button" class="gloss" data-gloss="posture-drift" aria-expanded="false">Posture drift</button> is not a score bucket either. The dashboard reports it alongside the score, in percentage points from posture targets derived from your operating thesis (or a fixed default when no thesis is active) rather than the <a class="part-ref" href="/part-5-portfolio-construction-position-management#postures">Part 5</a> ranges; its diagnostics warn at 10 points or more and fail at 20, and its Framework Rule Register grades the same drift at 5, 10 and 15 points.</p>
       </div>
 
@@ -478,7 +498,7 @@
       </div>
       <div class="measure prose">
         <p>CIS never reads FIS. FIS reads CIS only through its four bands: positions below 70 draw governance charges, the count of positions in each band feeds the Allocation bucket, and undocumented positions below 70 count toward Complexity. Under the FIS rules, twenty equal-weight positions scoring 65, each documented, with its distributions classified and the book on its wrapper targets, still lose 14 points (4 governance, 10 band distribution) and score 86. A 95-CIS position does not offset a poorly assembled book, and a well-assembled book does not lift a 65-CIS position.</p>
-        <p>Crossing the two scores at 70 gives four states, each with its own response, and a repair order where both fall short.</p>
+        <p>Crossing the two scores at 70 gives four states, each with its own response, and a repair order where both fall short. A quality holding in the wrong container is a construction problem, not a reason to exit it.</p>
       </div>
 
       <!-- Chart island: p6-cis-fis-matrix "Good Assets Can Still Form a Bad Portfolio": the two-score diagnosis quadrant.
@@ -570,7 +590,7 @@
       <div class="measure prose">
         <p>In doctrine the CIS station recomputes C, R, M and E for every position; the dashboard refreshes only the stale scores above, and its review reports what changed. The FIS station totals the penalties across the five buckets and ranks the attribution for repair. The governance station then checks earnings proximity (positions above 3 percent; the dashboard counts calendar days, the doctrine five trading days), momentum, tripwires and posture drift.</p>
         <p>Momentum here means <a class="part-ref" href="/part-5-portfolio-construction-position-management#management">Part 5</a>&rsquo;s three dimensions: distance from the 52-week high, strength against the sector and the market, and breadth. The dashboard does not yet measure them, so its Momentum Death tripwire, meant to fire when all three break, reports unavailable rather than guessing; a moving-average and RSI screen is coded but not yet fed, and does not stand in for them. What the dashboard does watch is stress across your holdings as a group, through the cohort confluence tripwire Part 5 describes.</p>
-        <p>In doctrine, action follows a fixed precedence: a tripwire demands a response first; then an earnings window above the 3 percent cap; then FIS below 70 (fix the top penalty); then a CIS move of 10 points or more (resize). No trigger means hold. The Weekly Review ranks its recommendations the same way, except that first place goes to a finding from the dashboard&rsquo;s three-level check. The review records where each of the framework&rsquo;s tripwires stands, but those readings raise no recommendation of their own, and it cannot yet raise the earnings step because it receives no earnings dates (the Framework Rule Register flags that case instead).</p>
+        <p>In doctrine, action follows a fixed precedence: a tripwire demands a response first; then an earnings window above the 3 percent cap; then FIS below 70 (fix the top penalty); then a CIS move of 10 points or more (resize). Absence of triggers means hold. The Weekly Review ranks its recommendations the same way, except that first place goes to a finding from the dashboard&rsquo;s three-level check. The review records where each of the framework&rsquo;s tripwires stands, but those readings raise no recommendation of their own, and it cannot yet raise the earnings step because it receives no earnings dates (the Framework Rule Register flags that case instead).</p>
         <p>The three-level check flags a position whose wrapper-adjusted CIS is below 75, a sector where more than half the scored positions sit below 80, and an FIS below 60 (<a class="part-ref" href="/framework-in-math#governance-math">the Math page</a> has the full conditions). None is an exit signal and none trades, but in the Weekly Review each becomes a top-precedence recommendation, so a holding whose wrapper-adjusted score sits between 70 and 75 draws one every time you run it, even though it sits in the Strong band.</p>
         <p>Logging closes the pass. The decision log keeps the last 52 reviews, a year at a weekly cadence. It records the positions whose scores changed, the FIS reading, the recommendations made or held back and why, or why none was needed.</p>
       </div>
@@ -606,7 +626,7 @@
 
       <aside class="callout callout-info" aria-label="The restraint principle">
         <p class="callout-label">The Restraint Principle</p>
-        <p>A CIS change under 5 points: monitor. An FIS change under 5 points: monitor. A position whose size already sits inside the band its score earns: no resize. All governance checks pass: hold. A week in which everything was measured and nothing moved is the system working.</p>
+        <p>Discipline includes restraint. A CIS change under 5 points: monitor. An FIS change under 5 points: monitor. A position whose size already sits inside the band its score earns: no resize. All governance checks pass: hold. A week in which everything was measured and nothing moved is the system working.</p>
       </aside>
 
       <div class="measure prose">
@@ -664,7 +684,7 @@
       </div>
 
       <div class="measure prose">
-        <p>Skip the recalculation and the story does the scoring. Each of these failures still rounds to healthy on any single day and shows up only in week-over-week tracking, so framework health has to be read as a trend. The last question is what carries that tracking in practice.</p>
+        <p>Skip the recalculation and the story does the scoring. Each of these failures still rounds to healthy on any single day and shows up only in week-over-week tracking, so framework health has to be read as a trend.</p>
       </div>
     </section>
 
@@ -706,7 +726,7 @@
       <!-- Chapter-end transition -->
       <aside class="callout callout-transition" aria-label="End of part">
         <p class="callout-label">End of Part 6</p>
-        <p>CIS rates each position on its own, and FIS rates how the positions fit together. Read both every week, act on a trigger or deliberately hold, and log the result: that routine turns the rules of the first five Parts into a working framework.</p>
+        <p>CIS rates each position on its own, and FIS rates how the positions fit together. Read both every week, act on a trigger or deliberately hold, and log the result: that routine turns the rules of the first five Parts into a working framework. Implementation is the remaining work.</p>
       </aside>
     </section>
 

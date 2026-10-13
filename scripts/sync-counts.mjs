@@ -88,6 +88,21 @@ function proseWords(file) {
   return words;
 }
 const WORDS = new Map(PART_FILES.map(([n, file]) => [n, proseWords(file)]));
+
+// Key takeaways are read, not heard: the narrator skips the collapsible box
+// (reading-core.js), so it counts toward the reading time but not the listening
+// time. Counted the same way as proseWords().
+const TAKEAWAYS_BOX = /<aside\b[^>]*\baria-label="Key takeaways"[^>]*>[\s\S]*?<\/aside>/;
+function takeawayWords(file) {
+  const html = fs.readFileSync(path.join(SITE, file), 'utf8');
+  const box = (html.match(TAKEAWAYS_BOX) || [''])[0];
+  return box
+    .replace(/<svg[\s\S]*?<\/svg>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z]+;|&#\d+;/gi, ' ')
+    .split(/\s+/).filter(Boolean).length;
+}
+const NARRATED = new Map(PART_FILES.map(([n, file]) => [n, WORDS.get(n) - takeawayWords(file)]));
 function readingMinutes(n) {
   return Math.round(WORDS.get(n) / WPM);
 }
@@ -105,9 +120,10 @@ const MINUTES = new Map(PART_FILES.map(([n]) => [n, readingMinutes(n)]));
 // (scripts/warm-narration.mjs) prints each Part's audio length.
 // Source: production pre-render run 37721876537 (2026-10-08), voice ash,
 // gpt-4o-mini-tts-2025-12-15, the first run in which every chart caption is
-// narrated on every load (#207). Words = proseWords() at that commit.
+// narrated on every load (#207). Words = proseWords() at that commit, less the
+// Key takeaways box the narrator skips (only Part 1 had one then: 243 words).
 const LISTEN_CALIBRATION = new Map([
-  [1, { words: 5075, minutes: 40 + 26 / 60 }],
+  [1, { words: 5075 - 243, minutes: 40 + 26 / 60 }],
   [2, { words: 3031, minutes: 29 + 19 / 60 }],
   [3, { words: 4709, minutes: 43 + 59 / 60 }],
   [4, { words: 3739, minutes: 33 + 28 / 60 }],
@@ -116,7 +132,7 @@ const LISTEN_CALIBRATION = new Map([
 ]);
 const LISTEN = new Map(PART_FILES.map(([n]) => {
   const cal = LISTEN_CALIBRATION.get(n);
-  return [n, Math.round(WORDS.get(n) * (cal.minutes / cal.words))];
+  return [n, Math.round(NARRATED.get(n) * (cal.minutes / cal.words))];
 }));
 const TOTAL_LISTEN = [...LISTEN.values()].reduce((a, b) => a + b, 0);
 
