@@ -68,14 +68,19 @@ citation, falsifier, chart or caption changed.
 - `scripts/sync-counts.mjs` now leaves the Key takeaways box out of the listening time (the narrator skips it) while
   still counting it for the reading time. Recalibrate the listening times from the next pre-render log, as before.
 
-## 5. Flagged for the owner, not changed
+## 5. Flagged for the owner, then resolved (2026-10-14)
 
 - **"Dominant structural return multiplier."** Earlier project notes list this as canonical phrasing. The October
-  audit softened it to "structural return multiplier" across Parts 2 and 4 and the chart source labels; it was left
-  as is because "dominant" is the stronger empirical claim.
-- **Part 5, doctrine vs parameter.** The first section calls the posture aggregate ranges (Ballast 20 to 35 percent)
-  doctrine, while the change-governance list treats a "Ballast aggregate ceiling (default 40%)" as a tunable
-  parameter.
-- **Part 5 case study.** It sizes Bitcoin at 20 percent for an investor with moderate risk tolerance on the strength
-  of a 15-year horizon; Part 3 ties 10 to 15 percent to moderate risk capacity and 20 to 30 percent to higher
-  conviction.
+  audit softened it to "structural return multiplier" across Parts 2 and 4 and the chart source labels. The owner
+  left the call to us. It stays without "dominant": Part 4's own evidence is that tax treatment "can rival what asset
+  selection adds, and sometimes exceed it", and "dominant" would claim more than that.
+- **Part 5, doctrine vs parameter.** Part 5 called the posture aggregate ranges (Ballast 20 to 35 percent) doctrine,
+  while its change-governance list treated a "Ballast aggregate ceiling (default 40%)" as a tunable parameter.
+  Owner ruling: the Ballast ceiling is 35 percent and matches everywhere. The 40 percent ceiling is gone from Part 5
+  and the posture chart, and the governance list and its P5-10 exhibit now name the floor and ceiling as doctrine,
+  not a parameter.
+- **Part 5 case study.** It sized Bitcoin at 20 percent for moderate risk tolerance, while Part 3 tied 10 to 15
+  percent to moderate risk capacity. Owner ruling: 15 to 20 percent is the moderate-risk target. Part 3, the glossary,
+  the reserve chart and the case study now say so; the 20 to 30 percent elevated range and the 30 to 50 percent
+  mature share are unchanged.
+- `tests/doctrine-numbers.test.mjs` now fails if any copy of either number drifts.
