@@ -64,12 +64,26 @@ test('the aggregate Ballast ceiling is 35 percent wherever it is stated', () => 
   assert.ok(seen >= 8, `found only ${seen} Ballast ceiling statements; the check has lost its sentences`);
 });
 
+// Part 5's change-governance list and its exhibit (P5-10's Doctrine and Parameters
+// nodes) classify the same rules, so both are checked.
 test('the Ballast ceiling is doctrine, not a tunable parameter', () => {
   const part5 = read('public/site-b/part-5-portfolio-construction.html');
+  const doctrine = (part5.match(/Doctrine: non-negotiable principles\.[^]*?(?=Parameters:)/) || [''])[0];
   const params = (part5.match(/Parameters: tunable thresholds\.[^]*?(?=Overrides:)/) || [''])[0];
-  assert.ok(params, 'Part 5 change-governance list of parameters not found');
+  assert.ok(doctrine && params, 'Part 5 change-governance lists not found');
+  assert.match(doctrine, /aggregate Ballast held between its 15% floor and 35% ceiling/,
+    'Part 5 does not list the Ballast floor and ceiling as doctrine');
   assert.doesNotMatch(params, /ballast/i,
     'Part 5 lists a Ballast aggregate limit as a parameter, but the 20 to 35 percent range and its 35 percent ceiling are doctrine');
+
+  const specs = read('components/framework-charts/chart-specs.mjs');
+  const node = (id) => (specs.match(new RegExp(`\\{ id: '${id}', kind: 'node',[^}]*?why: '([^']*)'`)) || [])[1];
+  const [docNode, paramNode] = [node('doctrine'), node('parameters')];
+  assert.ok(docNode && paramNode, 'P5-10 Doctrine and Parameters nodes not found');
+  assert.match(docNode, /aggregate Ballast held between its 15 percent floor and 35 percent ceiling/,
+    'P5-10 Doctrine node does not name the Ballast floor and ceiling');
+  assert.doesNotMatch(paramNode, /ballast/i,
+    'P5-10 Parameters node calls a Ballast aggregate limit adjustable, but it is doctrine');
 });
 
 test('the Bitcoin reserve target is 15 to 20 percent wherever it is stated', () => {

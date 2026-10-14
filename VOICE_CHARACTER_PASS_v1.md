@@ -77,7 +77,8 @@ citation, falsifier, chart or caption changed.
 - **Part 5, doctrine vs parameter.** Part 5 called the posture aggregate ranges (Ballast 20 to 35 percent) doctrine,
   while its change-governance list treated a "Ballast aggregate ceiling (default 40%)" as a tunable parameter.
   Owner ruling: the Ballast ceiling is 35 percent and matches everywhere. The 40 percent ceiling is gone from Part 5
-  and the posture chart, and the ceiling is no longer listed as a parameter.
+  and the posture chart, and the governance list and its P5-10 exhibit now name the floor and ceiling as doctrine,
+  not a parameter.
 - **Part 5 case study.** It sized Bitcoin at 20 percent for moderate risk tolerance, while Part 3 tied 10 to 15
   percent to moderate risk capacity. Owner ruling: 15 to 20 percent is the moderate-risk target. Part 3, the glossary,
   the reserve chart and the case study now say so; the 20 to 30 percent elevated range and the 30 to 50 percent
