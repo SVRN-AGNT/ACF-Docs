@@ -106,3 +106,19 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Shared CI floor from Dale-OS (ci/README.md). Report-only.
+  hygiene:
+    uses: Tataku/Dale-OS/.github/workflows/ci-hygiene.yml@4e376aa3912d2e0b793509035ae6e656ed652126
+    with:
+      ref: 4e376aa3912d2e0b793509035ae6e656ed652126
+
+  # Keeps one issue open while CI on main is red; closes it when green.
+  alert:
+    needs: [verify]
+    if: ${{ always() && github.event_name == 'push' }}
+    permissions:
+      issues: write
+    uses: Tataku/Dale-OS/.github/workflows/ci-red-alert.yml@4e376aa3912d2e0b793509035ae6e656ed652126
+    with:
+      result: ${{ needs.verify.result }}
