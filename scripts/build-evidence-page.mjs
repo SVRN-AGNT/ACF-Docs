@@ -72,7 +72,7 @@ ${body}
 const prose = (...ps) => `      <div class="measure prose">\n${ps.map((p) => `        <p>${p}</p>`).join('\n')}\n      </div>`;
 const ref = (href, text) => `<a class="part-ref" href="${href}">${text}</a>`;
 const ext = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-const REPO = 'https://github.com/Tataku/ACF-Docs';
+const REPO = 'https://github.com/SVRN-AGNT/ACF-Docs';
 const P1 = '/part-1-foundation';
 const P3 = '/part-3-bitcoin-convexity-backbone';
 
@@ -131,7 +131,7 @@ const corrections = section('corrections', 'Corrections', 'What was wrong, and w
 ].join('\n'));
 
 const arithmetic = section('arithmetic', 'Open Arithmetic', 'Rerun it yourself.', prose(
-  `The documentation is public: ${ext(REPO, 'github.com/Tataku/ACF-Docs')}. Clone it and run <code>npm test</code>. Among the suite&rsquo;s checks, ${WORKED} recompute the worked examples from the inputs each page states: the headroom formula and its examples, the Bitcoin headroom and network-convexity examples, catalyst decay, the FIS floor and multiplier, the sizing bands, the size-opportunity curve, the FIS example book, Part 3&rsquo;s case study, drawdowns, addressable-market and gold scenarios, reserve arithmetic and loan-to-value passage, Part 4&rsquo;s Roth case and tax-wedge charts, Part 5&rsquo;s wrapper compounding (1.10<sup>30</sup> against 1.075<sup>30</sup>) and Part 2&rsquo;s tax-drag multiples.`,
+  `The documentation is public: ${ext(REPO, 'github.com/SVRN-AGNT/ACF-Docs')}. Clone it and run <code>npm test</code>. Among the suite&rsquo;s checks, ${WORKED} recompute the worked examples from the inputs each page states: the headroom formula and its examples, the Bitcoin headroom and network-convexity examples, catalyst decay, the FIS floor and multiplier, the sizing bands, the size-opportunity curve, the FIS example book, Part 3&rsquo;s case study, drawdowns, addressable-market and gold scenarios, reserve arithmetic and loan-to-value passage, Part 4&rsquo;s Roth case and tax-wedge charts, Part 5&rsquo;s wrapper compounding (1.10<sup>30</sup> against 1.075<sup>30</sup>) and Part 2&rsquo;s tax-drag multiples.`,
   `Another ${HISTORY} recompute every figure Part 1 derives from committed public data (<code>data/part1-history/</code>, read by <code>scripts/part1-history.mjs</code>): the 60/40 and Treasury returns after inflation, the debt and interest checkpoints, the inflation figures, 2022&rsquo;s rank since 1928, and the readings behind Part 1&rsquo;s tests. Part 1&rsquo;s Bitcoin, yield and sequence-of-returns figures are checked against their cited sources, not yet by a test.`,
   `A further ${CORRELATION} rebuild the stock-bond correlation behind test 3 from Robert Shiller&rsquo;s monthly S&amp;P Composite series and the 10-year Treasury yield (<code>scripts/stock-bond-correlation.mjs</code>): they check the data against its sources, the bond reconstruction, the method and the history the pages state.`,
   'The same suite confirms that each of the 46 charts declares its data mode and names its sources, and that a chart labeled as plotted data names each series, its range and its retrieval date. It does not compare a drawn line with its sources; the source links are there for that.',
