@@ -297,11 +297,13 @@ test('part 3: the addressable-market arithmetic and the gold scenario follow fro
 });
 
 test('part 3: the reserve-drawdown arithmetic is the reserve times the fall', () => {
-  const [, fall, at15, at10] = find(PART3,
-    /a repeat of the (\d+) percent drawdown of 2021 to 2022 costs about (\d+(?:\.\d+)?) percent of the portfolio at a 15 percent reserve and about (\d+(?:\.\d+)?) percent at 10 percent/,
+  // The two weights are the ends of the 15-20 percent target set in the same paragraph.
+  const [, fall, at15, at20] = find(PART3,
+    /a repeat of the (\d+) percent drawdown of 2021 to 2022 costs about (\d+(?:\.\d+)?) percent of the portfolio at a 15 percent reserve and about (\d+(?:\.\d+)?) percent at 20 percent/,
     'reserve drawdown at a fixed weight');
+  find(PART3, /A 15–20 percent target suits horizons/, 'the target the two weights bracket');
   assert.ok(Math.abs(num(at15) - 0.15 * num(fall)) <= 0.06, `15% × ${fall}% is ${0.15 * num(fall)}`);
-  assert.ok(Math.abs(num(at10) - 0.10 * num(fall)) <= 0.06, `10% × ${fall}% is ${0.10 * num(fall)}`);
+  assert.ok(Math.abs(num(at20) - 0.20 * num(fall)) <= 0.06, `20% × ${fall}% is ${0.20 * num(fall)}`);
 });
 
 test('part 3: the loan-to-value passage follows from LTV ÷ (1 − fall) and its own call level (D-LTV-RULE)', () => {

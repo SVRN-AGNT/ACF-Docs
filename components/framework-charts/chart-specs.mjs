@@ -751,12 +751,13 @@ const p3Heartbeat = (() => {
 })();
 const p3Reserve = (() => {
   const n = 100;
-  // Illustrative trajectory: share (percent) = 12 + 34 x (year / 20)^2.3, plus small
-  // drawn noise. It first reaches the 30 percent mature guide after year 15 and
-  // reads about 46 percent at year 20. Reaching about 45 percent in 20 years with
-  // no new contributions implies Bitcoin outgrowing the rest of the portfolio by
-  // roughly 9 to 10 percent a year on average.
-  const reserve = curve(0, 20, n, (t) => 12 + 34 * Math.pow(t, 2.3), 351, 0.5);
+  // Illustrative trajectory: share (percent) = 17 + 29 x (year / 20)^2.9, plus small
+  // drawn noise. It starts inside Part 3's 15-20 percent target, first reaches the
+  // 30 percent mature guide after year 15 and reads about 46 percent at year 20.
+  // Reaching about 46 percent from 17 in 20 years with no new contributions implies
+  // Bitcoin outgrowing the rest of the portfolio by roughly 7 to 8 percent a year on
+  // average.
+  const reserve = curve(0, 20, n, (t) => 17 + 29 * Math.pow(t, 2.9), 351, 0.5);
   return { reserve };
 })();
 const p3Scenario = (() => {
@@ -2134,7 +2135,7 @@ export const FRAMEWORK_CHART_SPECS = [
     primaryKey: 'reserve',
     hoverTargets: [
       { id: 'max', kind: 'strategy', label: 'Maximum exposure', name: 'Maximum exposure', why: 'The highest terminal value on a clean path; all in, it even rides the rebound. With no income sleeve and no dry powder, though, a drawdown plus a lost paycheck forces a sale at the worst price, and the deepest drawdowns carry the highest strain, which is where panic selling and abandoned theses happen.', claim: 'Highest upside, highest behavior risk.', concept: 'Operational control', link: '/part-3-bitcoin-convexity-backbone#survivability' },
-      { id: 'reserve', kind: 'strategy', label: 'Framework reserve', name: 'Framework reserve', why: 'The framework allocation, matching Part 3’s Investor B: 15 percent Bitcoin, 15 percent dry powder and an income sleeve. Enough exposure to participate, enough reserve to act in a drawdown, and never a forced seller. It does not win every scenario; it stays inside the governable band in all of them. Its 15 percent sits at the top of the framework’s normal 10 to 15 percent target.', claim: 'Balanced, repeatable participation.', concept: 'Operational control', link: '/part-3-bitcoin-convexity-backbone#survivability' },
+      { id: 'reserve', kind: 'strategy', label: 'Framework reserve', name: 'Framework reserve', why: 'The framework allocation, matching Part 3’s Investor B: 15 percent Bitcoin, 15 percent dry powder and an income sleeve. Enough exposure to participate, enough reserve to act in a drawdown, and never a forced seller. It does not win every scenario; it stays inside the governable band in all of them. Its 15 percent sits at the low end of the framework’s 15 to 20 percent target.', claim: 'Balanced, repeatable participation.', concept: 'Operational control', link: '/part-3-bitcoin-convexity-backbone#survivability' },
       { id: 'stress', kind: 'strategy', label: 'Stress-tested reserve', name: 'Stress-tested reserve', why: 'The defensive allocation: the most capacity to act in a drawdown, paid for in cash drag for the rest of the cycle. Suited to extreme defense, and not the default. Dry powder it deploys is rebuilt over time, so it is never a one-time timing bet.', claim: 'Maximum defense; lags otherwise.', concept: 'Dry powder', link: '/part-5-portfolio-construction-position-management#ballast' },
     ],
     mobileTapTargets: ['max', 'reserve', 'stress'],
@@ -2280,31 +2281,31 @@ export const FRAMEWORK_CHART_SPECS = [
     chartId: 'p3-reserve-share-evolves', idx: 'P3-07', group: 'part-3', intendedPlacement: 'part-3',
     claimStack: {
       primaryClaim: 'A starting reserve can grow into a share large enough that governing it matters more than building it',
-      visualProof: 'A reserve-share line rising over twenty years from about 12 percent, past the 15 percent top of the target range near year 7 and across the 30 percent mature guide just after year 15, to about 46 percent, with a mark where borrowing becomes an option',
+      visualProof: 'A reserve-share line rising over twenty years from about 17 percent, past the 20 percent top of the target range near year 9 and across the 30 percent mature guide just after year 15, to about 46 percent, with a mark where borrowing becomes an option',
       interactionRole: 'Hover the line, the target and mature guides, or the borrowing mark to see why the job changes as the share grows',
       readerAction: 'Trace the line up through the target and mature guides to the borrowing mark',
       caution: 'Illustrative trajectory, not a forecast for any portfolio. These percentages describe outcomes under given conditions, not rebalanced targets.',
     },
     status: 'implemented', wiredPublic: true,
-    title: 'Reserve Share Evolves', setupLine: 'A 10–15% reserve can grow into a 30–50% share over 15 to 20 years, and borrowing against it then becomes an option',
+    title: 'Reserve Share Evolves', setupLine: 'A 15–20% reserve can grow into a 30–50% share over 15 to 20 years, and borrowing against it then becomes an option',
     claimLabel: 'ALLOCATION · PHASE',
-    frameworkClaim: 'A 10–15% reserve can grow, through accumulation and appreciation, into a 30–50% mature share, where borrowing against it becomes an option.',
+    frameworkClaim: 'A 15–20% reserve can grow, through accumulation and appreciation, into a 30–50% mature share, where borrowing against it becomes an option.',
     readerTakeaway: 'Success changes the job, from accumulating the reserve to governing it.',
     chartType: 'Reserve share as a percent of net worth, rising through the target range toward a mature share.',
     visualDataMode: 'simulation', disclosure: DISCLOSURE.simulation, footerCta: 'View methodology',
-    sources: [{ provider: 'Author calculation', label: 'Illustrative trajectory: share = 12 + 34 × (year ÷ 20)^2.3 percent, with small drawn noise', role: 'methodology', notes: 'Reaching about 45 percent in 20 years with no new contributions implies Bitcoin outgrowing the rest of the portfolio by roughly 9 to 10 percent a year on average; ongoing accumulation lowers that.' }, { provider: 'ACF · Part 3', label: 'Rule stated in Part 3 · TAM, custody, and the borrow phase', role: 'verifies-concept', url: '/part-3-bitcoin-convexity-backbone#tam' }],
+    sources: [{ provider: 'Author calculation', label: 'Illustrative trajectory: share = 17 + 29 × (year ÷ 20)^2.9 percent, with small drawn noise', role: 'methodology', notes: 'Reaching about 46 percent from 17 in 20 years with no new contributions implies Bitcoin outgrowing the rest of the portfolio by roughly 7 to 8 percent a year on average; ongoing accumulation lowers that.' }, { provider: 'ACF · Part 3', label: 'Rule stated in Part 3 · TAM, custody, and the borrow phase', role: 'verifies-concept', url: '/part-3-bitcoin-convexity-backbone#tam' }],
     explainerHeadline: 'A reserve that is never sold can outgrow its target.',
-    explainerBody: 'A starting reserve of 10 to 15 percent, accumulated and never sold, can grow into 30 to 50 percent of net worth after 15 to 20 years if Bitcoin keeps outgrowing the rest of the portfolio. At that point the job can change from building the reserve to governing it, and borrowing against it becomes an option, within the loan-to-value rules in Part 3.',
+    explainerBody: 'A starting reserve of 15 to 20 percent, accumulated and never sold, can grow into 30 to 50 percent of net worth after 15 to 20 years if Bitcoin keeps outgrowing the rest of the portfolio. At that point the job can change from building the reserve to governing it, and borrowing against it becomes an option, within the loan-to-value rules in Part 3.',
     explainerConcept: 'Reserve governance',
     concepts: [{ label: 'Reserve governance', link: '/part-3-bitcoin-convexity-backbone#tam' }, { label: 'Buy-borrow-die', link: '/part-3-bitcoin-convexity-backbone#tam' }],
     layout: 'single',
-    ariaSummary: 'Reserve share as a percent of net worth, rising over twenty years from about 12 percent, past the 15 percent top of the target range near year 7, across the 30 percent mature guide just after year 15, to about 46 percent at year 20. A mark at year 17 shows where borrowing against the reserve becomes an option.',
+    ariaSummary: 'Reserve share as a percent of net worth, rising over twenty years from about 17 percent, past the 20 percent top of the target range near year 9, across the 30 percent mature guide just after year 15, to about 46 percent at year 20. A mark at year 17 shows where borrowing against the reserve becomes an option.',
     domain: { xMin: 0, xMax: 20, yMin: 0, yMax: 55 }, yUnit: '', valueUnit: '% of net worth',
     xTicks: [{ v: 0, label: 'yr 0' }, { v: 10, label: 'yr 10' }, { v: 20, label: 'yr 20' }],
     yTicks: [{ v: 15, label: '15%' }, { v: 30, label: '30%' }, { v: 45, label: '45%' }],
     series: [{ key: 'reserve', tier: 'primary', label: 'Reserve share', pts: p3Reserve.reserve }],
     guides: [
-      { id: 'target', y: 15, kind: 'base', label: 'target 10–15%' },
+      { id: 'target', y: 20, kind: 'base', label: 'target 15–20%' },
       { id: 'mature', y: 30, kind: 'threshold', dash: true, label: 'mature share · 30%+' },
     ],
     markers: [
@@ -2313,12 +2314,12 @@ export const FRAMEWORK_CHART_SPECS = [
     primaryKey: 'reserve',
     hoverTargets: [
       { id: 'reserve', kind: 'series', seriesKey: 'reserve', label: 'Reserve share', name: 'Reserve share', why: 'Accumulation plus appreciation can grow the reserve from a modest slice into the largest holding in the portfolio. Nothing rebalances it up; it gets there by not being sold.', claim: 'The share is allowed to grow.', concept: 'Reserve governance', link: '/part-3-bitcoin-convexity-backbone#tam' },
-      { id: 'target', kind: 'level', label: 'Target 10–15%', name: 'Target reserve · 10–15%', why: 'The usual starting allocation, enough to matter. At a 10 to 15 percent reserve, an 80 percent Bitcoin drawdown costs the portfolio about 8 to 12 percent.', claim: 'The usual starting range.', concept: 'Position sizing', link: '/part-5-portfolio-construction-position-management#torque' },
+      { id: 'target', kind: 'level', label: 'Target 15–20%', name: 'Target reserve · 15–20%', why: 'The usual starting allocation, enough to matter. At a 15 to 20 percent reserve, an 80 percent Bitcoin drawdown costs the portfolio about 12 to 16 percent.', claim: 'The usual starting range.', concept: 'Position sizing', link: '/part-5-portfolio-construction-position-management#torque' },
       { id: 'mature', kind: 'level', label: 'Mature share · 30%+', name: 'Mature share', why: 'Past roughly 30 percent, the reserve is usually the largest single holding, and governing it matters more than adding to it.', claim: 'Big enough that governing it is the job.', concept: 'Reserve governance', link: '/part-3-bitcoin-convexity-backbone#tam' },
       { id: 'borrow', kind: 'marker', label: 'Borrowing becomes an option', name: 'Borrowing becomes an option', why: 'Once the reserve is large relative to any loan, you may borrow against it to fund income-producing assets, within the loan-to-value rules in Part 3. Borrowing stays optional; leverage, drawdown and liquidity now matter more than adding coins.', claim: 'The job changes from build to govern.', concept: 'Buy-borrow-die', link: '/part-3-bitcoin-convexity-backbone#tam' },
     ],
     mobileTapTargets: ['borrow', 'mature', 'target', 'reserve'],
-    implementationNotes: 'SIMULATION of an illustrative trajectory: share = 12 + 34 × (year ÷ 20)^2.3 plus small noise. As drawn it first reaches the 15 percent guide at year 7 and the 30 percent guide at year 15.2, reads about 35.6 at the year-17 mark and 46 at year 20. Ranges (10–15% target, 30–50% mature) from Part 3 #tam. Phase thresholds shown as guides.',
+    implementationNotes: 'SIMULATION of an illustrative trajectory: share = 17 + 29 × (year ÷ 20)^2.9 plus small noise. As drawn it first reaches the 20 percent guide at year 9 and the 30 percent guide at year 15.1, reads about 35.3 at the year-17 mark and 46 at year 20. Ranges (15–20% target, 30–50% mature) from Part 3 #tam. Phase thresholds shown as guides.',
   },
 
   /* ── PART 4 · TAX ARCHITECTURE ─────────────────────────────────────────── */
@@ -2696,11 +2697,11 @@ export const FRAMEWORK_CHART_SPECS = [
       { provider: 'ACF dashboard', label: 'The portfolio builder sizes Hype from CIS 50 at no more than 5 percent a position and 10 percent in aggregate; on the book you hold it flags a Hype position above 5 percent or a sleeve above 10 percent (software behavior as of September 2026)', role: 'verifies-concept', url: '/framework-in-math#sizing-math' },
     ],
     explainerHeadline: 'Quality is scored once; capital is assigned by role.',
-    explainerBody: 'Torque earns size through convexity, survivability and execution: 8 to 15 percent at a score of 70 or more, under a 15 percent cap that only a documented override can stretch to 18. Ballast earns size through resilience, liquidity and its usefulness in rotation: up to 8 percent ordinarily and 10 percent for one position of exceptional stability, with the sleeve working between 20 and 35 percent of the book, above a 15 percent floor and below a 40 percent ceiling. Hype has no score bands. It is eligible from a CIS of 50 and sized 2 to 5 percent, never more than 5 percent a position or 10 percent in aggregate, because momentum is both its thesis and its exit signal. The top of each band is the most a score in it can justify. Each posture’s own ceiling binds first, so the 18 percent maximum only ever matters for Torque, and across the book the top three positions stay within 35 percent and the top five within 50.',
+    explainerBody: 'Torque earns size through convexity, survivability and execution: 8 to 15 percent at a score of 70 or more, under a 15 percent cap that only a documented override can stretch to 18. Ballast earns size through resilience, liquidity and its usefulness in rotation: up to 8 percent ordinarily and 10 percent for one position of exceptional stability, with the sleeve working between 20 and 35 percent of the book, never below its 15 percent floor or above its 35 percent ceiling. Hype has no score bands. It is eligible from a CIS of 50 and sized 2 to 5 percent, never more than 5 percent a position or 10 percent in aggregate, because momentum is both its thesis and its exit signal. The top of each band is the most a score in it can justify. Each posture’s own ceiling binds first, so the 18 percent maximum only ever matters for Torque, and across the book the top three positions stay within 35 percent and the top five within 50.',
     explainerConcept: 'Position sizing',
     concepts: [{ label: 'Position sizing', link: '/part-5-portfolio-construction-position-management#torque' }, { label: 'Posture', link: '/part-5-portfolio-construction-position-management#postures' }, { label: 'CIS', link: '/part-6-convexity-framework-integrity-scoring#cis' }],
     layout: 'rangeSteps',
-    ariaSummary: 'Three columns on one shared percent scale, each with its own ceiling mark. Torque stacks three ranges, two to four percent for scores in the fifties, four to eight for the sixties and eight to fifteen at seventy and above, under a posture ceiling at fifteen percent that only a documented override extends to eighteen. Ballast stacks one to three, three to five and five to eight percent for the same score bands, under an exceptional single-position maximum of ten percent, with aggregate Ballast working between twenty and thirty-five percent above a fifteen percent floor and below a forty percent ceiling. Hype shows a single two to five percent range under a hard five percent cap, eligible from a CIS of fifty, with a ten percent aggregate cap. A single dashed rule above all three columns marks the eighteen percent portfolio outer bound; each posture ceiling binds before it.',
+    ariaSummary: 'Three columns on one shared percent scale, each with its own ceiling mark. Torque stacks three ranges, two to four percent for scores in the fifties, four to eight for the sixties and eight to fifteen at seventy and above, under a posture ceiling at fifteen percent that only a documented override extends to eighteen. Ballast stacks one to three, three to five and five to eight percent for the same score bands, under an exceptional single-position maximum of ten percent, with aggregate Ballast working between twenty and thirty-five percent, never below a fifteen percent floor or above a thirty-five percent ceiling. Hype shows a single two to five percent range under a hard five percent cap, eligible from a CIS of fifty, with a ten percent aggregate cap. A single dashed rule above all three columns marks the eighteen percent portfolio outer bound; each posture ceiling binds before it.',
     rangeSteps: {
       yUnit: '%', yMin: 0, yMax: 20,
       columns: [
@@ -2709,7 +2710,7 @@ export const FRAMEWORK_CHART_SPECS = [
           { id: 't-standard', from: 4, to: 8, tier: 'secondary', valueLabel: '60s · 4–8%' },
           { id: 't-core', from: 8, to: 15, tier: 'primary', valueLabel: '70+ · 8–15%' },
         ] },
-        { id: 'ballast', label: 'Ballast', sub: 'strategic reserves', capNote: 'aggregate 20–35% working · 15% floor · 40% ceiling', cap: { id: 'cap-ballast', v: 10, label: 'exceptional max 10%' }, steps: [
+        { id: 'ballast', label: 'Ballast', sub: 'strategic reserves', capNote: 'aggregate 20–35% working · 15% floor · 35% ceiling', cap: { id: 'cap-ballast', v: 10, label: 'exceptional max 10%' }, steps: [
           { id: 'b-marginal', from: 1, to: 3, tier: 'tertiary', valueLabel: '50s · 1–3%' },
           { id: 'b-standard', from: 3, to: 5, tier: 'secondary', valueLabel: '60s · 3–5%' },
           { id: 'b-core', from: 5, to: 8, tier: 'primary', valueLabel: '70+ · 5–8%' },
@@ -2737,7 +2738,7 @@ export const FRAMEWORK_CHART_SPECS = [
       { id: 'outer18', kind: 'node', label: 'Outer bound', name: 'Portfolio outer bound · 18% absolute', why: 'The absolute single-position limit across the whole book, reachable only by a Torque position under a documented override. Ballast stops at 10 percent and Hype at 5 long before it.', claim: 'The outer bound backstops; posture ceilings govern.', concept: 'Concentration limits', link: '/part-5-portfolio-construction-position-management#torque' },
     ],
     mobileTapTargets: ['t-core', 'b-core', 'h-band', 'cap-torque', 'cap-hype'],
-    implementationNotes: 'rangeSteps columns mode, revised per owner review (2026-07-13): each posture carries its own ceiling mark (Torque 15 with the override note, Ballast exceptional 10, Hype hard 5) drawn at the column so posture ceilings visibly bind first; the 18% absolute is a single dashed full-width rule labeled as the portfolio outer bound. Hype is one 2–5% range from CIS 50 (Part 5’s sizing range; the scoring rules set only the Hype caps). Ballast capNote carries the 20–35% working range, 15% floor and 40% ceiling. The visual claim remains the 70+ row asymmetry.',
+    implementationNotes: 'rangeSteps columns mode, revised per owner review (2026-07-13): each posture carries its own ceiling mark (Torque 15 with the override note, Ballast exceptional 10, Hype hard 5) drawn at the column so posture ceilings visibly bind first; the 18% absolute is a single dashed full-width rule labeled as the portfolio outer bound. Hype is one 2–5% range from CIS 50 (Part 5’s sizing range; the scoring rules set only the Hype caps). Ballast capNote carries the 20–35% working range, 15% floor and 35% ceiling. The visual claim remains the 70+ row asymmetry.',
   },
 
   {
