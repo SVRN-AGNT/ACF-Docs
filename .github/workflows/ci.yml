@@ -109,9 +109,9 @@ jobs:
 
   # Shared CI floor from Dale-OS (ci/README.md). Report-only.
   hygiene:
-    uses: Tataku/Dale-OS/.github/workflows/ci-hygiene.yml@1d63abd37314a79db64b4dace15f81ab0d80f938
+    uses: Tataku/Dale-OS/.github/workflows/ci-hygiene.yml@6940d2af5133539b78a4586a9797a7c3156ca690
     with:
-      ref: 1d63abd37314a79db64b4dace15f81ab0d80f938
+      ref: 6940d2af5133539b78a4586a9797a7c3156ca690
 
   # Keeps one issue open while CI on main is red; closes it when green.
   alert:
@@ -119,6 +119,6 @@ jobs:
     if: ${{ always() && github.event_name == 'push' }}
     permissions:
       issues: write
-    uses: Tataku/Dale-OS/.github/workflows/ci-red-alert.yml@1d63abd37314a79db64b4dace15f81ab0d80f938
+    uses: Tataku/Dale-OS/.github/workflows/ci-red-alert.yml@6940d2af5133539b78a4586a9797a7c3156ca690
     with:
       result: ${{ needs.verify.result }}

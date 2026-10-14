@@ -30,9 +30,9 @@ jobs:
       issues: write
       pull-requests: write
       checks: write
-    uses: Tataku/Dale-OS/.github/workflows/ci-pm-review.yml@1d63abd37314a79db64b4dace15f81ab0d80f938
+    uses: Tataku/Dale-OS/.github/workflows/ci-pm-review.yml@6940d2af5133539b78a4586a9797a7c3156ca690
     with:
-      ref: 1d63abd37314a79db64b4dace15f81ab0d80f938
+      ref: 6940d2af5133539b78a4586a9797a7c3156ca690
       comment_id: ${{ github.event.comment.id || inputs.comment_id }}
       # CI and the PM's own caller are held: a PR that edits them gets the high bar.
       held_paths: '^\.github/workflows/'
