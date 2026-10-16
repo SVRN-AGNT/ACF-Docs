@@ -39,6 +39,9 @@ jobs:
       issues: write
       pull-requests: write
       checks: write
+    # Pinned ahead of agent-review.yml and ci.yml (f2c71dc) on purpose: CLAUDE.md's dispatch re-run waits for the
+    # notice "the CLEAR on <head> still stands", which first exists in Dale-OS bdabfd2. Nothing those callers use
+    # changed in f2c71dc..bdabfd2.
     uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@bdabfd252f274346e96d8ccf97a4edd3077857da
     with:
       ref: bdabfd252f274346e96d8ccf97a4edd3077857da
