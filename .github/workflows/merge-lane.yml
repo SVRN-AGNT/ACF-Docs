@@ -27,9 +27,9 @@ jobs:
       checks: read
       actions: read
       statuses: read
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-merge-lane.yml@85cf0f0419eb7345cf1d465ecb69f6de1a7ee796
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-merge-lane.yml@2f588f914b44f7f4303831ff955d339d7e793521
     with:
-      ref: 85cf0f0419eb7345cf1d465ecb69f6de1a7ee796
+      ref: 2f588f914b44f7f4303831ff955d339d7e793521
       held_paths: '^\.github/workflows/'
       required_workflows: .github/workflows/ci.yml
     secrets:
