@@ -26,10 +26,10 @@ jobs:
       issues: read
       checks: read
       actions: read
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-merge-lane.yml@e4d9581ebf9296b0b7210e1805d8a82b8b038ee9
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-merge-lane.yml@c22775ddfd9f42a9cafd96779887ffd6dd298a8d
     with:
-      ref: e4d9581ebf9296b0b7210e1805d8a82b8b038ee9
+      ref: c22775ddfd9f42a9cafd96779887ffd6dd298a8d
       held_paths: '^\.github/workflows/'
-      required_checks: 'Tests, audits, generator drift, build'
+      required_workflows: .github/workflows/ci.yml
     secrets:
       merge_token: ${{ secrets.INTEGRATION_TOKEN }}
