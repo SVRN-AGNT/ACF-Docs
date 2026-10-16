@@ -153,11 +153,13 @@ export const MOTION_TYPES = ['timeSweep', 'reveal', 'rowSweep', 'scenarioUpdate'
 export const MOTION_DURATIONS = ['calm', 'slow', 'transformational'];
 
 // Per-family motion tempo (ms). The shared time-series sweep (PlotSvg) reads this;
-// bespoke renderers carry matching choreography. Governed, not random — but the
-// default family (timeSweep) preserves the current values exactly.
+// bespoke renderers carry matching choreography. Governed, not random.
+// maMs is ma, the beat of stillness before the brush draws in (owner decision
+// 0036, about 200ms). Only the families whose first entrance is a brush draw-in
+// carry it; scenarioUpdate replays on input, where a pause would read as lag.
 export const MOTION_TIMING = {
-  timeSweep: { sweepMs: 1900, fastMs: 560, mediumMs: 1100, staggerMs: 140 },
-  reveal: { sweepMs: 1100, fastMs: 620, mediumMs: 900, staggerMs: 200 },
+  timeSweep: { sweepMs: 1900, fastMs: 560, mediumMs: 1100, staggerMs: 140, maMs: 200 },
+  reveal: { sweepMs: 1100, fastMs: 620, mediumMs: 900, staggerMs: 200, maMs: 200 },
   rowSweep: { sweepMs: 1500, fastMs: 480, mediumMs: 900, staggerMs: 90 },
   scenarioUpdate: { sweepMs: 460, fastMs: 300, mediumMs: 460, staggerMs: 0 },
   diagramBuild: { sweepMs: 1400, fastMs: 520, mediumMs: 1000, staggerMs: 160 },

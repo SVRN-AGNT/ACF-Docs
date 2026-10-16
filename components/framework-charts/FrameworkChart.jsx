@@ -399,6 +399,11 @@ function PlotSvg({
   // after the sweep front reaches their x-position. Slower + calmer than a pop.
   const EASE = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
   const TM = { fast: (motion && motion.fastMs) || 560, medium: (motion && motion.mediumMs) || 1100, path: (motion && motion.sweepMs) || 1900 };
+  // Ma: the beat of stillness before the brush draws in (owner decision 0036).
+  // Governed per motion family in MOTION_TIMING (chart-specs.mjs); a family
+  // without one (a scenario update replays on input, where a pause is lag)
+  // keeps the 120ms start it always had.
+  const MA = (motion && Number.isFinite(motion.maMs)) ? motion.maMs : 120;
   const plotW = width - pad.l - pad.r;
   const xFrac = (px) => Math.max(0, Math.min(1, (px - pad.l) / (plotW || 1)));
   const sweep = (dur = TM.path, delay = 0) => ({
@@ -406,7 +411,7 @@ function PlotSvg({
     transition: reduce ? 'none' : `clip-path ${dur}ms ${EASE} ${delay}ms, -webkit-clip-path ${dur}ms ${EASE} ${delay}ms`,
   });
   // opacity reveal timed to when the sweep reaches a given x (object exists first).
-  const fadeAt = (px, dur = TM.fast, extra = 0) => ({ opacity: entered ? 1 : 0, transition: reduce ? 'opacity 300ms ease' : `opacity ${dur}ms ${EASE} ${Math.round(120 + TM.path * xFrac(px) + extra)}ms` });
+  const fadeAt = (px, dur = TM.fast, extra = 0) => ({ opacity: entered ? 1 : 0, transition: reduce ? 'opacity 300ms ease' : `opacity ${dur}ms ${EASE} ${Math.round(MA + TM.path * xFrac(px) + extra)}ms` });
 
   let tooltip = null;
   // LOCKED (owner decision, re-affirmed 2026-07-13): NO floating tooltip on
@@ -455,10 +460,10 @@ function PlotSvg({
         {/* master time-sweep: bands, areas and all related series grow left→right
             together, so related lines move in tandem and areas/backgrounds grow
             with the line fronts rather than popping in afterward. */}
-        <g style={sweep(TM.path, 120)}>
+        <g style={sweep(TM.path, MA)}>
           <g style={{ opacity: bandReveal, transition: reduce ? 'none' : 'opacity 220ms ease' }}>
           {geom.bands.map((bg, i) => (
-            <g key={`band${i}`} style={{ opacity: entered ? (focusId === bg.b.id ? 1 : 0.85) : 0, transition: reduce ? 'opacity 320ms ease' : `opacity ${TM.medium}ms ${EASE} 120ms` }}>
+            <g key={`band${i}`} style={{ opacity: entered ? (focusId === bg.b.id ? 1 : 0.85) : 0, transition: reduce ? 'opacity 320ms ease' : `opacity ${TM.medium}ms ${EASE} ${MA}ms` }}>
               {bg.field ? (
                 <>
                   <path d={bg.field.plume} fill={pal.bandStress} fillOpacity={focusId === bg.b.id ? (pal.name === 'light' ? 0.20 : 0.18) : (pal.name === 'light' ? 0.13 : 0.12)} style={{ transition: trans('fill-opacity') }} />
@@ -505,7 +510,7 @@ function PlotSvg({
 
         {/* markers — resolve as the sweep front reaches their x-position */}
         {geom.markers.map((m, i) => (
-          <g key={`mk${i}`} style={{ opacity: entered ? dimOf(m.m.id) : 0, transformOrigin: `${m.cx}px ${m.cy}px`, transform: entered ? 'none' : 'scale(0.86)', transition: reduce ? 'opacity 240ms ease' : `opacity ${TM.fast}ms ${EASE} ${Math.round(120 + TM.path * xFrac(m.cx))}ms, transform ${TM.fast}ms ${EASE} ${Math.round(120 + TM.path * xFrac(m.cx))}ms` }}>
+          <g key={`mk${i}`} style={{ opacity: entered ? dimOf(m.m.id) : 0, transformOrigin: `${m.cx}px ${m.cy}px`, transform: entered ? 'none' : 'scale(0.86)', transition: reduce ? 'opacity 240ms ease' : `opacity ${TM.fast}ms ${EASE} ${Math.round(MA + TM.path * xFrac(m.cx))}ms, transform ${TM.fast}ms ${EASE} ${Math.round(MA + TM.path * xFrac(m.cx))}ms` }}>
             <path d={m.d} fill={pal.markInk} />
             {focusId === m.m.id && <circle cx={m.cx} cy={m.cy} r={(m.m.r || 13) + 2} fill="none" stroke={accent} strokeWidth="1.1" opacity="0.9" />}
           </g>
@@ -527,7 +532,7 @@ function PlotSvg({
         {(panel.series || []).map((s) => {
           const g = geom.series[s.key];
           const c = s.tier === 'primary' ? accent : tierColor(s.tier, pal, accent);
-          return s.label && !s.hidden ? <text key={`el${s.key}`} x={g.end.x + 9} y={g.end.y + 3.5 + (s.labelDy || 0)} style={{ ...haloSans(pal, s.tier === 'primary' ? FS.endP : FS.endS, c, s.tier === 'primary' ? 600 : 500), opacity: entered ? dimOf(s.key) : 0, transition: reduce ? 'opacity 300ms ease' : `opacity ${TM.fast}ms ${EASE} ${Math.round(120 + TM.path * xFrac(g.end.x))}ms` }}>{s.label}</text> : null;
+          return s.label && !s.hidden ? <text key={`el${s.key}`} x={g.end.x + 9} y={g.end.y + 3.5 + (s.labelDy || 0)} style={{ ...haloSans(pal, s.tier === 'primary' ? FS.endP : FS.endS, c, s.tier === 'primary' ? 600 : 500), opacity: entered ? dimOf(s.key) : 0, transition: reduce ? 'opacity 300ms ease' : `opacity ${TM.fast}ms ${EASE} ${Math.round(MA + TM.path * xFrac(g.end.x))}ms` }}>{s.label}</text> : null;
         })}
         {geom.notes.map((n, i) => <text key={`nt${i}`} x={n.x} y={n.y} textAnchor={n.nt.anchor || 'middle'} style={{ ...haloSans(pal, FS.note, pal.text3, 500), fontStyle: 'italic', ...fadeAt(n.x, TM.fast, 120) }}>{n.nt.text}</text>)}
 
