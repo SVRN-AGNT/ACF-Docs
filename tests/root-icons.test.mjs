@@ -22,7 +22,7 @@ for (const name of ['favicon.ico', 'apple-touch-icon.png']) {
 
 // The SVG favicon is parsed as XML when a tab loads it as an image, and XML
 // forbids "--" inside a comment. The generated banner once named its --token,
-// which left this file malformed: the tab fell back to the .ico or drew nothing.
+// which left this file malformed: loaded as an image, Chromium drew nothing.
 test('the brand favicon.svg is well-formed (no "--" inside a comment)', () => {
   const svg = fs.readFileSync(path.join(PUBLIC, 'site-b', 'brand', 'favicon.svg'), 'utf8');
   const comments = svg.match(/<!--([\s\S]*?)-->/g) || [];
