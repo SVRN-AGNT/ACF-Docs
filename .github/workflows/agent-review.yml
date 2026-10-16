@@ -30,9 +30,9 @@ jobs:
       pull-requests: write
       checks: write
       actions: read
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-agent-review.yml@58ed38f0b1cdb083e1b974adf6e52d5245a32a06
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-agent-review.yml@f2c71dc0639be081d036408c849f8bab6da21c27
     with:
-      ref: 58ed38f0b1cdb083e1b974adf6e52d5245a32a06
+      ref: f2c71dc0639be081d036408c849f8bab6da21c27
       pr: ${{ github.event.pull_request.number || inputs.pr }}
       held_paths: '^\.github/workflows/'
     secrets:
