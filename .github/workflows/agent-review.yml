@@ -1,0 +1,39 @@
+# Independent Claude review on every non-draft PR by an allowlisted author: an
+# `Agent Review` check on the exact head, billed to the Claude subscription only
+# (CLAUDE_CODE_OAUTH_TOKEN organization secret). Shared workflow and rationale:
+# Dale-OS ci/README.md ("The agent-review caller").
+name: agent-review
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Number of the PR to review
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-review-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # A dispatch on any other branch would run that branch's copy of this file.
+    if: (github.event_name == 'workflow_dispatch' && github.ref_name == github.event.repository.default_branch) || (github.event_name == 'pull_request_target' && github.event.pull_request.draft == false)
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+      actions: read
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-agent-review.yml@58ed38f0b1cdb083e1b974adf6e52d5245a32a06
+    with:
+      ref: 58ed38f0b1cdb083e1b974adf6e52d5245a32a06
+      pr: ${{ github.event.pull_request.number || inputs.pr }}
+      held_paths: '^\.github/workflows/'
+    secrets:
+      claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
