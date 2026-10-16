@@ -1,0 +1,28 @@
+# Merges a PR whose exact head both reviewers cleared, with no person typing
+# "merge" (owner ruling 2026-10-16). Rules: Dale-OS ci/merge_gate.py. It wakes
+# when a review or CI run finishes, so the CLEAR it reads is fresh.
+name: merge-lane
+
+on:
+  workflow_run:
+    workflows: [pm-review, agent-review, CI]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lane:
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+      checks: read
+      actions: read
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-merge-lane.yml@72144a4c531b4a726eca0f03776181bbe9d24ded
+    with:
+      ref: 72144a4c531b4a726eca0f03776181bbe9d24ded
+      held_paths: '^\.github/workflows/'
+    secrets:
+      merge_token: ${{ secrets.INTEGRATION_TOKEN }}

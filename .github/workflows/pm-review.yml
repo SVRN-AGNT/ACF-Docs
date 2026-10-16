@@ -39,12 +39,10 @@ jobs:
       issues: write
       pull-requests: write
       checks: write
-    # Pinned ahead of agent-review.yml and ci.yml (f2c71dc) on purpose: CLAUDE.md's dispatch re-run waits for the
-    # notice "the CLEAR on <head> still stands", which first exists in Dale-OS bdabfd2. Nothing those callers use
-    # changed in f2c71dc..bdabfd2.
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@bdabfd252f274346e96d8ccf97a4edd3077857da
+      actions: read
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@72144a4c531b4a726eca0f03776181bbe9d24ded
     with:
-      ref: bdabfd252f274346e96d8ccf97a4edd3077857da
+      ref: 72144a4c531b4a726eca0f03776181bbe9d24ded
       comment_id: ${{ github.event.comment.id || inputs.comment_id }}
       expected_pr: ${{ inputs.pr }}
       # CI and the PM's own caller are held: a PR that edits them gets the high bar.
