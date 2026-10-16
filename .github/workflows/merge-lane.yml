@@ -8,6 +8,9 @@ on:
     workflows: [pm-review, agent-review, CI]
     types: [completed]
   workflow_dispatch:
+  # Nothing else wakes the lane when a timeout passes or a hold label comes off.
+  schedule:
+    - cron: '17 */2 * * *'
 
 permissions:
   contents: read
@@ -23,9 +26,10 @@ jobs:
       issues: read
       checks: read
       actions: read
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-merge-lane.yml@2395bb51f78079cb2e8d6503d2fb00a83b412420
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-merge-lane.yml@4ff99d37b164720e4afcfcdb49647a67e3f7cf91
     with:
-      ref: 2395bb51f78079cb2e8d6503d2fb00a83b412420
+      ref: 4ff99d37b164720e4afcfcdb49647a67e3f7cf91
       held_paths: '^\.github/workflows/'
+      required_checks: 'Tests, audits, generator drift, build'
     secrets:
       merge_token: ${{ secrets.INTEGRATION_TOKEN }}
