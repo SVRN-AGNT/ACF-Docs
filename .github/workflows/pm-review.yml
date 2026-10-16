@@ -30,9 +30,9 @@ jobs:
       issues: write
       pull-requests: write
       checks: write
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@45b081b8990df1c13b95a0ccc396054f6b81961a
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@58ed38f0b1cdb083e1b974adf6e52d5245a32a06
     with:
-      ref: 45b081b8990df1c13b95a0ccc396054f6b81961a
+      ref: 58ed38f0b1cdb083e1b974adf6e52d5245a32a06
       comment_id: ${{ github.event.comment.id || inputs.comment_id }}
       # CI and the PM's own caller are held: a PR that edits them gets the high bar.
       held_paths: '^\.github/workflows/'
