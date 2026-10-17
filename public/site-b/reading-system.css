@@ -4382,9 +4382,6 @@ a.dc-card:hover .dc-plate::before, a.dc-card:focus-visible .dc-plate::before { o
 a.dc-card:hover, a.dc-card:focus-visible {
   border-color: var(--accent-quiet);
 }
-[data-theme="dark"] a.dc-card:hover, [data-theme="dark"] a.dc-card:focus-visible {
-  box-shadow: 0 14px 32px -12px rgba(0, 0, 0, 0.55);
-}
 .dc-card.pending { opacity: 0.62; }
 .dc-num {
   position: absolute;
