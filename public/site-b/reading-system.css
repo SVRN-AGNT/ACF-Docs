@@ -1049,7 +1049,7 @@ body {
   transition: background var(--motion-base) var(--ease-standard),
               transform var(--motion-base) var(--ease-emphasis);
 }
-.nav-cta:hover, .nav-cta:focus-visible { background: var(--accent-link); transform: translateY(-1px); }
+.nav-cta:hover, .nav-cta:focus-visible { background: var(--accent-link); }
 
 /* Brand lockup */
 .brand {
@@ -1245,8 +1245,6 @@ body {
 .cover-cta .cta-arrow svg { width: 1rem; height: 1rem; display: block; }
 .cover-cta:hover, .cover-cta:focus-visible {
   background: var(--accent-link);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px -10px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 .cover-cta:hover .cta-arrow, .cover-cta:focus-visible .cta-arrow { transform: translateX(3px); }
 
@@ -3258,8 +3256,8 @@ html:not([data-pointer="coarse"]) a.side-part:hover, a.side-part:focus-visible {
    Progressive enhancement: hidden without JS; the breadcrumb, sidebar and
    Next-up card already cover navigation. JS reveals it past a scroll threshold.
    ============================================================================ */
-/* Outer = positioning + reveal + hover-lift (transforms are only ever transitioned
-   here, never animated, so they don't collide with the inner's continuous bob). */
+/* Outer = positioning + reveal. It holds still once shown: nothing on a reading
+   surface moves unless something changed, and hover changes colour, never place. */
 .floatnav {
   position: fixed;
   left: 0;
@@ -3281,9 +3279,8 @@ html:not([data-pointer="coarse"]) a.side-part:hover, a.side-part:focus-visible {
   transform: translateY(0);
   pointer-events: auto;
 }
-.floatnav:hover { transform: translateY(-3px); }
-/* Inner = the visible pill: surface-matched cockpit dock, hairline accent edge,
-   elevation, and the perpetual float bob. */
+/* Inner = the visible pill: an opaque surface-matched dock with a hairline accent
+   edge, so the text it covers never shows through it. */
 .floatnav-inner {
   display: flex;
   align-items: center;
@@ -3293,23 +3290,11 @@ html:not([data-pointer="coarse"]) a.side-part:hover, a.side-part:focus-visible {
   background: var(--floatnav-bg);
   border: 1px solid var(--floatnav-edge);
   color: var(--floatnav-fg);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  backdrop-filter: blur(16px) saturate(1.4);
-  box-shadow: var(--surface-highlight), var(--elevation-3);
-  animation: floatnav-bob 4.6s ease-in-out infinite;
-  transition: box-shadow var(--motion-slow) var(--ease-standard),
+  box-shadow: var(--surface-highlight), var(--elevation-1);
+  transition: border-color var(--motion-base) var(--ease-standard),
               border-radius var(--motion-base) var(--ease-emphasis);
 }
-.floatnav:hover .floatnav-inner {
-  animation-play-state: paused;
-  box-shadow: var(--surface-highlight),
-              0 12px 28px -6px rgba(10, 14, 18, .55),
-              0 28px 64px -16px rgba(10, 14, 18, .50);
-}
-@keyframes floatnav-bob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4px); }
-}
+.floatnav:hover .floatnav-inner { border-color: var(--accent-quiet); }
 /* Return-to-top — a round chevron button at the head of the floating nav,
    connected to the Framework / Next segments (a divider follows it). Quiet,
    theme-aware; smooth-scrolls to top unless reduced motion is requested. */
@@ -4396,8 +4381,6 @@ a.dc-card:hover .dc-plate::before, a.dc-card:focus-visible .dc-plate::before { o
 .dc-card.pending .dc-plate { opacity: 0.55; }
 a.dc-card:hover, a.dc-card:focus-visible {
   border-color: var(--accent-quiet);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px -16px rgba(10, 14, 18, 0.25);
 }
 [data-theme="dark"] a.dc-card:hover, [data-theme="dark"] a.dc-card:focus-visible {
   box-shadow: 0 14px 32px -12px rgba(0, 0, 0, 0.55);
@@ -4656,13 +4639,11 @@ a.dc-card:hover .dc-card-meta::after, a.dc-card:focus-visible .dc-card-meta::aft
 }
 
 /* ---- Hover / focus: one coordinated move ---------------------------------
-   The card lifts, the wash sweeps outward from its own origin, the scrim thins,
+   The card holds its place (hover changes colour, never geometry); the wash sweeps outward from its own origin, the scrim thins,
    and the drawing brightens and steps toward the reader. Four small things on
    the same curve, not four separate effects. */
 .dc-tile:hover, .dc-tile:focus-visible {
   border-color: var(--accent-quiet);
-  transform: translateY(-2px);
-  box-shadow: var(--elevation-1);
 }
 .dc-tile:hover::before, .dc-tile:focus-visible::before { transform: scale(1.14); }
 .dc-tile:hover::after, .dc-tile:focus-visible::after { opacity: .78; }
@@ -5131,7 +5112,6 @@ a.dc-card[data-part="6"]:focus-visible .art-cell-lit,
    `:focus-visible` rule is the authority; the card inherits it. */
 .posture-card:hover, .posture-card:focus-visible {
   border-color: color-mix(in srgb, var(--pi-c) 45%, var(--rule));
-  transform: translateY(-2px);
 }
 .posture-card-eyebrow {
   font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600;

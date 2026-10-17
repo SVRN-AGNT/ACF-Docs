@@ -254,7 +254,8 @@ test('hover: the pulse animates transform and opacity, not the SVG geometry', ()
 
 test('hover: motion is transform/opacity/colour only, so the global reduce rule kills it', () => {
   const block = CSS.slice(CSS.indexOf('.dc-tile:hover, .dc-tile:focus-visible {'), CSS.indexOf('/* ---- Per-tile wash geometry'));
-  assert.match(block, /transform: translateY\(-2px\)/, 'the card lifts');
+  const card = block.slice(0, block.indexOf('}') + 1);
+  assert.doesNotMatch(card, /transform:/, 'the card holds its place: hover changes colour, never geometry');
   assert.match(block, /transform: scale\(1\.06\)/, 'the drawing steps forward');
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]{0,200}transition: none !important/,
     'and the site-wide reduce rule disables all of it');

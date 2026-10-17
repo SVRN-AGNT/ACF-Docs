@@ -196,8 +196,8 @@ test('posture cards keep the site-wide focus ring instead of cancelling it', () 
   // The shared authority it now inherits.
   assert.match(CSS, /:focus-visible \{ outline: 2px solid var\(--accent\)/,
     'the global focus indicator is what the card falls back to');
-  // The hover treatment itself is unchanged: colour plus lift, lift dropped
-  // under reduced motion.
+  // Hover changes colour, never geometry (house style T7): the border tints,
+  // the card stays where it is.
   assert.match(body, /border-color:/, 'hover still tints the border');
-  assert.match(body, /transform: translateY\(-2px\)/, 'hover still lifts');
+  assert.doesNotMatch(body, /transform:/, 'hover must not move the card');
 });
