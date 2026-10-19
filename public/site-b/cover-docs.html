@@ -110,7 +110,6 @@
        static page is always complete without it. -->
   <!-- vendored locally (self-contained page; no third-party CDN in the read path) -->
   <script defer src="/site-b/vendor/gsap.min.js"></script>
-  <script defer src="/site-b/vendor/ScrollTrigger.min.js"></script>
   <style id="acf-reference-integrity-fallback">.part-ref.is-pending-reference,.lineage-ref.is-pending-reference{color:inherit!important;border:0!important;background:none!important;text-decoration:none!important;cursor:default!important}.part-ref.is-pending-reference::before,.part-ref.is-pending-reference::after,.lineage-ref.is-pending-reference::before,.lineage-ref.is-pending-reference::after{content:none!important}</style>
   <!-- Zenovay analytics: third-party and deferred. It records visits and takes
        no part in rendering, so a blocked or failed load leaves the page complete.
@@ -212,16 +211,16 @@
           </defs>
         </svg>
 
-        <div class="dc-parts-head">
+        <div class="dc-parts-head" data-reveal>
           <p class="dc-parts-eyebrow">The framework</p>
           <h2 class="dc-parts-title" id="dc-parts-title">From philosophy to governance</h2>
           <p class="dc-parts-lede">Six Parts in four movements.</p>
         </div>
 
         <div class="dc-movement">
-          <p class="dc-movement-label">Philosophy</p>
+          <p class="dc-movement-label" data-reveal>Philosophy</p>
           <div class="dc-grid">
-            <a class="dc-card" href="/part-1-foundation" data-part="1">
+            <a class="dc-card" data-reveal href="/part-1-foundation" data-part="1">
               <span class="dc-plate dc-art" aria-hidden="true"><svg viewBox="0 0 480 120" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
               <path class="art-floor" d="M0 98H480V120H0Z"/><path class="art-floor-rule" d="M0 98H480"/>
               <path class="art-grid art-in art-d0" d="M120 12V98M240 12V98M360 12V98"/>
@@ -236,7 +235,7 @@
               <p class="dc-card-desc">Why the traditional playbook is failing, what replaces it, and the nine-step order of operations.</p>
               <p class="dc-card-meta"><span>&approx; 22 min read &middot; &approx; 41 min listen</span><span class="read-badge">&check; Read</span></p>
             </a>
-            <a class="dc-card" href="/part-2-lineage-macro-thesis" data-part="2">
+            <a class="dc-card" data-reveal href="/part-2-lineage-macro-thesis" data-part="2">
               <span class="dc-plate dc-art" aria-hidden="true"><svg viewBox="0 0 480 120" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
               <g class="art-quadrants art-in art-d0"><rect class="art-cell" x="300" y="14" width="76" height="46" rx="3"/><rect class="art-cell art-cell-lit art-move" x="380" y="14" width="76" height="46" rx="3"/><rect class="art-cell" x="300" y="64" width="76" height="46" rx="3"/><rect class="art-cell" x="380" y="64" width="76" height="46" rx="3"/></g>
               <g class="art-sources art-in art-d1"><path class="art-context" d="M24 28C110 28 170 40 236 58"/><path class="art-context" d="M24 60C110 60 170 60 236 60"/><path class="art-context" d="M24 92C110 92 170 80 236 62"/><circle class="art-node" cx="24" cy="28" r="3.5"/><circle class="art-node" cx="24" cy="60" r="3.5"/><circle class="art-node" cx="24" cy="92" r="3.5"/></g>
@@ -253,9 +252,9 @@
         </div>
 
         <div class="dc-movement">
-          <p class="dc-movement-label">Architecture</p>
+          <p class="dc-movement-label" data-reveal>Architecture</p>
           <div class="dc-grid">
-            <a class="dc-card" href="/part-3-bitcoin-convexity-backbone" data-part="3">
+            <a class="dc-card" data-reveal href="/part-3-bitcoin-convexity-backbone" data-part="3">
               <span class="dc-plate dc-art" aria-hidden="true"><svg viewBox="0 0 480 120" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
               <path class="art-grid art-in art-d0" d="M24 104H456M24 76H456M24 56H456M24 42H456M24 32H456"/>
               <path class="art-axis" d="M24 104H456"/>
@@ -271,7 +270,7 @@
               <p class="dc-card-desc">Why Bitcoin is the portfolio&rsquo;s main source of convexity, and how it is valued, accumulated, held, and borrowed against.</p>
               <p class="dc-card-meta"><span>&approx; 22 min read &middot; &approx; 44 min listen</span><span class="read-badge">&check; Read</span></p>
             </a>
-            <a class="dc-card" href="/part-4-tax-architecture-roc-strategy" data-part="4">
+            <a class="dc-card" data-reveal href="/part-4-tax-architecture-roc-strategy" data-part="4">
               <span class="dc-plate dc-art" aria-hidden="true"><svg viewBox="0 0 480 120" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
               <path class="art-flow art-draw art-d0" pathLength="1" d="M24 60H140"/>
               <path class="art-glow art-draw art-d1" pathLength="1" d="M140 60C190 60 200 26 250 26H310"/>
@@ -293,9 +292,9 @@
 
         <div class="dc-movement-pair">
           <div class="dc-movement">
-            <p class="dc-movement-label">Implementation</p>
+            <p class="dc-movement-label" data-reveal>Implementation</p>
             <div class="dc-grid">
-              <a class="dc-card" href="/part-5-portfolio-construction-position-management" data-part="5">
+              <a class="dc-card" data-reveal href="/part-5-portfolio-construction-position-management" data-part="5">
                 <span class="dc-plate dc-art" aria-hidden="true"><svg viewBox="0 0 480 120" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
               <path class="art-field-ink art-move art-in art-d0" d="M40 110C120 10 360 10 440 110Z"/>
               <path class="art-arc art-move art-draw art-d0" pathLength="1" d="M40 110C120 10 360 10 440 110"/>
@@ -315,9 +314,9 @@
           </div>
 
           <div class="dc-movement">
-            <p class="dc-movement-label">Governance</p>
+            <p class="dc-movement-label" data-reveal>Governance</p>
             <div class="dc-grid">
-              <a class="dc-card" href="/part-6-convexity-framework-integrity-scoring" data-part="6">
+              <a class="dc-card" data-reveal href="/part-6-convexity-framework-integrity-scoring" data-part="6">
                 <span class="dc-plate dc-art" aria-hidden="true"><svg viewBox="0 0 480 120" fill="none" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
               <text class="art-label art-in art-d0" x="26" y="22">FIS 100</text>
               <g class="art-steps"><rect class="art-step art-grow-y art-d0" x="24" y="28" width="40" height="80"/><rect class="art-step art-grow-y art-d1" x="70" y="42" width="40" height="66"/><rect class="art-step art-grow-y art-d2" x="116" y="58" width="40" height="50"/><rect class="art-step art-step-final art-move art-grow-y art-d3" x="162" y="70" width="40" height="38"/></g>
@@ -341,17 +340,17 @@
       <!-- Landing exhibits: the three pictures the framework thinks with.
            FrameworkChart islands (site-b-charts.js) with supporting copy; a
            chart never stands on the page without prose holding it. -->
-      <section class="dc-lens" id="lens" aria-labelledby="dc-lens-title" data-reveal>
-        <div class="dc-parts-head">
+      <section class="dc-lens" id="lens" aria-labelledby="dc-lens-title">
+        <div class="dc-parts-head" data-reveal>
           <p class="dc-parts-eyebrow">Before you read</p>
           <h2 class="dc-parts-title" id="dc-lens-title">Three pictures the framework thinks with</h2>
           <p class="dc-parts-lede">Two show the framework&rsquo;s habits; the third, the shape of results it is designed for. All three are sketches, not market data.</p>
         </div>
 
-        <div class="measure prose">
+        <div class="measure prose" data-reveal>
           <p>The framework&rsquo;s first habit is knowing where you stand. Growth and inflation are one common way to sort the market&rsquo;s weather, and leadership rotates across it. <a class="part-ref" href="/part-2-lineage-macro-thesis#macro-thesis">Part 2</a> reads growth, inflation, and policy together to form the macro thesis that positions are judged against. The map below follows one path through four quadrants of that weather. The path is illustrative, and so is the point marked &ldquo;Now&rdquo;: it shows the habit of re-reading where you stand, not a measurement of today.</p>
         </div>
-        <figure class="fc-mount" id="exhibit-dl-regime-map" data-fc-chart="dl-regime-map">
+        <figure class="fc-mount" data-reveal id="exhibit-dl-regime-map" data-fc-chart="dl-regime-map">
           <figcaption class="fc-fallback" data-fc-fallback="dl-regime-map">
             <p class="fc-fallback-title"><strong>L1 · Capital Has Weather</strong>: Same assets, different regime, different behavior</p>
             <p class="fc-fallback-claim">The same portfolio behaves differently in different macro regimes.</p>
@@ -361,10 +360,10 @@
           </figcaption>
         </figure>
 
-        <div class="measure prose">
+        <div class="measure prose" data-reveal>
           <p>The second habit is patience about entries, and it governs the positions you pick. <a class="part-ref" href="/part-1-foundation#order-of-operations">Part 1&rsquo;s order of operations</a> gives a new position its full weight only once momentum confirms its CIS score, and <a class="part-ref" href="/part-5-portfolio-construction-position-management#torque">Part 5</a> builds it in stages as the evidence earns them, then lets it run while conviction holds. The Bitcoin reserve runs on a different clock: <a class="part-ref" href="/part-3-bitcoin-convexity-backbone#accumulate">Part 3</a> buys it on a schedule and leans in when it is cheap, and Ballast income can fund those purchases in a dislocation. The window below follows one position you pick, from compression through confirmation to a run that lasts until its thesis, its momentum, or the concentration limits say otherwise.</p>
         </div>
-        <figure class="fc-mount" id="exhibit-dl-convexity-window" data-fc-chart="dl-convexity-window">
+        <figure class="fc-mount" data-reveal id="exhibit-dl-convexity-window" data-fc-chart="dl-convexity-window">
           <figcaption class="fc-fallback" data-fc-fallback="dl-convexity-window">
             <p class="fc-fallback-title"><strong>L2 · The Window Opens</strong>: A new position waits out the range, adds on confirmation, then lets the move run</p>
             <p class="fc-fallback-claim">A new position earns its full weight only after the market confirms the thesis.</p>
@@ -374,10 +373,10 @@
           </figcaption>
         </figure>
 
-        <div class="measure prose">
+        <div class="measure prose" data-reveal>
           <p>Those two habits work one decision at a time. Over many years, the six Parts&rsquo; rules are meant to change the shape of your results as a whole, though none has been backtested against a benchmark. The picture below holds the average fixed to show what the framework changes around it: fewer deep losses, more small shortfalls, and a longer right tail. The wash on the left is what position limits, stops, and tripwires take away; the wash on the right is what convex positions left free to run add.</p>
         </div>
-        <figure class="fc-mount" id="exhibit-sig-shape" data-fc-chart="sig-shape">
+        <figure class="fc-mount" data-reveal id="exhibit-sig-shape" data-fc-chart="sig-shape">
           <figcaption class="fc-fallback" data-fc-fallback="sig-shape">
             <p class="fc-fallback-title"><strong>S2 · Bend the Tail</strong>: Hold the average fixed and see what the framework changes around it</p>
             <p class="fc-fallback-claim">With the average held fixed, ACF is designed to thin the deep-loss tail and lengthen the gain tail, paying for it with more small shortfalls.</p>
@@ -387,15 +386,15 @@
           </figcaption>
         </figure>
 
-        <div class="measure prose">
+        <div class="measure prose" data-reveal>
           <p><a class="part-ref" href="/part-1-foundation#manifesto">Part 1</a> starts where the framework does: why the traditional playbook is failing, and the nine steps that replace it.</p>
         </div>
       </section>
 
       <section class="dc-resources" aria-label="Resources">
-        <p class="dc-res-head">Resources</p>
+        <p class="dc-res-head" data-reveal>Resources</p>
         <div class="dc-res-grid">
-          <a class="dc-tile" href="/framework-in-pictures" data-motif="exhibits" data-pictures-tile>
+          <a class="dc-tile" href="/framework-in-pictures" data-motif="exhibits" data-reveal data-pictures-tile>
             <span class="dc-tile-art dc-art" aria-hidden="true"><svg viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false">
               <g class="art-print art-print-back art-in art-d0"><rect class="art-frame" x="52" y="20" width="94" height="66" rx="4"/><path class="art-ref" d="M62 74 L134 36"/></g>
               <g class="art-print art-print-mid art-in art-d1"><rect class="art-frame" x="46" y="29" width="94" height="66" rx="4"/><path class="art-ref" d="M56 83 L128 45"/><path class="art-context" d="M56 81c14 0 24-4 34-12s18-16 30-22"/></g>
@@ -412,7 +411,7 @@
             <p class="dc-tile-title">The Framework in Pictures</p>
             <p class="dc-tile-desc">Every chart in the framework, grouped by Part.</p>
           </a>
-          <a class="dc-tile" href="/framework-in-math" data-motif="math">
+          <a class="dc-tile" href="/framework-in-math" data-motif="math" data-reveal>
             <span class="dc-tile-art dc-art" aria-hidden="true"><svg viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false">
               <path class="art-grid art-in art-d0" d="M18 20H118M18 36H118M18 52H118M18 68H118M18 84H118M34 8V100M50 8V100M66 8V100M82 8V100M98 8V100"/>
               <path class="art-axis" d="M18 8V100H118"/>
@@ -431,7 +430,7 @@
             <p class="dc-tile-title">The Framework in Math</p>
             <p class="dc-tile-desc">The arithmetic underneath: weights, clamps, penalties, and how a score becomes a size.</p>
           </a>
-          <a class="dc-tile" href="/glossary" data-motif="glossary">
+          <a class="dc-tile" href="/glossary" data-motif="glossary" data-reveal>
             <span class="dc-tile-art dc-art" aria-hidden="true"><svg viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false">
               <rect class="art-page art-in art-d0" x="34" y="8" width="94" height="110" rx="3"/>
               <path class="art-margin art-in art-d0" d="M44 8V118"/>
@@ -448,7 +447,7 @@
             <p class="dc-tile-title">Glossary</p>
             <p class="dc-tile-desc">The framework&rsquo;s vocabulary, defined where it is taught.</p>
           </a>
-          <a class="dc-tile" href="https://acfdashboard.com" data-motif="software">
+          <a class="dc-tile" href="https://acfdashboard.com" data-motif="software" data-reveal>
             <span class="dc-tile-art dc-art" aria-hidden="true"><svg viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false">
               <rect class="art-panel art-in art-d0" x="8" y="8" width="144" height="104" rx="7"/>
               <g class="art-kpi art-in art-d1"><rect x="18" y="18" width="38" height="18" rx="3"/><rect x="61" y="18" width="38" height="18" rx="3"/><rect x="104" y="18" width="38" height="18" rx="3"/></g>
@@ -489,13 +488,13 @@
       </section>
 
       <!-- FAQ -->
-      <section class="faq" id="faq" aria-labelledby="faq-title" data-reveal>
+      <section class="faq" id="faq" aria-labelledby="faq-title">
         <div class="faq-inner">
-          <p class="faq-eyebrow">FAQ</p>
-          <h2 class="faq-title" id="faq-title">Convexity, clarified.</h2>
+          <p class="faq-eyebrow" data-reveal>FAQ</p>
+          <h2 class="faq-title" data-reveal id="faq-title">Convexity, clarified.</h2>
 
           <div class="faq-list">
-            <details class="faq-item">
+            <details class="faq-item" data-reveal>
               <summary class="faq-q">
                 <span>What is the Adaptive Convexity Framework?</span>
                 <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -507,7 +506,7 @@
               </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" data-reveal>
               <summary class="faq-q">
                 <span>What does convexity mean here?</span>
                 <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -519,7 +518,7 @@
               </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" data-reveal>
               <summary class="faq-q">
                 <span>Who is it for?</span>
                 <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -531,7 +530,7 @@
               </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" data-reveal>
               <summary class="faq-q">
                 <span>What will I come away with?</span>
                 <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -543,7 +542,7 @@
               </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" data-reveal>
               <summary class="faq-q">
                 <span>How much of this does the software do?</span>
                 <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -555,7 +554,7 @@
               </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" data-reveal>
               <summary class="faq-q">
                 <span>Is it free to read?</span>
                 <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -567,7 +566,7 @@
               </div>
             </details>
 
-            <details class="faq-item">
+            <details class="faq-item" data-reveal>
               <summary class="faq-q">
                 <span>Is this investment advice?</span>
                 <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">

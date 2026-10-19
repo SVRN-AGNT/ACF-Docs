@@ -1457,15 +1457,21 @@ html.is-framed .theme-toggle { display: none; }
 
 /* ---- Scroll-in reveals (JS adds .is-in to [data-reveal]) ------------------- *
  * Hidden start states apply ONLY under <html class="js"> + motion-allowed, so
- * JS-off and reduced-motion readers get every section + the finished chart.     */
+ * JS-off and reduced-motion readers get every section + the finished chart.
+ * One settle for every unit (heading, card, figure, row): opacity and a short
+ * rise on one curve, delayed by the batch stagger the script writes into
+ * --reveal-delay. Once landed the script adds .is-settled, which drops the
+ * reveal transition so the element's own hover transitions apply undelayed.  */
 @media (prefers-reduced-motion: no-preference) {
-  /* Each section fades + rises as it enters the viewport */
-  html.js [data-reveal] {
+  html.js [data-reveal]:not(.is-in):not(.premise) {
     opacity: 0;
-    transform: translateY(22px);
-    transition: opacity 700ms var(--ease-standard), transform 800ms var(--ease-emphasis);
+    transform: translate3d(0, var(--reveal-distance), 0);
   }
-  html.js [data-reveal].is-in { opacity: 1; transform: none; }
+  html.js [data-reveal].is-in:not(.is-settled):not(.premise) {
+    transition:
+      opacity var(--motion-reveal) var(--ease-emphasis) var(--reveal-delay, 0ms),
+      transform var(--motion-reveal) var(--ease-emphasis) var(--reveal-delay, 0ms);
+  }
 
   /* Convexity chart — the curve draws in (rising left→right as it increases),
      the area/conventional/dots fade up beneath it, then the labels fade in. */
