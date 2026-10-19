@@ -190,6 +190,13 @@
   --motion-draw:   1100ms;
   --ease-standard: cubic-bezier(.2, .0, .2, 1);
   --ease-emphasis: cubic-bezier(.2, .0, .0, 1);
+  /* Scroll reveal — the ONE on-scroll settle, shared with the ACF Dashboard
+     landing (ScrollReveal): every heading, card and figure rises the same
+     short distance on the emphasis curve; a batch entering together staggers
+     by one step, capped at four. */
+  --motion-reveal: 560ms;
+  --reveal-distance: 12px;
+  --reveal-stagger-step: 60ms;
 
   /* ---- Stepper: dim for steps ahead of the reading focus (JS-driven) ------- */
   --step-dim: 0.4;

@@ -736,23 +736,54 @@
   }
 
   /* ---- Section reveal: fade + rise each [data-reveal] as it scrolls in ---- *
-   * Adds `.is-in` once a section enters view. The CSS hides [data-reveal] only
-   * when <html class="js"> AND motion is allowed, so JS-off / reduced-motion
-   * readers see everything immediately. The signature chart keys its grow-in off
-   * `.signature.is-in`, so the chart animates on the same trigger.               */
+   * Adds `.is-in` the frame an element reaches the viewport. The CSS hides
+   * [data-reveal] only when <html class="js"> AND motion is allowed, so JS-off /
+   * reduced-motion readers see everything immediately. The signature chart keys
+   * its grow-in off `.signature.is-in`, so the chart animates on the same trigger.
+   * One settle for every unit (shared with the ACF Dashboard landing):
+   *   - elements entering in the same frame stagger top-to-bottom, then
+   *     left-to-right, one --reveal-stagger-step apart, capped at four steps,
+   *     so a fast scroll never queues a long wait;
+   *   - anything already ABOVE the viewport when first observed (a deep link,
+   *     restored scroll) is shown at once with no animation;
+   *   - once landed, `.is-settled` drops the reveal transition so the
+   *     element's own hover transitions apply undelayed.                       */
   function sectionReveal() {
     var els = document.querySelectorAll('[data-reveal]');
     if (!els.length) return;
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || !('IntersectionObserver' in window)) {
-      els.forEach(function (el) { el.classList.add('is-in'); });
+      els.forEach(function (el) { el.classList.add('is-in', 'is-settled'); });
       return;
     }
+    var root = getComputedStyle(document.documentElement);
+    var step = parseFloat(root.getPropertyValue('--reveal-stagger-step')) || 60;
+    var dur = parseFloat(root.getPropertyValue('--motion-reveal')) || 560;
     var obs = new IntersectionObserver(function (entries) {
+      var entering = [];
       entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add('is-in'); obs.unobserve(en.target); }
+        if (en.isIntersecting) entering.push(en);
+        else if (en.boundingClientRect.bottom <= 0) {
+          en.target.classList.add('is-in', 'is-settled');
+          obs.unobserve(en.target);
+        }
       });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+      entering.sort(function (a, b) {
+        return (a.boundingClientRect.top - b.boundingClientRect.top)
+          || (a.boundingClientRect.left - b.boundingClientRect.left);
+      });
+      entering.forEach(function (en, i) {
+        var el = en.target;
+        var delay = Math.min(i, 4) * step;
+        if (delay) el.style.setProperty('--reveal-delay', delay + 'ms');
+        el.classList.add('is-in');
+        obs.unobserve(el);
+        setTimeout(function () {
+          el.classList.add('is-settled');
+          el.style.removeProperty('--reveal-delay');
+        }, delay + dur + 50);
+      });
+    }, { threshold: 0 });
     els.forEach(function (el) { obs.observe(el); });
   }
 
