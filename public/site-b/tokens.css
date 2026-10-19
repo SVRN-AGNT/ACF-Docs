@@ -211,7 +211,7 @@
    * cockpit dock at night) rather than inverting, so it reads as part of the
    * reading surface. fg rides --ink for legible text/icons in both themes;
    * bg + edge are theme-specific translucent surfaces (see [data-theme="dark"]). */
-  --floatnav-bg:    rgba(251, 248, 241, .90);   /* --surface-raised, translucent */
+  --floatnav-bg:    rgb(251, 248, 241);         /* --surface-raised, opaque */
   --floatnav-fg:    var(--ink);
   --floatnav-line:  rgba(0, 0, 0, .10);
   --floatnav-hover: rgba(0, 0, 0, .05);
@@ -310,7 +310,7 @@
   --confidence-low:   #8a929c;
 
   /* ---- Floating reading nav — dark cockpit dock, light overlays ----------- */
-  --floatnav-bg:    rgba(20, 24, 28, .92);      /* dark surface (≈ --paper) */
+  --floatnav-bg:    rgb(20, 24, 28);            /* dark surface (≈ --paper), opaque */
   --floatnav-line:  rgba(255, 255, 255, .10);
   --floatnav-hover: rgba(255, 255, 255, .07);
   --floatnav-edge:  rgba(52, 211, 153, .26);    /* dark-theme accent hairline */

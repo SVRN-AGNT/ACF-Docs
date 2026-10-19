@@ -58,6 +58,21 @@
     });
   }
 
+  /* ---- Framed by the ACF dashboard --------------------------------------- *
+   * The app owns the theme there (the toggle is hidden under .is-framed) and
+   * posts { type: 'acf-docs:theme', theme } when its reader flips it. Only the
+   * parent frame is heard, and only the two theme names are accepted. */
+  function framedTheme() {
+    if (!root.classList.contains('is-framed')) return;
+    window.addEventListener('message', function (event) {
+      var data = event.data;
+      if (event.source !== window.parent || !data || data.type !== 'acf-docs:theme') return;
+      if (data.theme !== 'light' && data.theme !== 'dark') return;
+      root.setAttribute('data-theme', data.theme);
+      try { sessionStorage.setItem('acf-framed-theme', data.theme); } catch (e) {}
+    });
+  }
+
   /* ---- Scroll-spy: highlight the in-view section in the sidebar TOC ------- */
   function scrollSpy() {
     var spy = document.querySelector('[data-spy]');
@@ -1903,6 +1918,7 @@
 
   /* ---- init -------------------------------------------------------------- */
   theme();
+  framedTheme();
   scrollSpy();
   drawer();
   pointerMode();

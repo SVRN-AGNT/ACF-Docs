@@ -18,6 +18,7 @@
     "test:next-up-plates": "node --test tests/next-up-plates.test.mjs",
     "test:posture-rails": "node --test tests/posture-rails.test.mjs",
     "test:crawler-contract": "node --test tests/crawler-contract.test.mjs",
+    "test:framed-contract": "node --test tests/framed-contract.test.mjs",
     "test:hidden-controls": "node --test tests/hidden-controls.test.mjs",
     "test:narration-intent": "node --test tests/narration-intent.test.mjs",
     "test:glossary-tagger": "node --test tests/glossary-tagger.test.mjs",
