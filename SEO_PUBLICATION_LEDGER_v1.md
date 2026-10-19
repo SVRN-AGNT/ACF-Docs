@@ -1,6 +1,9 @@
 # SEO & Publication Ledger v1
 
 **Status of record for `docs.acfdashboard.com` · reconciled 2026-09-16 against `main` at `97261e3`.**
+**Revision 4 (2026-10-19)** — §9 adds AI-search citation (GEO) as a second axis
+beside classic search, weighed against new evidence, and §6.3 gains one owner
+decision. Nothing in §1–§8 changes status.
 **Revision 3** — §8 adds the post-promotion verification obligation and the
 distinction it turns on: implementation landing on `preview` is not the audit
 closing. **Revision 2** corrected three findings on owner review; see §7,
@@ -409,6 +412,7 @@ work**; the one remaining item is in the other repository.
    in §5.1 can be settled by argument; only measurement settles it.
 3. **Breadcrumb schema** (§5.2) — worth the generator, or not?
 4. **Byline and dates** (§4.3) — a design question about credibility, not SEO.
+5. **Question-matching titles** (§9.4) — keep the book's titles as they are, or add a plain descriptor that names what each page answers?
 
 ---
 
@@ -441,6 +445,10 @@ remains is not in this repository.
 in §8: [#5421](https://github.com/Tataku/ACFDashboard/pull/5421) merged to
 `preview` as `39a4828`. Nothing else changed — the obligation stands and the
 audit is still not closed.
+
+**Revision 4 — 2026-10-19.** Adds §9 (AI-search citation) and decision 5 in
+§6.3. The classic-search conclusions in §4 and §6 stand; §9 explains why the
+new evidence leaves them intact and changes only how editorial effort is ranked.
 
 ---
 
@@ -506,6 +514,132 @@ curl -sS -o /dev/null -w "/ %{http_code}\n" https://acfdashboard.com/
 replaced by the date and the result. Until then its status is
 **implementation complete, verification outstanding** — which is not the same
 thing, and the ledger should not be read as if it were.
+
+---
+
+## 9. AI-search citation (GEO) — added in revision 4
+
+§1–§8 are about classic search: can a crawler fetch, render and index the pages.
+Answer engines (ChatGPT, Gemini, Perplexity) add a second question: once a page
+is retrieved, is it the one quoted as a source? This section weighs a large
+observational study of that question against this property. It re-ranks editorial
+effort; it opens no defect.
+
+### 9.1 The evidence, as checked
+
+**arXiv 2610.15033**, *What Drives AI Citations? Content, Retrieval and Model
+Knowledge in Generative Engine Optimization (GEO)*, v1, October 2026. Two 90-day
+collections of answers to commercial questions in contrasting markets, 158,099
+answers carrying 468,037 citations. It compares pages *within* the same website,
+which separates what a page does from what its site does. Read from the arXiv
+abstract and HTML on 2026-10-19:
+
+| finding | figure |
+|---|---|
+| A title and best paragraph that match the questions people ask are cited more | title **+14.1% per SD** in the main dataset, **+26.4%** in the replication market |
+| FAQ blocks, structured data, summary boxes and page speed work only *across* sites, not within one | FAQ block +22.5% across sites against **−1.9%** within |
+| Site authority does nothing for small vendors | −1.3% per SD |
+| The engine's own retrieval outweighs page features | 30% of within-site variation against 10% for page features (not significant at 629 pages) |
+| ChatGPT cites 57.1% of the pages it ranks first and 8.3% at ranks 11–20; 99% of what it retrieves is outside Google's top 50 | — |
+
+*Limits, stated so this stays falsifiable.* Not yet peer reviewed. Commercial
+questions only, not finance-education or documentation queries. Observational,
+so "matches the question" is associated with citation, not proven to cause it.
+Engines change retrieval often. The handoff brief quoted only the +26% figure;
+the main dataset gives about half that, and both are recorded here.
+
+**Ahrefs, *We Analyzed 137K Sites: 97% of llms.txt Files Never Get Read***
+(2026-06-15, before the study window but the primary dataset). 28% of 137,210
+domains publish an llms.txt; 97% of those received no request at all in May
+2026. Of the requests that did arrive, 96% came from bots, and the named AI
+tools were led by GPTBot and Claude Code rather than any search assistant.
+No AI bot asked for an llms.txt that did not exist. Agents fetch the file when
+directed to it, not speculatively.
+
+### 9.2 What this changes in the ledger
+
+1. **§4.1, §4.2 and §5.2 hold, now on a second axis.** The within-site result
+   says FAQ blocks and structured data do not move AI citation either, so the
+   rejections of JSON-LD and `DefinedTerm` stand without needing the
+   second-source-of-truth argument. `BreadcrumbList` stays optional for its
+   visible SERP effect only; it should not be justified as a GEO lever.
+2. **§4.5 holds for classic search, and GEO adds a different test.** §4.5 asked
+   whether titles are duplicated, missing, vague or cut mid-thought; none is.
+   The study asks something else: does the title share words and meaning with
+   the question a reader would type? A book-style chapter name can pass §4.5 and
+   still match no question. §9.3 scores that.
+3. **llms.txt: nothing to remove.** The site publishes no llms.txt and this
+   ledger never claimed one would help visibility; the only mention in the repo
+   is the analytics skip-list in `middleware.ts`. If one is ever added, it is an
+   index for coding agents, not a citation lever, and it should be linked from
+   the pages, because unlinked files go unread.
+4. **For a small property the larger levers are off-page.** Retrieval and
+   third-party pages that name the framework explain more than anything on the
+   page. Being fetchable (§2.2) is the precondition, and that is already held
+   closed.
+
+### 9.3 Titles and leads, scored against the study
+
+**Leads already answer first.** Each Part opens with a *Key takeaways* box
+whose first item states the Part's answer before any argument (Part 3: *"Bitcoin
+is the framework's reserve asset and its main source of convexity, held by
+default in self-custody in a taxable account"*). The cover opens *"A tax-aware
+method for compounding through unstable markets, built to survive being
+wrong."* The four reference pages open by saying what the page does. The one
+partial exception is Part 1, whose first takeaway is market history (the 60/40
+record) and whose fifth states the objective. That ordering is calibrated
+prose held to the owner's locked phrasing (`FRAMEWORK_DOCS_CANONICAL.md` §5a), so
+it is recorded here and not edited.
+
+**Titles name subjects, not questions.** Titles live once in
+`scripts/site-titles.mjs` (D-TITLES) and reach the h1, `<title>`, og/twitter
+tags, navigation, share text and the rendered social cards.
+
+| page | title today | question it answers (from its own lead) | matches? |
+|---|---|---|---|
+| cover | The Adaptive Convexity Framework | what is the Adaptive Convexity Framework? | yes, by name |
+| Part 1 | Foundation & Philosophy | why is the 60/40 portfolio failing, and what replaces it? | no |
+| Part 2 | Lineage & Macro Thesis | where does the method come from; how is a macro thesis built? | partly |
+| Part 3 | Bitcoin: Convexity Backbone | why hold Bitcoin as a reserve asset, and how much? | partly |
+| Part 4 | Tax Architecture & ROC Strategy | which account should each holding go in? | partly |
+| Part 5 | Portfolio Construction & Position Management | how big should each position be? | partly |
+| Part 6 | Convexity & Framework Integrity Scoring | how are positions and portfolios scored? | partly |
+| Glossary, Pictures, Math, Evidence | as named | reference lookups | yes, for their own queries |
+
+### 9.4 The option, for the owner (decision 5 in §6.3)
+
+Renaming the Parts is out of scope: they are the book's chapter names. The
+reversible version keeps every h1 and Part name and adds a plain descriptor to
+the `<title>` and share text only, for example:
+
+| page | descriptor appended to today's `<title>` |
+|---|---|
+| Part 1 | why 60/40 is failing and what replaces it |
+| Part 2 | where the method comes from and how a thesis is built |
+| Part 3 | why Bitcoin is the reserve asset and how it is sized |
+| Part 4 | which account each holding belongs in |
+| Part 5 | how each position is sized |
+| Part 6 | how CIS and FIS score a portfolio |
+
+*Cost.* An amendment to D-TITLES (a `<title>` that differs from its h1), the
+separator chosen so `shareText`/`splitLabel` and `reading-core.js` still parse
+it (the normalization standard rules out an em dash), `tests/site-titles.test.mjs`
+updated to the new rule, and re-rendered social cards, since each card bakes its
+title into pixels. *Expected benefit.* Unmeasured: the per-SD figures come from commercial
+queries, and nothing yet observes AI citations of this site, so a change could
+not be shown to work. The recommendation is to defer it until there is a way to
+measure (Search Console in §5.3 for classic search; a periodic check of which
+answer engines cite which page for a fixed question set for GEO).
+
+*Optional, not scheduled.* A docs eval in CI (a fixed question set, an agent
+limited to these pages, a judge with pinned reference answers) would catch
+drift between the docs and the dashboard and would push leads further toward
+answering first. It is a CI and cost decision, not an SEO defect.
+
+Sources: arXiv 2610.15033 (https://arxiv.org/abs/2610.15033), Ahrefs llms.txt
+study (https://ahrefs.com/blog/llmstxt-study), both read 2026-10-19; the project's
+AI-advances research notes of the same date. Titles and leads read from
+`public/site-b/` at `main` `0de12a3`.
 
 ---
 
