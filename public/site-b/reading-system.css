@@ -1140,6 +1140,9 @@ body {
   transition: color var(--motion-base) var(--ease-standard),
               background var(--motion-base) var(--ease-standard);
 }
+
+/* Framed by the ACF dashboard, the app owns the theme: one switch, not two. */
+html.is-framed .theme-toggle { display: none; }
 .theme-toggle:hover, .theme-toggle:focus-visible {
   color: var(--accent);
 }

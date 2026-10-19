@@ -35,14 +35,21 @@
     (function () {
       document.documentElement.classList.remove('no-js');
       document.documentElement.classList.add('js');
+      // Framed by the ACF dashboard: the app owns the theme and names it in
+      // ?theme=, kept for the session so links inside the frame keep it too.
+      var framed = true;
+      try { framed = window.self !== window.top; } catch (e) {}
+      if (framed) document.documentElement.classList.add('is-framed');
+      var asked = framed && /[?&]theme=(light|dark)(?:&|$)/.exec(location.search);
       try {
-        var stored = localStorage.getItem('acf-theme');
+        if (asked) sessionStorage.setItem('acf-framed-theme', asked[1]);
+        var stored = (framed && sessionStorage.getItem('acf-framed-theme')) || localStorage.getItem('acf-theme');
         var theme = stored
           || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('acf-home', 'cover-docs.html'); // reading pages route "home" back to this cover
       } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme', asked ? asked[1] : 'light');
       }
     })();
   </script>
