@@ -73,6 +73,9 @@
   --confidence-high:  var(--accent);
   --confidence-med:   #b07a0a;
   --confidence-low:   #6b7280;
+  /* Data trust at its weakest: a stand-in, an estimate, or stale (the trust
+     meter and the age word, owner ruling 2026-10-20). Paper-retuned red. */
+  --trust-critical:   #b42318;
 
   /* ---- Typography — ACF design-system §08 -------------------------------- *
    * Inter for everything that reads as language; JetBrains Mono for tokens,
@@ -315,6 +318,7 @@
   --confidence-high:  var(--accent);
   --confidence-med:   #f59e0b;
   --confidence-low:   #8a929c;
+  --trust-critical:   #f87171;
 
   /* ---- Floating reading nav — dark cockpit dock, light overlays ----------- */
   --floatnav-bg:    rgb(20, 24, 28);            /* dark surface (≈ --paper), opaque */

@@ -5325,3 +5325,22 @@ a.dc-card[data-part="6"]:focus-visible .art-cell-lit,
   .posture-card { transition: none; }
   .posture-card:hover, .posture-card:focus-visible { transform: none; }
 }
+
+/* ==========================================================================
+   The three-stroke data-trust meter, as the app draws it (owner ruling 2026-10-20,
+   confidence system). Three strokes of the ink dash, lit top-down; the
+   paths are a <symbol>-style sprite emitted once per page by the generator.
+   Teaching surface only: the docs show the reading, they do not compute it.
+   ========================================================================== */
+.ink3-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.ink3 { display: inline-flex; align-items: center; line-height: 0; vertical-align: middle; }
+.ink3 svg { display: block; width: 14px; height: 14px; overflow: visible; }
+.ink3 use { fill: var(--ink-muted); opacity: 0.38; }
+.ink3 use[data-lit="true"] { opacity: 1; }
+.ink3[data-tone="ok"] use[data-lit="true"] { fill: var(--confidence-high); }
+.ink3[data-tone="caution"] use[data-lit="true"] { fill: var(--confidence-med); }
+.ink3[data-tone="critical"] use[data-lit="true"] { fill: var(--trust-critical); }
+.ink3[data-tone="neutral"] use { fill: var(--confidence-low); opacity: 1; }
+.ink3-age { font-family: var(--font-sans); font-size: 0.875em; color: var(--trust-critical); }
+.compare td.ink3-cell { text-align: center; }
+@media (max-width: 560px) { .compare td.ink3-cell { text-align: right; } }
