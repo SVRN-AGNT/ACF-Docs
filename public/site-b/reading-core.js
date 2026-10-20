@@ -816,11 +816,134 @@
   }
 
   /* ---- Quote-highlight system: light each .hl phrase as it scrolls into view *
-   * The CSS hides the green-bold + underline behind <html class="js"> + motion,
+   * The phrase goes green and semibold, rests a beat (ma), then a brush stroke
+   * draws under it left to right. The stroke is drawn per phrase by the docs'
+   * own brush engine (components/framework-charts/brush.js, ported below),
+   * seeded by the phrase's place in the page, so every render is identical.
+   *
+   * It is painted as the phrase's background, not as an SVG child: a phrase
+   * that wraps keeps one stroke across its lines, the stroke never shifts the
+   * text, and with JS off the CSS fallback stroke is simply there. The viewBox
+   * is sized to the phrase in em, so at rest the stroke is drawn at 1:1 and the
+   * reveal (background-size 0 → 100%, see reading-system.css) crops it from the
+   * left instead of stretching it.
+   *
+   * The CSS hides the green-bold + stroke behind <html class="js"> + motion,
    * so JS-off / reduced-motion readers get the emphasis immediately.            */
+
+  /* BEGIN brush port: mulberry32, closedBezier, strokeToPath and brushSegment
+     from components/framework-charts/brush.js, unchanged arithmetic.
+     tests/hl-brush.test.mjs holds this copy to that file's output. */
+  var inkBrush = (function () {
+    function fmt(n) { return (Math.round(n * 1000) / 1000).toString(); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function mulberry32(a) {
+      return function () {
+        a |= 0; a = (a + 0x6d2b79f5) | 0;
+        var t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    function closedBezier(pts) {
+      var n = pts.length, i;
+      if (n < 3) return '';
+      var d = 'M' + fmt(pts[0].x) + ' ' + fmt(pts[0].y);
+      for (i = 0; i < n; i++) {
+        var p0 = pts[(i - 1 + n) % n], p1 = pts[i];
+        var p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+        var c1x = p1.x + (p2.x - p0.x) / 6, c1y = p1.y + (p2.y - p0.y) / 6;
+        var c2x = p2.x - (p3.x - p1.x) / 6, c2y = p2.y - (p3.y - p1.y) / 6;
+        d += ' C' + fmt(c1x) + ' ' + fmt(c1y) + ' ' + fmt(c2x) + ' ' + fmt(c2y) + ' ' + fmt(p2.x) + ' ' + fmt(p2.y);
+      }
+      return d + ' Z';
+    }
+    function strokeToPath(skel, seed, jitter, edge) {
+      var rng = mulberry32(seed);
+      var upper = [], lower = [], i;
+      for (i = 0; i < skel.length; i++) {
+        var p = skel[i];
+        var prev = skel[Math.max(0, i - 1)];
+        var next = skel[Math.min(skel.length - 1, i + 1)];
+        var dx = next.x - prev.x, dy = next.y - prev.y;
+        var L = Math.hypot(dx, dy) || 1;
+        var nx = -dy / L, ny = dx / L;
+        var j = (rng() - 0.5) * jitter;
+        var w = Math.max(0.02, p.w + j);
+        var eU = edge ? (rng() - 0.5) * edge : 0;
+        var eL = edge ? (rng() - 0.5) * edge : 0;
+        upper.push({ x: p.x + nx * (w + eU), y: p.y + ny * (w + eU) });
+        lower.push({ x: p.x - nx * (w + eL), y: p.y - ny * (w + eL) });
+      }
+      return closedBezier(upper.concat(lower.reverse()));
+    }
+    function brushSegment(x1, y1, x2, y2, o) {
+      var seed = o.seed, weight = o.weight, intensity = o.intensity, waver = o.waver;
+      var N = Math.max(8, Math.round(Math.hypot(x2 - x1, y2 - y1) / 6));
+      var skel = [], i;
+      var dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1;
+      var nx = -dy / L, ny = dx / L;
+      for (i = 0; i <= N; i++) {
+        var t = i / N;
+        var cap = Math.max(0.22, Math.min(t / 0.08, (1 - t) / 0.08, 1));
+        var wv = (Math.sin(t * Math.PI * 3 + seed) * 0.5 + Math.sin(t * Math.PI * 7) * 0.3) * waver * intensity;
+        var w = weight * cap * (1 + 0.25 * Math.sin(t * Math.PI * 4 + seed));
+        skel.push({ x: lerp(x1, x2, t) + nx * wv, y: lerp(y1, y2, t) + ny * wv, w: Math.max(0.05, w) });
+      }
+      return strokeToPath(skel, seed + 5, 0.04 * intensity, 0.35 * intensity);
+    }
+    return { brushSegment: brushSegment };
+  })();
+  /* END brush port */
+
+  // The stroke box is .42em tall (reading-system.css `.hl`); the viewBox is 16
+  // units tall, so one unit is .42/16 em. Stroke shape is the verdict board's
+  // pick B: weight 2.6, waver .7, intensity .8, a slight rise left to right.
+  var HL_BOX_EM = 0.42, HL_UNITS = 16, HL_SEED = 21;
+
+  function hlStrokeUri(widthUnits, seed, ink) {
+    var d = inkBrush.brushSegment(2, 8, widthUnits - 2, 9.4, { seed: seed, weight: 2.6, waver: 0.7, intensity: 0.8 });
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + (Math.round(widthUnits * 100) / 100) + ' ' + HL_UNITS +
+      "' preserveAspectRatio='xMinYMid slice'><path fill='" + ink + "' fill-opacity='.9' d='" + d + "'/></svg>";
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg).replace(/'/g, '%27') + '")';
+  }
+
   function highlights() {
-    var els = document.querySelectorAll('.hl');
+    var els = Array.prototype.slice.call(document.querySelectorAll('.hl'));
     if (!els.length) return;
+
+    // Width of the phrase at its LIT weight, in viewBox units. Measured on an
+    // invisible nowrap copy so the live phrase never changes weight mid-measure
+    // (that would start its own transition). A wrapped phrase's lines add up to
+    // its unwrapped width, which is what the sliced background spans.
+    function phraseUnits(el) {
+      var probe = document.createElement('span');
+      probe.setAttribute('aria-hidden', 'true');
+      probe.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;white-space:nowrap;' +
+        'font-weight:' + getComputedStyle(el).getPropertyValue('--hl-weight') + ';padding:0;background:none;transition:none';
+      probe.textContent = el.textContent;
+      el.appendChild(probe);
+      var w = probe.getBoundingClientRect().width;
+      var fs = parseFloat(getComputedStyle(el).fontSize) || 16;
+      el.removeChild(probe);
+      return Math.max(HL_UNITS * 2, (w / (fs * HL_BOX_EM)) * HL_UNITS);
+    }
+    function paint() {
+      els.forEach(function (el, i) {
+        var ink = getComputedStyle(el).getPropertyValue('--hl-ink').trim();
+        if (!ink) return;   // no token, keep the CSS fallback stroke
+        el.style.setProperty('--hl-brush', hlStrokeUri(phraseUnits(el), HL_SEED + i, ink));
+      });
+    }
+    paint();
+    // The stroke carries its colour, so a theme flip repaints it; webfonts that
+    // land late change the phrase's width, so they re-measure it.
+    if ('MutationObserver' in window) {
+      new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(paint);
+
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || !('IntersectionObserver' in window)) {
       els.forEach(function (el) { el.classList.add('lit'); });
