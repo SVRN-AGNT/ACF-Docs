@@ -1133,12 +1133,19 @@
       Array.prototype.forEach.call(document.querySelectorAll('figure.acf-chart-build:not([data-ink])'), function (fg) {
         fg.setAttribute('data-ink', '');
         var n = framed++;
+        var inked = '';
         var p = { host: fg, cls: 'ink-framed', paint: function () {
           var L = layer(fg, 12);
-          add(L.s, ensoFrame(L.x, L.y, L.w, L.h, 7, 30 + n), rgba(getComputedStyle(fg).color, 0.42));
+          inked = getComputedStyle(fg).color;
+          add(L.s, ensoFrame(L.x, L.y, L.w, L.h, 7, 30 + n), rgba(inked, 0.42));
         } };
         painters.push(p);
         if (ro) ro.observe(fg);
+        // The card's ink is React's inline colour, which changes a beat after
+        // data-theme, when the chart commits its new theme; repaint then.
+        if ('MutationObserver' in window) new MutationObserver(function () {
+          if (getComputedStyle(fg).color !== inked) paintOne(p);
+        }).observe(fg, { attributes: true, attributeFilter: ['style'] });
         paintOne(p);
       });
     }
