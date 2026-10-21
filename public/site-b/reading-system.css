@@ -5347,3 +5347,12 @@ a.dc-card[data-part="6"]:focus-visible .art-cell-lit,
   .posture-card { transition: none; }
   .posture-card:hover, .posture-card:focus-visible { transform: none; }
 }
+
+/* ---- Ink marks (Japanese craft board round 2, owner picks 2026-10-21) -----
+   reading-core.js inkMarks() draws each mark as an aria-hidden SVG layer and
+   only then adds the host's .ink-* class, so an old line goes only once its
+   brushed replacement is on the page. JS-off readers keep today's lines. */
+svg.ink-mark { position: absolute; pointer-events: none; overflow: visible; }
+.section-title, .callout-collapse { position: relative; }
+.acf-chart-build.ink-framed { position: relative; border-color: transparent !important; }
+.side-part.current.ink-current::before { opacity: 0; }

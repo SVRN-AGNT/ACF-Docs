@@ -22,7 +22,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { brushSegment } from '../components/framework-charts/brush.js';
+import { brushSegment, brushLine } from '../components/framework-charts/brush.js';
 import { grainField, tileAlpha, decodePng, greyFor, TILES, SIZE, OUT_DIR } from '../scripts/build-washi-grain.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -118,4 +118,30 @@ test('the ink dash leads both stacks and draws only U+2014', () => {
   }
   assert.match(TOKENS, /--font-sans:\s*'ACF Ink Dash', 'Inter'/);
   assert.match(TOKENS, /--font-mono:\s*'ACF Ink Dash Mono', 'JetBrains Mono'/);
+});
+
+// Round 2 (owner picks 2026-10-21): the ensō frame round each chart card is
+// drawn with a browser copy of brushLine. Same promise as brushSegment above:
+// the copy must be THE brush, point for point.
+test('the browser frame line is brush.js brushLine, point for point', () => {
+  const port = portedBrush();
+  const box = (w, h, r) => [{ x: 12 + r, y: 12 }, { x: 12 + w - r, y: 12 }, { x: 12 + w, y: 12 + r },
+    { x: 12 + w, y: 12 + h - r }, { x: 12 + w - r, y: 12 + h }, { x: 12 + r, y: 12 + h }, { x: 12, y: 12 + h - r }, { x: 12, y: 12 + r }];
+  for (const [w, h, seed] of [[893, 740, 30], [358, 1100, 31], [600, 420, 37]]) {
+    const o = { seed, weight: 0.75, intensity: 0.5, taper: 0.012, modulate: 0.22, step: 5 };
+    assert.equal(port.brushLine(box(w, h, 7), o), brushLine(box(w, h, 7), o), `${w}x${h}, seed ${seed}`);
+  }
+});
+
+// An old line may go only behind the class inkMarks() adds after drawing its
+// replacement, so a reader without JS (or before the script runs) keeps it.
+test('old lines are hidden only once their ink mark is drawn', () => {
+  const rules = [...CSS.matchAll(/([^{}]+)\{([^}]*)\}/g)];
+  const frame = rules.find(([, sel]) => /\.acf-chart-build\.ink-framed/.test(sel));
+  assert.ok(frame && /border-color:\s*transparent/.test(frame[2]), 'the card drops its hairline only as .ink-framed');
+  const marker = rules.find(([, sel]) => /\.side-part\.current\.ink-current::before/.test(sel));
+  assert.ok(marker && /opacity:\s*0/.test(marker[2]), 'the contents bar hides only as .ink-current');
+  for (const cls of ['ink-title', 'ink-takeaways', 'ink-current', 'ink-framed']) {
+    assert.ok(CORE.includes(`'${cls}'`), `inkMarks() adds .${cls} after it draws`);
+  }
 });

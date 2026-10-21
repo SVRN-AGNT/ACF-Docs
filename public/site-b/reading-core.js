@@ -893,7 +893,43 @@
       }
       return strokeToPath(skel, seed + 5, 0.04 * intensity, 0.35 * intensity);
     }
-    return { brushSegment: brushSegment };
+    function resamplePolyline(pts, step) {
+      var seg = [], total = 0, i;
+      for (i = 1; i < pts.length; i++) {
+        var d = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+        seg.push(d); total += d;
+      }
+      var out = [{ x: pts[0].x, y: pts[0].y, s: 0 }];
+      var acc = 0, idx = 0, target;
+      for (target = step; target < total; target += step) {
+        while (idx < seg.length && acc + seg[idx] < target) { acc += seg[idx]; idx++; }
+        if (idx >= seg.length) break;
+        var segLen = seg[idx] || 1;
+        var t = (target - acc) / segLen;
+        var a = pts[idx], b = pts[idx + 1];
+        out.push({ x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), s: target });
+      }
+      out.push({ x: pts[pts.length - 1].x, y: pts[pts.length - 1].y, s: total });
+      return { pts: out, total: total };
+    }
+    function brushLine(centerPts, o) {
+      var seed = o.seed, weight = o.weight, intensity = o.intensity, taper = o.taper, modulate = o.modulate, step = o.step;
+      var r = resamplePolyline(centerPts, step), pts = r.pts, total = r.total;
+      var rng = mulberry32(seed + 99);
+      var n = pts.length, i;
+      for (i = 0; i < n; i++) {
+        var t = total ? pts[i].s / total : 0;
+        var cap = Math.min(t / taper, (1 - t) / taper, 1);
+        var capFactor = Math.max(0.18, cap);
+        var mod = 1
+          + modulate * 0.55 * Math.sin(t * Math.PI * 5 + seed)
+          + modulate * 0.30 * Math.sin(t * Math.PI * 12 + seed * 2);
+        var j = (rng() - 0.5) * 0.18 * intensity;
+        pts[i].w = Math.max(0.06, weight * capFactor * mod + j);
+      }
+      return strokeToPath(pts, seed + 3, 0.05 * intensity, 0.5 * intensity);
+    }
+    return { brushSegment: brushSegment, brushLine: brushLine, strokeToPath: strokeToPath };
   })();
   /* END brush port */
 
@@ -955,6 +991,173 @@
       });
     }, { rootMargin: '0px 0px -15% 0px', threshold: 0.5 });
     els.forEach(function (el) { obs.observe(el); });
+  }
+
+
+  /* ---- Ink marks: the heavier hand (Japanese craft board, round 2) ----------
+   * Owner picks 2026-10-21, drawn with the brush port above, seeded by each
+   * mark's place in the page so every render is identical:
+   *   - a section title gets one brush stroke under its last line, in two
+   *     touches (a stroke, one lift, a short second touch);
+   *   - an exhibit chart card's hairline box becomes an enso frame: one brush
+   *     line round the card with one lift at the top left;
+   *   - the Key takeaways box gets a top rule that starts thick and fades out
+   *     fast, over a hairline;
+   *   - the contents marker for the current part is one vertical brush touch.
+   * Each mark is an aria-hidden SVG layer inside its host, so it never moves
+   * text. The host only drops its old line (the .ink-* classes in
+   * reading-system.css) once its mark is drawn, so JS-off readers keep today's
+   * lines. Marks are static, so reduced motion needs nothing.                  */
+  function inkMarks() {
+    var NS = 'http://www.w3.org/2000/svg';
+    function rgba(c, a) {
+      var m = String(c).match(/[\d.]+/g);
+      return m && m.length >= 3 ? 'rgba(' + m[0] + ',' + m[1] + ',' + m[2] + ',' + a + ')' : c;
+    }
+    function layer(host, pad) {
+      var s = host.querySelector(':scope > svg.ink-mark');
+      if (!s) {
+        s = document.createElementNS(NS, 'svg');
+        s.setAttribute('class', 'ink-mark');
+        s.setAttribute('aria-hidden', 'true');
+        s.setAttribute('focusable', 'false');
+        host.appendChild(s);
+      }
+      var w = host.offsetWidth, h = host.offsetHeight;
+      s.setAttribute('width', w + pad * 2);
+      s.setAttribute('height', h + pad * 2);
+      s.setAttribute('viewBox', '0 0 ' + (w + pad * 2) + ' ' + (h + pad * 2));
+      s.style.left = s.style.top = -pad + 'px';
+      while (s.firstChild) s.removeChild(s.firstChild);
+      return { s: s, w: w, h: h, x: pad, y: pad };
+    }
+    function add(s, d, fill, op) {
+      var p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', d);
+      p.setAttribute('fill', fill);
+      if (op != null) p.setAttribute('fill-opacity', op);
+      s.appendChild(p);
+      return p;
+    }
+    function twoTouch(x1, y, x2, o) {
+      var L = x2 - x1, gap = Math.min(7, L * 0.03), a = x1 + L * 0.72;
+      return inkBrush.brushSegment(x1, y, a - gap / 2, y + 0.25, o) +
+        inkBrush.brushSegment(a + gap / 2, y - 0.2, x2, y + 0.1,
+          { seed: o.seed + 7, weight: o.weight * 0.82, intensity: o.intensity, waver: o.waver });
+    }
+    // A rounded rectangle walked as one brush line from just past its top-left
+    // corner, ending a little short of where it began: that gap is the lift.
+    function ensoFrame(x, y, w, h, r, seed) {
+      var pts = [], start = 0.06;
+      function arc(cx, cy, a0, a1) {
+        for (var i = 0; i <= 8; i++) {
+          var a = a0 + (a1 - a0) * i / 8;
+          pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+        }
+      }
+      pts.push({ x: x + r + (w - 2 * r) * start, y: y });
+      pts.push({ x: x + w - r, y: y }); arc(x + w - r, y + r, -Math.PI / 2, 0);
+      pts.push({ x: x + w, y: y + h - r }); arc(x + w - r, y + h - r, 0, Math.PI / 2);
+      pts.push({ x: x + r, y: y + h }); arc(x + r, y + h - r, Math.PI / 2, Math.PI);
+      pts.push({ x: x, y: y + r }); arc(x + r, y + r, Math.PI, Math.PI * 1.5);
+      pts.push({ x: x + r + (w - 2 * r) * (start - 0.035), y: y - 0.3 });
+      return inkBrush.brushLine(pts, { seed: seed, weight: 0.75, intensity: 0.5, taper: 0.012, modulate: 0.22, step: 5 });
+    }
+    // A rule that starts thick and thins to nothing; a gradient fades its ink.
+    function fadeRule(s, x1, y, x2, ink, weight, seed) {
+      var id = 'ink-fade-' + seed, g = document.createElementNS(NS, 'linearGradient');
+      g.setAttribute('id', id);
+      g.setAttribute('gradientUnits', 'userSpaceOnUse');
+      g.setAttribute('x1', x1); g.setAttribute('x2', x2); g.setAttribute('y1', 0); g.setAttribute('y2', 0);
+      [[0, 1], [0.18, 0.85], [0.55, 0.12], [1, 0]].forEach(function (st) {
+        var e = document.createElementNS(NS, 'stop');
+        e.setAttribute('offset', st[0]); e.setAttribute('stop-color', ink); e.setAttribute('stop-opacity', st[1]);
+        g.appendChild(e);
+      });
+      s.appendChild(g);
+      var skel = [], N = Math.max(10, Math.round((x2 - x1) / 6)), i;
+      for (i = 0; i <= N; i++) {
+        var t = i / N;
+        skel.push({ x: x1 + (x2 - x1) * t, y: y + Math.sin(t * Math.PI * 3 + seed) * 0.25,
+          w: Math.max(0.12, weight * (t < 0.03 ? 0.4 + t / 0.03 * 0.6 : Math.pow(1 - t, 1.6))) });
+      }
+      add(s, inkBrush.strokeToPath(skel, seed, 0.05, 0.3), 'url(#' + id + ')');
+    }
+
+    var accent = function () { return getComputedStyle(root).getPropertyValue('--accent').trim(); };
+    var painters = [];
+
+    Array.prototype.forEach.call(document.querySelectorAll('.section-title'), function (h, i) {
+      painters.push({ host: h, cls: 'ink-title', paint: function () {
+        var range = document.createRange();
+        range.selectNodeContents(h);
+        var rects = range.getClientRects();
+        if (!rects.length) return false;
+        var last = rects[rects.length - 1], box = h.getBoundingClientRect();
+        var L = layer(h, 12);
+        var x1 = L.x - 1, x2 = L.x + Math.min(last.right - box.left, box.width) * 0.42;
+        add(L.s, twoTouch(x1, L.y + (last.bottom - box.top) + 9, x2,
+          { seed: 3 + i, weight: 1.05, intensity: 0.7, waver: 0.4 }), accent(), 0.95);
+      } });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.callout-collapse'), function (c, i) {
+      painters.push({ host: c, cls: 'ink-takeaways', paint: function () {
+        var L = layer(c, 12), ink = getComputedStyle(c).color;
+        fadeRule(L.s, L.x, L.y, L.x + L.w * 0.75, rgba(ink, 0.62), 1.9, 40 + i);
+        add(L.s, inkBrush.brushSegment(L.x, L.y + L.h, L.x + L.w, L.y + L.h,
+          { seed: 50 + i, weight: 0.5, intensity: 0.6, waver: 0.4 }), rgba(ink, 0.32));
+      } });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.side-part.current'), function (a, i) {
+      painters.push({ host: a, cls: 'ink-current', paint: function () {
+        var pre = getComputedStyle(a, '::before');
+        var L = layer(a, 12), x = L.x + (parseFloat(pre.left) || 0) + 1;
+        add(L.s, inkBrush.brushSegment(x, L.y + 3, x + 0.6, L.y + L.h - 3,
+          { seed: 60 + i, weight: 1.35, intensity: 0.8, waver: 0.5 }), pre.backgroundColor);
+      } });
+    });
+
+    function paintOne(p) {
+      if (!p.host.isConnected || !p.host.offsetWidth) return;
+      if (p.paint() === false) return;
+      p.host.classList.add(p.cls);
+    }
+    function paintAll() { painters.forEach(paintOne); }
+
+    // Chart cards mount later (chartBuild), so they join as they appear.
+    var framed = 0;
+    function frameCharts() {
+      Array.prototype.forEach.call(document.querySelectorAll('figure.acf-chart-build:not([data-ink])'), function (fg) {
+        fg.setAttribute('data-ink', '');
+        var n = framed++;
+        var p = { host: fg, cls: 'ink-framed', paint: function () {
+          var L = layer(fg, 12);
+          add(L.s, ensoFrame(L.x, L.y, L.w, L.h, 7, 30 + n), rgba(getComputedStyle(fg).color, 0.42));
+        } };
+        painters.push(p);
+        if (ro) ro.observe(fg);
+        paintOne(p);
+      });
+    }
+
+    var ro = 'ResizeObserver' in window ? new ResizeObserver(function (entries) {
+      entries.forEach(function (en) {
+        painters.forEach(function (p) { if (p.host === en.target) paintOne(p); });
+      });
+    }) : null;
+    paintAll();
+    if (ro) painters.forEach(function (p) { ro.observe(p.host); });
+    frameCharts();
+    if ('MutationObserver' in window) {
+      new MutationObserver(paintAll).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+      var queued = false;
+      new MutationObserver(function () {
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function () { queued = false; frameCharts(); });
+      }).observe(document.body, { childList: true, subtree: true });
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(paintAll);
   }
 
   /* ---- Stepper progress: grow each list's rail fill + flag read/active/ahead *
@@ -2085,6 +2288,7 @@
   sectionReveal();
   hamburgerFade();
   highlights();
+  inkMarks();
   stepperProgress();
   partActions();
   narrationDock();
