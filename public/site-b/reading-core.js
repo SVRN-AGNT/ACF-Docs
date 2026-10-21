@@ -1089,8 +1089,11 @@
 
     Array.prototype.forEach.call(document.querySelectorAll('.section-title'), function (h, i) {
       painters.push({ host: h, cls: 'ink-title', paint: function () {
-        var range = document.createRange();
+        // Measure the title's own text: on a repaint the ink layer is already
+        // inside the title, and its box would pass for the last line.
+        var range = document.createRange(), mark = h.querySelector(':scope > svg.ink-mark');
         range.selectNodeContents(h);
+        if (mark) range.setEndBefore(mark);
         var rects = range.getClientRects();
         if (!rects.length) return false;
         var last = rects[rects.length - 1], box = h.getBoundingClientRect();
