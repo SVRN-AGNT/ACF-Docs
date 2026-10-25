@@ -40,11 +40,11 @@ jobs:
       pull-requests: write
       checks: write
       actions: read
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@84b5e94e7877ba8896a349f84efa8a535731c992
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@e43239ebb6cb5f9fce64b29aeb18f965e13ba2fc
     with:
-      ref: 84b5e94e7877ba8896a349f84efa8a535731c992
+      ref: e43239ebb6cb5f9fce64b29aeb18f965e13ba2fc
       comment_id: ${{ github.event.comment.id || inputs.comment_id }}
       expected_pr: ${{ inputs.pr }}
       # CI and the PM's own caller are held: a PR that edits them gets the high bar.
-      held_paths: '^\.github/workflows/'
+      held_paths: '^(\.github/workflows/|CLAUDE\.md$|middleware\.ts$|pages/api/)'
       provider: chatgpt
