@@ -4,7 +4,7 @@
 **Revision 4 (2026-10-19, re-counted 2026-10-27)** — §9 adds AI-search citation (GEO) as a second axis
 beside classic search, weighed against new evidence, and §6.3 gains one owner
 decision. §1, §2.3, §4.5, §4.6, §5.1 and §6.1 are re-counted for the twelfth route
-(`/part-1-pictures`); nothing in §1–§8 changes status.
+(`/part-1-pictures`, which revisions 1–3 missed); nothing in §1–§8 changes status.
 **Revision 3** — §8 adds the post-promotion verification obligation and the
 distinction it turns on: implementation landing on `preview` is not the audit
 closing. **Revision 2** corrected three findings on owner review; see §7,
@@ -44,7 +44,7 @@ and for `/api/narration`; there is no framework routing to reason about.
 
 | | |
 |---|---|
-| Indexable routes | 12 (`/part-1-pictures` joined after the 2026-09-16 reconciliation) |
+| Indexable routes | 12 (revisions 1–3 counted 11 and missed `/part-1-pictures`, which was already routed and in the sitemap at `97261e3`) |
 | Canonical declared | 12 / 12, each equal to the route that serves it |
 | `og:*` + `twitter:*` | 12 / 12 complete, with a per-page social card that exists on disk |
 | Internal `href`s | 700 in page bodies across the 12 routes — **0** expose `.html`, **0** unresolved |
@@ -452,8 +452,10 @@ audit is still not closed.
 
 **Revision 4 — 2026-10-19, re-counted 2026-10-27.** Adds §9 (AI-search
 citation) and decision 5 in §6.3, and re-counts the publication figures in §1,
-§2.3, §4.5, §4.6, §5.1 and §6.1 for `/part-1-pictures`, the twelfth route, which
-arrived after revision 3. All twelve pass the same checks. The classic-search conclusions in §4 and §6 stand; §9 explains why the
+§2.3, §4.5, §4.6, §5.1 and §6.1 for `/part-1-pictures`, the twelfth route. It
+was added on 2026-09-15 and was already routed, canonical and in the sitemap at
+`97261e3`, so revisions 1–3 missed an existing indexable page rather than the
+site growing afterwards. All twelve pass the same checks. The classic-search conclusions in §4 and §6 stand; §9 explains why the
 new evidence leaves them intact and adds one editorial option, deferred.
 
 ---
@@ -653,4 +655,6 @@ AI-advances research notes of the same date. Titles and leads read from
 PR #169 (robots + sitemap, derived); #186 (crawler contract); #187 (blocking CI);
 #188 (accessibility, Share control); #190 (glossary runtime); #191 (font
 payload). Figures re-measured from the repositories on 2026-09-16, not carried
-forward from earlier reports.*
+forward from earlier reports. Revision 4 re-measured the §1, §2.3, §4.5, §4.6,
+§5.1 and §6.1 figures on 2026-10-27 against `main` at `d589cce`; where the two
+differ, the 2026-10-27 figure is the current one and the earlier one is history.*
