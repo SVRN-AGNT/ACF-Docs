@@ -1,7 +1,7 @@
 # SEO & Publication Ledger v1
 
 **Status of record for `docs.acfdashboard.com` · reconciled 2026-09-16 against `main` at `97261e3`.**
-**Revision 4 (2026-10-19)** — §9 adds AI-search citation (GEO) as a second axis
+**Revision 4 (2026-10-19, re-counted 2026-10-27)** — §9 adds AI-search citation (GEO) as a second axis
 beside classic search, weighed against new evidence, and §6.3 gains one owner
 decision. §1, §2.3, §4.5, §4.6 and §6.1 are re-counted for the twelfth route
 (`/part-1-pictures`); nothing in §1–§8 changes status.
@@ -309,10 +309,10 @@ The defects that *would* be real were tested for, and none is present:
 | Duplicate titles | **none** — 12 distinct (re-checked 2026-10-27) |
 | Duplicate descriptions | **none** — 12 distinct (re-checked 2026-10-27) |
 | Missing title or description | **none** |
-| Non-descriptive titles | none — every unique segment names its own subject (`Part 4 — Tax Architecture and ROC Strategy`, `The Framework in Math`) |
-| Long descriptions that break mid-thought at ~155 | **none of the seven** — each reads as a complete proposition, with only a trailing sub-clause beyond the cut |
+| Non-descriptive titles | none — every unique segment names its own subject (`Part 4 · Tax Architecture & ROC Strategy`, `The Framework in Math`) |
+| Long descriptions that break mid-thought at ~155 | **none** — on 2026-09-16 seven ran past ~155, each complete before the cut; on 2026-10-27 all twelve are 115 characters or fewer, the cap D-TITLES now enforces |
 
-Example, `/part-6` at 190 characters: *"The two-score execution kernel of the
+Example from 2026-09-16, `/part-6` at 190 characters: *"The two-score execution kernel of the
 framework: CIS quantifies position quality, FIS validates construction integrity,
 and a weekly workflow turns both me…"* — complete before it is cut.
 
@@ -350,7 +350,7 @@ them is ever done.
 ### 5.1 Editorial
 | Item | Note |
 |---|---|
-| Six titles run 66–90 characters | Not a defect (§4.5). If the owner prefers tighter SERP display, the lever is the shared 34-character suffix `· The Adaptive Convexity Framework`, and one rule should govern all six rather than six judgements. |
+| Six titles run 66–88 characters (re-checked 2026-10-27) | Not a defect (§4.5). If the owner prefers tighter SERP display, the lever is the shared 34-character suffix `· The Adaptive Convexity Framework`, and one rule should govern all six rather than six judgements. |
 | Seven descriptions run 169–232 characters | Not a defect (§4.5). All seven already stand alone at 155 characters. Rewriting is a style preference. |
 | `/part-1-pictures` description at 87 characters | Short, not truncated. May be under-selling the page. |
 | Byline and dates | §4.3 — a *design* question about reader credibility. If the pages should show an author, design that first and let metadata follow. Never the reverse. |
@@ -454,7 +454,7 @@ audit is still not closed.
 citation) and decision 5 in §6.3, and re-counts the publication figures in §1,
 §2.3, §4.5, §4.6 and §6.1 for `/part-1-pictures`, the twelfth route, which
 arrived after revision 3. All twelve pass the same checks. The classic-search conclusions in §4 and §6 stand; §9 explains why the
-new evidence leaves them intact and changes only how editorial effort is ranked.
+new evidence leaves them intact and adds one editorial option, deferred.
 
 ---
 
@@ -528,8 +528,8 @@ thing, and the ledger should not be read as if it were.
 §1–§8 are about classic search: can a crawler fetch, render and index the pages.
 Answer engines (ChatGPT, Gemini, Perplexity) add a second question: once a page
 is retrieved, is it the one quoted as a source? This section weighs a large
-observational study of that question against this property. It re-ranks editorial
-effort; it opens no defect.
+observational study of that question against this property. It says where
+editorial effort would go if pursued; it opens no defect.
 
 ### 9.1 The evidence, as checked
 
@@ -558,7 +558,8 @@ the main dataset gives about half that, and both are recorded here.
 (2026-06-15, before the study window but the primary dataset). 28% of 137,210
 domains publish an llms.txt; 97% of those received no request at all in May
 2026. Of the requests that did arrive, 96% came from bots, and the named AI
-tools were led by GPTBot and Claude Code rather than any search assistant.
+tools were led by GPTBot and Claude Code, ahead of every AI search and
+assistant bot.
 No AI bot asked for an llms.txt that did not exist; Ahrefs reads this as agents
 fetching the file when directed to it, not speculatively.
 
@@ -644,7 +645,7 @@ answering first. It is a CI and cost decision, not an SEO defect.
 Sources: arXiv 2610.15033 (https://arxiv.org/abs/2610.15033), Ahrefs llms.txt
 study (https://ahrefs.com/blog/llmstxt-study), both read 2026-10-19; the project's
 AI-advances research notes of the same date. Titles and leads read from
-`public/site-b/` at `main` `0de12a3`.
+`public/site-b/` at `main` `0de12a3` and unchanged at `d589cce`.
 
 ---
 
