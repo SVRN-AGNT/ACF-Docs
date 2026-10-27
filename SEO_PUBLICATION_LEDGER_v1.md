@@ -3,7 +3,7 @@
 **Status of record for `docs.acfdashboard.com` · reconciled 2026-09-16 against `main` at `97261e3`.**
 **Revision 4 (2026-10-19, re-counted 2026-10-27)** — §9 adds AI-search citation (GEO) as a second axis
 beside classic search, weighed against new evidence, and §6.3 gains one owner
-decision. §1, §2.3, §4.5, §4.6 and §6.1 are re-counted for the twelfth route
+decision. §1, §2.3, §4.5, §4.6, §5.1 and §6.1 are re-counted for the twelfth route
 (`/part-1-pictures`); nothing in §1–§8 changes status.
 **Revision 3** — §8 adds the post-promotion verification obligation and the
 distinction it turns on: implementation landing on `preview` is not the audit
@@ -351,9 +351,8 @@ them is ever done.
 | Item | Note |
 |---|---|
 | Six titles run 66–88 characters (re-checked 2026-10-27) | Not a defect (§4.5). If the owner prefers tighter SERP display, the lever is the shared 34-character suffix `· The Adaptive Convexity Framework`, and one rule should govern all six rather than six judgements. |
-| Seven descriptions run 169–232 characters | Not a defect (§4.5). All seven already stand alone at 155 characters. Rewriting is a style preference. |
-| `/part-1-pictures` description at 87 characters | Short, not truncated. May be under-selling the page. |
-| Byline and dates | §4.3 — a *design* question about reader credibility. If the pages should show an author, design that first and let metadata follow. Never the reverse. |
+| Description length | Re-checked 2026-10-27: all twelve run 86–115 characters under the D-TITLES cap, so the 2026-09-16 entries (seven at 169–232 characters, `/part-1-pictures` at 87) no longer apply. Nothing open. |
+| Byline and dates | §4.3 — a *design* question about reader credibility. Part 1 and Evidence now carry a visible byline (2026-10-27); no author or date metadata follows it, which is the order §4.3 asks for. Whether other pages should show one stays a design choice. |
 
 ### 5.2 Structured data
 | Item | Note |
@@ -406,8 +405,9 @@ the `vite.config.ts:322` copy step — with a regression asserting the six paths
 redirect rather than serving a document or a soft 200.
 
 Revision 1 listed four items. Two were not defects (§4.4, §4.5) and one is
-optional polish (§5.2). **`docs.acfdashboard.com` itself needs no further SEO
-work**; the one remaining item is in the other repository.
+optional polish (§5.2). **`docs.acfdashboard.com` itself needs no further technical
+SEO work**; the one remaining item is in the other repository. The GEO title
+option (§9.4) is optional editorial work, deferred.
 
 ### 6.3 Decisions that are the owner's, not mine
 1. **Do the redirects now, or after beta?** It is the only material item, and it
@@ -452,7 +452,7 @@ audit is still not closed.
 
 **Revision 4 — 2026-10-19, re-counted 2026-10-27.** Adds §9 (AI-search
 citation) and decision 5 in §6.3, and re-counts the publication figures in §1,
-§2.3, §4.5, §4.6 and §6.1 for `/part-1-pictures`, the twelfth route, which
+§2.3, §4.5, §4.6, §5.1 and §6.1 for `/part-1-pictures`, the twelfth route, which
 arrived after revision 3. All twelve pass the same checks. The classic-search conclusions in §4 and §6 stand; §9 explains why the
 new evidence leaves them intact and adds one editorial option, deferred.
 
