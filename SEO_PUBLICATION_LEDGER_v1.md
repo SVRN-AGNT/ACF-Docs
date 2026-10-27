@@ -537,9 +537,9 @@ abstract and HTML on 2026-10-19:
 | finding | figure |
 |---|---|
 | A title and best paragraph that match the questions people ask are cited more | title **+14.1% per SD** in the main dataset, **+26.4%** in the replication market |
-| FAQ blocks, structured data, summary boxes and page speed work only *across* sites, not within one | FAQ block +22.5% across sites against **−1.9%** within |
-| Site authority does nothing for small vendors | −1.3% per SD |
-| The engine's own retrieval outweighs page features | 30% of within-site variation against 10% for page features (not significant at 629 pages) |
+| FAQ blocks, structured data, summary boxes and page speed are associated with citation only *across* sites; within one site no reliable association was found | FAQ block +22.5% across sites against **−1.9%** within |
+| Site authority showed no association with citation for these small vendors | −1.3% per SD |
+| The engine's own retrieval explained more within-site variation than page features, though the gap was not significant | 30% against 10% (difference CI −1 to 31, at 629 pages) |
 | ChatGPT cites 57.1% of the pages it ranks first and 8.3% at ranks 11–20; 99% of what it retrieves is outside Google's top 50 | — |
 
 *Limits, stated so this stays falsifiable.* Not yet peer reviewed. Commercial
@@ -553,16 +553,18 @@ the main dataset gives about half that, and both are recorded here.
 domains publish an llms.txt; 97% of those received no request at all in May
 2026. Of the requests that did arrive, 96% came from bots, and the named AI
 tools were led by GPTBot and Claude Code rather than any search assistant.
-No AI bot asked for an llms.txt that did not exist. Agents fetch the file when
-directed to it, not speculatively.
+No AI bot asked for an llms.txt that did not exist; Ahrefs reads this as agents
+fetching the file when directed to it, not speculatively.
 
 ### 9.2 What this changes in the ledger
 
-1. **§4.1, §4.2 and §5.2 hold, now on a second axis.** The within-site result
-   says FAQ blocks and structured data do not move AI citation either, so the
-   rejections of JSON-LD and `DefinedTerm` stand without needing the
-   second-source-of-truth argument. `BreadcrumbList` stays optional for its
-   visible SERP effect only; it should not be justified as a GEO lever.
+1. **§4.1, §4.2 and §5.2 hold, and GEO gives no reason to reopen them.** In
+   the study's within-site models, FAQ blocks and structured data showed no
+   reliable association with extra citations. That is a null result from
+   observational data, not proof of no effect, so the rejections of JSON-LD and
+   `DefinedTerm` still rest on their own reasoning (the second source of truth
+   in §4.1 and §4.2). `BreadcrumbList` stays optional for its visible SERP
+   effect only; this evidence gives no grounds to call it a GEO lever.
 2. **§4.5 holds for classic search, and GEO adds a different test.** §4.5 asked
    whether titles are duplicated, missing, vague or cut mid-thought; none is.
    The study asks something else: does the title share words and meaning with
@@ -573,10 +575,11 @@ directed to it, not speculatively.
    is the analytics skip-list in `middleware.ts`. If one is ever added, it is an
    index for coding agents, not a citation lever, and it should be linked from
    the pages, because unlinked files go unread.
-4. **For a small property the larger levers are off-page.** Retrieval and
-   third-party pages that name the framework explain more than anything on the
-   page. Being fetchable (§2.2) is the precondition, and that is already held
-   closed.
+4. **For a small property the larger levers are probably off-page.** In the
+   study, retrieval explained more of the variation than page features, though
+   not significantly. The inference, not a finding, is that being retrieved and
+   being named on other sites matter more here than on-page edits. Being
+   fetchable (§2.2) is the precondition, and that is already held closed.
 
 ### 9.3 Titles and leads, scored against the study
 
