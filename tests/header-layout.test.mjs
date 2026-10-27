@@ -110,7 +110,7 @@ test('header: the Glossary tile is a plain link to the glossary page', () => {
   // was always /glossary — a click handler swallowed it and opened the modal
   // instead, so the tile looked like a link and behaved like a button.
   const cover = read('public/site-b/cover-docs.html');
-  assert.match(cover, /<a class="dc-tile" href="\/glossary" data-motif="glossary">/,
+  assert.match(cover, /<a class="dc-tile" href="\/glossary" data-motif="glossary"[^>]*>/,
     'the tile carries no handler hook');
   assert.doesNotMatch(cover, /data-glossary-tile|data-search-open|data-search-hint/,
     'no hooks remain for a script to bind to');

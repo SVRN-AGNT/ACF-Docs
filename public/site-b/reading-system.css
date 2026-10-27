@@ -40,11 +40,14 @@ body {
   margin: 0;
   /* Faint top atmosphere: a soft light source at the top of the page so content
      doesn't sit on a flat sheet. Viewport-anchored (fixed) so it stays overhead
-     while reading; barely perceptible via the theme-scoped --page-glow. */
+     while reading; barely perceptible via the theme-scoped --page-glow.
+     Under it, the washi grain (tokens.css --paper-grain): the paper's own tooth,
+     so it repeats and scrolls WITH the sheet rather than sitting on the glass. */
   background-color: var(--paper);
-  background-image: radial-gradient(120% 70% at 50% 0%, var(--page-glow), transparent 60%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  background-image: radial-gradient(120% 70% at 50% 0%, var(--page-glow), transparent 60%),
+                    var(--paper-grain);
+  background-attachment: fixed, scroll;
+  background-repeat: no-repeat, repeat;
   color: var(--ink);
   font-family: var(--font-serif);
   font-optical-sizing: auto;
@@ -222,48 +225,61 @@ body {
 @media (max-width: 768px) {
   .pull-quote::before { color: rgba(52, 211, 153, .085); }
 }
-/* .hl phrase inside the dark pull-quote panel reads in the bright feature accent */
+/* .hl phrase inside the dark pull-quote panel reads in the bright feature accent,
+   and so does its brush stroke. */
 .pull-quote .hl {
+  --hl-ink: var(--feature-accent);
+  --hl-brush-fallback: var(--hl-brush-feature);
   color: var(--feature-accent);
-  background-image: linear-gradient(var(--feature-accent), var(--feature-accent));
 }
 
 /* ============================================================================
    QUOTE HIGHLIGHT SYSTEM  —  .hl   (the rule for emphasising a phrase in a quote)
    Wrap a key phrase: <span class="hl">phrase</span> inside any pull-quote, the
-   premise, or prose. It gets the signature green + bold + sweeping-underline
-   emphasis as it scrolls into view — reading.js `highlights()` adds `.lit` via an
-   IntersectionObserver. Base state IS the end state (green-bold-underlined), so
-   JS-off / reduced-motion readers still get the emphasis. Same visual language as
-   the cover premise key phrase. The underline is a background gradient so it
-   follows the text across line wraps.
+   premise, or prose. It gets the signature green + semibold, and a brush
+   underline drawn by the docs' brush engine (owner pick, Japanese craft verdict
+   board 2026-10-20: "Brush underline after a beat"). As it scrolls into view
+   reading.js `highlights()` adds `.lit` via an IntersectionObserver; the phrase
+   rests 450ms (ma), then the stroke draws left to right over 1100ms.
+
+   Base state IS the end state (green, semibold, stroke drawn), so JS-off /
+   reduced-motion readers still get the emphasis. The stroke is the phrase's
+   background, so it follows the text across line wraps and never moves it:
+     --hl-brush-fallback  the board's stroke, from tokens.css (JS off)
+     --hl-brush           the per-phrase seeded stroke reading-core.js paints,
+                          sized to the phrase so it is drawn 1:1, never stretched
+   Padding-bottom only extends the painted box below the text into the leading;
+   vertical padding on an inline box moves no line, so nothing shifts.
    ============================================================================ */
 .hl {
+  --hl-ink: var(--accent);
+  --hl-weight: var(--weight-semibold);
+  --hl-brush-fallback: var(--hl-brush-paper);
   color: var(--accent);
-  font-weight: var(--weight-semibold);
-  background-image: linear-gradient(var(--accent), var(--accent));
+  font-weight: var(--hl-weight);
+  background-image: var(--hl-brush, var(--hl-brush-fallback));
   background-repeat: no-repeat;
   background-position: 0 100%;
-  background-size: 100% 0.08em;
-  padding-bottom: 0.04em;
+  background-size: 100% 0.42em;
+  padding-bottom: 0.34em;
 }
 @media (prefers-reduced-motion: no-preference) {
   html.js .hl {
     color: var(--ink);
     font-weight: var(--weight-normal);
-    background-size: 0% 0.08em;
-    transition: color 550ms var(--ease-standard) 250ms,
-                font-weight 550ms var(--ease-standard) 250ms,
-                background-size 700ms var(--ease-emphasis) 250ms;
+    background-size: 0% 0.42em;
+    transition: color 550ms var(--ease-standard) 450ms,
+                font-weight 550ms var(--ease-standard) 450ms,
+                background-size var(--motion-draw) var(--ease-emphasis) 450ms;
   }
   html.js .hl.lit {
     color: var(--accent);
-    font-weight: var(--weight-semibold);
-    background-size: 100% 0.08em;
+    font-weight: var(--hl-weight);
+    background-size: 100% 0.42em;
   }
   /* On the dark feature panel the animated states must use the feature accent:
      pre-lit reads as the light quote text (visible on dark), lit reads in the
-     BRIGHT feature accent so the phrase matches its own underline. These beat the
+     BRIGHT feature accent so the phrase matches its own stroke. These beat the
      generic html.js .hl / .hl.lit rules on specificity. */
   html.js .pull-quote .hl { color: var(--feature-ink); }
   html.js .pull-quote .hl.lit { color: var(--feature-accent); }
@@ -1457,15 +1473,21 @@ html.is-framed .theme-toggle { display: none; }
 
 /* ---- Scroll-in reveals (JS adds .is-in to [data-reveal]) ------------------- *
  * Hidden start states apply ONLY under <html class="js"> + motion-allowed, so
- * JS-off and reduced-motion readers get every section + the finished chart.     */
+ * JS-off and reduced-motion readers get every section + the finished chart.
+ * One settle for every unit (heading, card, figure, row): opacity and a short
+ * rise on one curve, delayed by the batch stagger the script writes into
+ * --reveal-delay. Once landed the script adds .is-settled, which drops the
+ * reveal transition so the element's own hover transitions apply undelayed.  */
 @media (prefers-reduced-motion: no-preference) {
-  /* Each section fades + rises as it enters the viewport */
-  html.js [data-reveal] {
+  html.js [data-reveal]:not(.is-in):not(.premise) {
     opacity: 0;
-    transform: translateY(22px);
-    transition: opacity 700ms var(--ease-standard), transform 800ms var(--ease-emphasis);
+    transform: translate3d(0, var(--reveal-distance), 0);
   }
-  html.js [data-reveal].is-in { opacity: 1; transform: none; }
+  html.js [data-reveal].is-in:not(.is-settled):not(.premise) {
+    transition:
+      opacity var(--motion-reveal) var(--ease-emphasis) var(--reveal-delay, 0ms),
+      transform var(--motion-reveal) var(--ease-emphasis) var(--reveal-delay, 0ms);
+  }
 
   /* Convexity chart — the curve draws in (rising left→right as it increases),
      the area/conventional/dots fade up beneath it, then the labels fade in. */
@@ -3920,12 +3942,18 @@ html[data-narrating] .shell-main { padding-bottom: var(--dock-clear); }
   max-width: min(34rem, calc(100% - 2 * var(--page-gutter)));
   margin: var(--space-8) auto;
   padding: var(--space-4) var(--space-4) var(--space-3);
-  background: var(--feature-bg);
+  background: var(--exhibit-grain-dark), var(--feature-bg);   /* washi grain at exhibit strength */
   color: var(--feature-ink);
   border: 1px solid var(--feature-edge);
   border-radius: var(--radius-card);
   box-shadow: var(--feature-shadow);
 }
+/* The live chart card paints its own paper inline (FrameworkChart.jsx sets the
+   `background` shorthand), so the grain joins it as an image layer. !important
+   is the only way a stylesheet adds to an inline shorthand; it touches the
+   image alone, never the card's colour. The plot draws above its background,
+   so the grain sits under every mark and moves no datum. */
+.acf-chart-build { background-image: var(--exhibit-grain) !important; }
 /* Gallery pages (part-N-pictures) let exhibits breathe wider. */
 .exhibit[data-wide] { max-width: min(54rem, calc(100% - 2 * var(--page-gutter))); }
 /* Live React chart island (site-b-charts.js) renders its own card, so drop the
@@ -5319,3 +5347,31 @@ a.dc-card[data-part="6"]:focus-visible .art-cell-lit,
   .posture-card { transition: none; }
   .posture-card:hover, .posture-card:focus-visible { transform: none; }
 }
+
+/* ---- Ink marks (Japanese craft board round 2, owner picks 2026-10-21) -----
+   reading-core.js inkMarks() draws each mark as an aria-hidden SVG layer and
+   only then adds the host's .ink-* class, so an old line goes only once its
+   brushed replacement is on the page. JS-off readers keep today's lines. */
+svg.ink-mark { position: absolute; pointer-events: none; overflow: visible; }
+.section-title, .callout-collapse { position: relative; }
+.acf-chart-build.ink-framed { position: relative; border-color: transparent !important; }
+.side-part.current.ink-current::before { opacity: 0; }
+
+/* ==========================================================================
+   The three-stroke data-trust meter, as the app draws it (owner ruling 2026-10-20,
+   confidence system). Three strokes of the ink dash, lit top-down; the
+   paths are a <symbol>-style sprite emitted once per page by the generator.
+   Teaching surface only: the docs show the reading, they do not compute it.
+   ========================================================================== */
+.ink3-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.ink3 { display: inline-flex; align-items: center; line-height: 0; vertical-align: middle; }
+.ink3 svg { display: block; width: 14px; height: 14px; overflow: visible; }
+.ink3 use { fill: var(--ink-muted); opacity: 0.38; }
+.ink3 use[data-lit="true"] { opacity: 1; }
+.ink3[data-tone="ok"] use[data-lit="true"] { fill: var(--confidence-high); }
+.ink3[data-tone="caution"] use[data-lit="true"] { fill: var(--confidence-med); }
+.ink3[data-tone="critical"] use[data-lit="true"] { fill: var(--trust-critical); }
+.ink3[data-tone="neutral"] use { fill: var(--confidence-low); opacity: 1; }
+.ink3-age { font-family: var(--font-sans); font-size: 0.875em; color: var(--trust-critical); }
+.compare td.ink3-cell { text-align: center; }
+@media (max-width: 560px) { .compare td.ink3-cell { text-align: right; } }
