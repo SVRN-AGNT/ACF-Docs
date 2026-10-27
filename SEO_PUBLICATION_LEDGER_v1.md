@@ -1,6 +1,10 @@
 # SEO & Publication Ledger v1
 
 **Status of record for `docs.acfdashboard.com` · reconciled 2026-09-16 against `main` at `97261e3`.**
+**Revision 4 (2026-10-19, re-counted 2026-10-27)** — §9 adds AI-search citation (GEO) as a second axis
+beside classic search, weighed against new evidence, and §6.3 gains one owner
+decision. §1, §2.3, §4.5, §4.6, §5.1 and §6.1 are re-counted for the twelfth route
+(`/part-1-pictures`, which revisions 1–3 missed); nothing in §1–§8 changes status.
 **Revision 3** — §8 adds the post-promotion verification obligation and the
 distinction it turns on: implementation landing on `preview` is not the audit
 closing. **Revision 2** corrected three findings on owner review; see §7,
@@ -34,18 +38,22 @@ scored as a gap.
 
 ## 1. The property
 
-Eleven hand-authored static pages under `public/site-b/`, served at clean routes
+Twelve hand-authored static pages under `public/site-b/`, served at clean routes
 by `beforeFiles` rewrites in `next.config.mjs`. Next.js exists for those rewrites
 and for `/api/narration`; there is no framework routing to reason about.
 
 | | |
 |---|---|
-| Indexable routes | 11 |
-| Canonical declared | 11 / 11, each equal to the route that serves it |
-| `og:*` + `twitter:*` | 11 / 11 complete, with a per-page social card that exists on disk |
-| Internal `href`s | 975 across the 11 routes — **0** expose `.html`, **0** unresolved |
+| Indexable routes | 12 (revisions 1–3 counted 11 and missed `/part-1-pictures`, which was already routed and in the sitemap at `97261e3`) |
+| Canonical declared | 12 / 12, each equal to the route that serves it |
+| `og:*` + `twitter:*` | 12 / 12 complete, with a per-page social card that exists on disk |
+| Internal `href`s | 700 in page bodies across the 12 routes — **0** expose `.html`, **0** unresolved |
 | Structured data | **0 pages** |
-| Sitemap | 11 `<loc>`, matching the routes exactly |
+| Sitemap | 12 `<loc>`, matching the routes exactly |
+
+*Re-measured in revision 4 on 2026-10-27, against `main` at `d589cce`, by reading
+each routed page. The 2026-09-16 count was 975 `href`s across 11 routes; the
+re-count covers page bodies only, so the two href totals are not comparable.*
 
 ---
 
@@ -95,7 +103,7 @@ document."*
 ### 2.3 Social preview images were unreachable
 **Closed by #186**, same root cause as 2.2 — `og:image` points under `/site-b/`,
 which the old rule disallowed. The cards were being advertised and refused in the
-same breath. All 11 now resolve to files that exist and are fetchable, and carry
+same breath. All 12 now resolve to files that exist and are fetchable, and carry
 no noindex, so they stay eligible for image indexing.
 
 *Protected by:* `audit:social` (`build-social-meta.mjs --check`) for generation,
@@ -298,13 +306,13 @@ The defects that *would* be real were tested for, and none is present:
 
 | test | result |
 |---|---|
-| Duplicate titles | **none** — 11 distinct |
-| Duplicate descriptions | **none** — 11 distinct |
+| Duplicate titles | **none** — 12 distinct (re-checked 2026-10-27) |
+| Duplicate descriptions | **none** — 12 distinct (re-checked 2026-10-27) |
 | Missing title or description | **none** |
-| Non-descriptive titles | none — every unique segment names its own subject (`Part 4 — Tax Architecture and ROC Strategy`, `The Framework in Math`) |
-| Long descriptions that break mid-thought at ~155 | **none of the seven** — each reads as a complete proposition, with only a trailing sub-clause beyond the cut |
+| Non-descriptive titles | none — every unique segment names its own subject (`Part 4 · Tax Architecture & ROC Strategy`, `The Framework in Math`) |
+| Long descriptions that break mid-thought at ~155 | **none** — on 2026-09-16 seven ran past ~155, each complete before the cut; on 2026-10-27 all twelve are 115 characters or fewer, the cap D-TITLES now enforces |
 
-Example, `/part-6` at 190 characters: *"The two-score execution kernel of the
+Example from 2026-09-16, `/part-6` at 190 characters: *"The two-score execution kernel of the
 framework: CIS quantifies position quality, FIS validates construction integrity,
 and a weekly workflow turns both me…"* — complete before it is cut.
 
@@ -314,9 +322,8 @@ closure open.**
 
 ### 4.6 "Internal links leak `.html`"
 **Rejected — not a defect.** Raised during the original sweep and disproved on
-challenge. Re-verified on `main` today: **975** `href`s across the 11 routes,
-**zero** resolving to a `.html` path and **zero** unresolved. Navigation lands on
-clean routes.
+challenge. Re-verified on 2026-10-27: **700** internal `href`s in page bodies across the 12 routes (a narrower count than the 975 recorded on 2026-09-16, so the two are not comparable), **zero** resolving to a
+`.html` path and **zero** unresolved. Navigation lands on clean routes.
 
 ### 4.7 White chart labels fail contrast
 **Rejected — not a defect.** A geometric probe reported ~1.15:1 by measuring the
@@ -343,10 +350,9 @@ them is ever done.
 ### 5.1 Editorial
 | Item | Note |
 |---|---|
-| Six titles run 66–90 characters | Not a defect (§4.5). If the owner prefers tighter SERP display, the lever is the shared 34-character suffix `· The Adaptive Convexity Framework`, and one rule should govern all six rather than six judgements. |
-| Seven descriptions run 169–232 characters | Not a defect (§4.5). All seven already stand alone at 155 characters. Rewriting is a style preference. |
-| `/part-1-pictures` description at 87 characters | Short, not truncated. May be under-selling the page. |
-| Byline and dates | §4.3 — a *design* question about reader credibility. If the pages should show an author, design that first and let metadata follow. Never the reverse. |
+| Six titles run 66–88 characters (re-checked 2026-10-27) | Not a defect (§4.5). If the owner prefers tighter SERP display, the lever is the shared 34-character suffix `· The Adaptive Convexity Framework`, and one rule should govern all six rather than six judgements. |
+| Description length | Re-checked 2026-10-27: all twelve run 86–115 characters under the D-TITLES cap, so the 2026-09-16 entries (seven at 169–232 characters, `/part-1-pictures` at 87) no longer apply. Nothing open. |
+| Byline and dates | §4.3 — a *design* question about reader credibility. Part 1 and Evidence now carry a visible byline (2026-10-27); no author or date metadata follows it, which is the order §4.3 asks for. Whether other pages should show one stays a design choice. |
 
 ### 5.2 Structured data
 | Item | Note |
@@ -370,12 +376,12 @@ them is ever done.
 > Repository-closed, not production-verified. See **§8** — the redirect retirement
 > still owes a production smoke test before the audit itself closes.
 The **publication plumbing**. A compliant crawler can fetch every resource the
-eleven pages need, renders the real documents, is told exactly which URLs are
+twelve pages need, renders the real documents, is told exactly which URLs are
 canonical, is given a sitemap derived from those same canonicals, and is kept out
 of the API. Duplicate suppression for the raw documents sits in one mechanism the
 crawler can actually read. Social cards resolve and are indexable. Metadata is
-complete, unique and descriptive on all eleven routes. Internal linking is clean:
-975 `href`s, zero exposing `.html`, zero unresolved. The dashboard's links to
+complete, unique and descriptive on all twelve routes. Internal linking is clean:
+zero `href`s expose `.html` and zero are unresolved (§1). The dashboard's links to
 this site are genuine crawlable anchors.
 
 None of it can silently regress: eight crawler-contract tests, four `--check`
@@ -399,8 +405,9 @@ the `vite.config.ts:322` copy step — with a regression asserting the six paths
 redirect rather than serving a document or a soft 200.
 
 Revision 1 listed four items. Two were not defects (§4.4, §4.5) and one is
-optional polish (§5.2). **`docs.acfdashboard.com` itself needs no further SEO
-work**; the one remaining item is in the other repository.
+optional polish (§5.2). **`docs.acfdashboard.com` itself needs no further technical
+SEO work**; the one remaining item is in the other repository. The GEO title
+option (§9.4) is optional editorial work, deferred.
 
 ### 6.3 Decisions that are the owner's, not mine
 1. **Do the redirects now, or after beta?** It is the only material item, and it
@@ -409,6 +416,7 @@ work**; the one remaining item is in the other repository.
    in §5.1 can be settled by argument; only measurement settles it.
 3. **Breadcrumb schema** (§5.2) — worth the generator, or not?
 4. **Byline and dates** (§4.3) — a design question about credibility, not SEO.
+5. **Question-matching titles** (§9.4) — keep the book's titles as they are, or add a plain descriptor that names what each page answers?
 
 ---
 
@@ -441,6 +449,14 @@ remains is not in this repository.
 in §8: [#5421](https://github.com/Tataku/ACFDashboard/pull/5421) merged to
 `preview` as `39a4828`. Nothing else changed — the obligation stands and the
 audit is still not closed.
+
+**Revision 4 — 2026-10-19, re-counted 2026-10-27.** Adds §9 (AI-search
+citation) and decision 5 in §6.3, and re-counts the publication figures in §1,
+§2.3, §4.5, §4.6, §5.1 and §6.1 for `/part-1-pictures`, the twelfth route. It
+was added on 2026-09-15 and was already routed, canonical and in the sitemap at
+`97261e3`, so revisions 1–3 missed an existing indexable page rather than the
+site growing afterwards. All twelve pass the same checks. The classic-search conclusions in §4 and §6 stand; §9 explains why the
+new evidence leaves them intact and adds one editorial option, deferred.
 
 ---
 
@@ -509,8 +525,136 @@ thing, and the ledger should not be read as if it were.
 
 ---
 
+## 9. AI-search citation (GEO) — added in revision 4
+
+§1–§8 are about classic search: can a crawler fetch, render and index the pages.
+Answer engines (ChatGPT, Gemini, Perplexity) add a second question: once a page
+is retrieved, is it the one quoted as a source? This section weighs a large
+observational study of that question against this property. It says where
+editorial effort would go if pursued; it opens no defect.
+
+### 9.1 The evidence, as checked
+
+**arXiv 2610.15033**, *What Drives AI Citations? Content, Retrieval and Model
+Knowledge in Generative Engine Optimization (GEO)*, v1, October 2026. Two 90-day
+collections of answers to commercial questions in contrasting markets, 158,099
+answers carrying 468,037 citations. It compares pages *within* the same website,
+which separates what a page does from what its site does. Read from the arXiv
+abstract and HTML on 2026-10-19:
+
+| finding | figure |
+|---|---|
+| A title and best paragraph that match the questions people ask are cited more | title **+14.1% per SD** in the main dataset, **+26.4%** in the replication market |
+| FAQ blocks, structured data, summary boxes and page speed are associated with citation only *across* sites; within one site no reliable association was found | FAQ block +22.5% across sites against **−1.9%** within |
+| Site authority showed no association with citation for these small vendors | −1.3% per SD |
+| The engine's own retrieval explained more within-site variation than page features, though the gap was not significant | 30% against 10% (difference CI −1 to 31, at 629 pages) |
+| ChatGPT cites 57.1% of the pages it ranks first and 8.3% at ranks 11–20; 99% of what it retrieves is outside Google's top 50 | — |
+
+*Limits, stated so this stays falsifiable.* Not yet peer reviewed. Commercial
+questions only, not finance-education or documentation queries. Observational,
+so "matches the question" is associated with citation, not proven to cause it.
+Engines change retrieval often. The handoff brief quoted only the +26% figure;
+the main dataset gives about half that, and both are recorded here.
+
+**Ahrefs, *We Analyzed 137K Sites: 97% of llms.txt Files Never Get Read***
+(2026-06-15, before the study window but the primary dataset). 28% of 137,210
+domains publish an llms.txt; 97% of those received no request at all in May
+2026. Of the requests that did arrive, 96% came from bots, and the named AI
+tools were led by GPTBot and Claude Code, ahead of every AI search and
+assistant bot.
+No AI bot asked for an llms.txt that did not exist; Ahrefs reads this as agents
+fetching the file when directed to it, not speculatively.
+
+### 9.2 What this changes in the ledger
+
+1. **§4.1, §4.2 and §5.2 hold, and GEO gives no reason to reopen them.** In
+   the study's within-site models, FAQ blocks and structured data showed no
+   reliable association with extra citations. That is a null result from
+   observational data, not proof of no effect, so the rejections of JSON-LD and
+   `DefinedTerm` still rest on their own reasoning (the second source of truth
+   in §4.1 and §4.2). `BreadcrumbList` stays optional for its visible SERP
+   effect only; this evidence gives no grounds to call it a GEO lever.
+2. **§4.5 holds for classic search, and GEO adds a different test.** §4.5 asked
+   whether titles are duplicated, missing, vague or cut mid-thought; none is.
+   The study asks something else: does the title share words and meaning with
+   the question a reader would type? A book-style chapter name can pass §4.5 and
+   still match no question. §9.3 scores that.
+3. **llms.txt: nothing to remove.** The site publishes no llms.txt and this
+   ledger never claimed one would help visibility; the only mention in the repo
+   is the analytics skip-list in `middleware.ts`. If one is ever added, it is an
+   index for coding agents, not a citation lever, and it should be linked from
+   the pages, because unlinked files go unread.
+
+### 9.3 Titles and leads, scored against the study
+
+**Leads already answer first.** Each Part opens with a *Key takeaways* box
+whose first item states the Part's answer before any argument (Part 3: *"Bitcoin
+is the framework's reserve asset and its main source of convexity, held by
+default in self-custody in a taxable account"*). The cover opens *"A tax-aware
+method for compounding through unstable markets, built to survive being
+wrong."* The four reference pages and Part 1 in Pictures open by saying what the page does. The one
+partial exception is Part 1, whose first takeaway is market history (the 60/40
+record) and whose fifth states the objective. That ordering is calibrated
+prose held to the owner's locked phrasing (`FRAMEWORK_DOCS_CANONICAL.md` §5a), so
+it is recorded here and not edited.
+
+**Titles name subjects, not questions.** Titles live once in
+`scripts/site-titles.mjs` (D-TITLES) and reach the h1, `<title>`, og/twitter
+tags, navigation, share text and the rendered social cards.
+
+| page | title today | question it answers (from its own lead) | matches? |
+|---|---|---|---|
+| cover | The Adaptive Convexity Framework | what is the Adaptive Convexity Framework? | yes, by name |
+| Part 1 | Foundation & Philosophy | why is the 60/40 portfolio failing, and what replaces it? | no |
+| Part 2 | Lineage & Macro Thesis | where does the method come from; how is a macro thesis built? | partly |
+| Part 3 | Bitcoin: Convexity Backbone | why hold Bitcoin as a reserve asset, and how much? | partly |
+| Part 4 | Tax Architecture & ROC Strategy | which account should each holding go in? | partly |
+| Part 5 | Portfolio Construction & Position Management | how big should each position be? | partly |
+| Part 6 | Convexity & Framework Integrity Scoring | how are positions and portfolios scored? | partly |
+| Glossary, Pictures, Math, Evidence | as named | reference lookups | yes, for their own queries |
+| Part 1 in Pictures | Part 1 in Pictures | what do Part 1's charts show? | partly: names its Part, not its subject |
+
+### 9.4 The option, for the owner (decision 5 in §6.3)
+
+Renaming the Parts is out of scope: they are the book's chapter names. The
+reversible version keeps every h1 and Part name and adds a plain descriptor to
+the `<title>` and share text only, for example:
+
+| page | descriptor appended to today's `<title>` |
+|---|---|
+| Part 1 | why 60/40 is failing and what replaces it |
+| Part 2 | where the method comes from and how a thesis is built |
+| Part 3 | why Bitcoin is the reserve asset and how it is sized |
+| Part 4 | which account each holding belongs in |
+| Part 5 | how each position is sized |
+| Part 6 | how CIS and FIS score a portfolio |
+
+*Cost.* An amendment to D-TITLES (a `<title>` that differs from its h1), the
+separator chosen so `shareText`/`splitLabel` and `reading-core.js` still parse
+it (the normalization standard rules out an em dash), `tests/site-titles.test.mjs`
+updated to the new rule, and re-rendered social cards, since each card bakes its
+title into pixels. *Expected benefit.* Unmeasured: the per-SD figures come from commercial
+queries, and nothing yet observes AI citations of this site, so a change could
+not be shown to work. The recommendation is to defer it until there is a way to
+measure (Search Console in §5.3 for classic search; a periodic check of which
+answer engines cite which page for a fixed question set for GEO).
+
+*Optional, not scheduled.* A docs eval in CI (a fixed question set, an agent
+limited to these pages, a judge with pinned reference answers) would catch
+drift between the docs and the dashboard and would push leads further toward
+answering first. It is a CI and cost decision, not an SEO defect.
+
+Sources: arXiv 2610.15033 (https://arxiv.org/abs/2610.15033), Ahrefs llms.txt
+study (https://ahrefs.com/blog/llmstxt-study), both read 2026-10-19; the project's
+AI-advances research notes of the same date. Titles and leads read from
+`public/site-b/` at `main` `0de12a3` and unchanged at `d589cce`.
+
+---
+
 *Reconciled against `main` at `97261e3`. Sources: the original publication sweep;
 PR #169 (robots + sitemap, derived); #186 (crawler contract); #187 (blocking CI);
 #188 (accessibility, Share control); #190 (glossary runtime); #191 (font
 payload). Figures re-measured from the repositories on 2026-09-16, not carried
-forward from earlier reports.*
+forward from earlier reports. Revision 4 re-measured the §1, §2.3, §4.5, §4.6,
+§5.1 and §6.1 figures on 2026-10-27 against `main` at `d589cce`; where the two
+differ, the 2026-10-27 figure is the current one and the earlier one is history.*
