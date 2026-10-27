@@ -585,7 +585,7 @@ whose first item states the Part's answer before any argument (Part 3: *"Bitcoin
 is the framework's reserve asset and its main source of convexity, held by
 default in self-custody in a taxable account"*). The cover opens *"A tax-aware
 method for compounding through unstable markets, built to survive being
-wrong."* The four reference pages open by saying what the page does. The one
+wrong."* The four reference pages and Part 1 in Pictures open by saying what the page does. The one
 partial exception is Part 1, whose first takeaway is market history (the 60/40
 record) and whose fifth states the objective. That ordering is calibrated
 prose held to the owner's locked phrasing (`FRAMEWORK_DOCS_CANONICAL.md` §5a), so
@@ -605,6 +605,7 @@ tags, navigation, share text and the rendered social cards.
 | Part 5 | Portfolio Construction & Position Management | how big should each position be? | partly |
 | Part 6 | Convexity & Framework Integrity Scoring | how are positions and portfolios scored? | partly |
 | Glossary, Pictures, Math, Evidence | as named | reference lookups | yes, for their own queries |
+| Part 1 in Pictures | Part 1 in Pictures | what do Part 1's charts show? | partly: names its Part, not its subject |
 
 ### 9.4 The option, for the owner (decision 5 in §6.3)
 
