@@ -3,7 +3,8 @@
 **Status of record for `docs.acfdashboard.com` · reconciled 2026-09-16 against `main` at `97261e3`.**
 **Revision 4 (2026-10-19)** — §9 adds AI-search citation (GEO) as a second axis
 beside classic search, weighed against new evidence, and §6.3 gains one owner
-decision. Nothing in §1–§8 changes status.
+decision. §1, §2.3, §4.5, §4.6 and §6.1 are re-counted for the twelfth route
+(`/part-1-pictures`); nothing in §1–§8 changes status.
 **Revision 3** — §8 adds the post-promotion verification obligation and the
 distinction it turns on: implementation landing on `preview` is not the audit
 closing. **Revision 2** corrected three findings on owner review; see §7,
@@ -37,18 +38,22 @@ scored as a gap.
 
 ## 1. The property
 
-Eleven hand-authored static pages under `public/site-b/`, served at clean routes
+Twelve hand-authored static pages under `public/site-b/`, served at clean routes
 by `beforeFiles` rewrites in `next.config.mjs`. Next.js exists for those rewrites
 and for `/api/narration`; there is no framework routing to reason about.
 
 | | |
 |---|---|
-| Indexable routes | 11 |
-| Canonical declared | 11 / 11, each equal to the route that serves it |
-| `og:*` + `twitter:*` | 11 / 11 complete, with a per-page social card that exists on disk |
-| Internal `href`s | 975 across the 11 routes — **0** expose `.html`, **0** unresolved |
+| Indexable routes | 12 (`/part-1-pictures` joined after the 2026-09-16 reconciliation) |
+| Canonical declared | 12 / 12, each equal to the route that serves it |
+| `og:*` + `twitter:*` | 12 / 12 complete, with a per-page social card that exists on disk |
+| Internal `href`s | 700 in page bodies across the 12 routes — **0** expose `.html`, **0** unresolved |
 | Structured data | **0 pages** |
-| Sitemap | 11 `<loc>`, matching the routes exactly |
+| Sitemap | 12 `<loc>`, matching the routes exactly |
+
+*Re-measured in revision 4 on 2026-10-27, against `main` at `d589cce`, by reading
+each routed page. The 2026-09-16 count was 975 `href`s across 11 routes; the
+re-count covers page bodies only, so the two href totals are not comparable.*
 
 ---
 
@@ -98,7 +103,7 @@ document."*
 ### 2.3 Social preview images were unreachable
 **Closed by #186**, same root cause as 2.2 — `og:image` points under `/site-b/`,
 which the old rule disallowed. The cards were being advertised and refused in the
-same breath. All 11 now resolve to files that exist and are fetchable, and carry
+same breath. All 12 now resolve to files that exist and are fetchable, and carry
 no noindex, so they stay eligible for image indexing.
 
 *Protected by:* `audit:social` (`build-social-meta.mjs --check`) for generation,
@@ -301,8 +306,8 @@ The defects that *would* be real were tested for, and none is present:
 
 | test | result |
 |---|---|
-| Duplicate titles | **none** — 11 distinct |
-| Duplicate descriptions | **none** — 11 distinct |
+| Duplicate titles | **none** — 12 distinct (re-checked 2026-10-27) |
+| Duplicate descriptions | **none** — 12 distinct (re-checked 2026-10-27) |
 | Missing title or description | **none** |
 | Non-descriptive titles | none — every unique segment names its own subject (`Part 4 — Tax Architecture and ROC Strategy`, `The Framework in Math`) |
 | Long descriptions that break mid-thought at ~155 | **none of the seven** — each reads as a complete proposition, with only a trailing sub-clause beyond the cut |
@@ -317,9 +322,8 @@ closure open.**
 
 ### 4.6 "Internal links leak `.html`"
 **Rejected — not a defect.** Raised during the original sweep and disproved on
-challenge. Re-verified on `main` today: **975** `href`s across the 11 routes,
-**zero** resolving to a `.html` path and **zero** unresolved. Navigation lands on
-clean routes.
+challenge. Re-verified on 2026-10-27: **700** internal `href`s in page bodies across the 12 routes (a narrower count than the 975 recorded on 2026-09-16, so the two are not comparable), **zero** resolving to a
+`.html` path and **zero** unresolved. Navigation lands on clean routes.
 
 ### 4.7 White chart labels fail contrast
 **Rejected — not a defect.** A geometric probe reported ~1.15:1 by measuring the
@@ -373,12 +377,12 @@ them is ever done.
 > Repository-closed, not production-verified. See **§8** — the redirect retirement
 > still owes a production smoke test before the audit itself closes.
 The **publication plumbing**. A compliant crawler can fetch every resource the
-eleven pages need, renders the real documents, is told exactly which URLs are
+twelve pages need, renders the real documents, is told exactly which URLs are
 canonical, is given a sitemap derived from those same canonicals, and is kept out
 of the API. Duplicate suppression for the raw documents sits in one mechanism the
 crawler can actually read. Social cards resolve and are indexable. Metadata is
-complete, unique and descriptive on all eleven routes. Internal linking is clean:
-975 `href`s, zero exposing `.html`, zero unresolved. The dashboard's links to
+complete, unique and descriptive on all twelve routes. Internal linking is clean:
+zero `href`s expose `.html` and zero are unresolved (§1). The dashboard's links to
 this site are genuine crawlable anchors.
 
 None of it can silently regress: eight crawler-contract tests, four `--check`
@@ -446,8 +450,10 @@ in §8: [#5421](https://github.com/Tataku/ACFDashboard/pull/5421) merged to
 `preview` as `39a4828`. Nothing else changed — the obligation stands and the
 audit is still not closed.
 
-**Revision 4 — 2026-10-19.** Adds §9 (AI-search citation) and decision 5 in
-§6.3. The classic-search conclusions in §4 and §6 stand; §9 explains why the
+**Revision 4 — 2026-10-19, re-counted 2026-10-27.** Adds §9 (AI-search
+citation) and decision 5 in §6.3, and re-counts the publication figures in §1,
+§2.3, §4.5, §4.6 and §6.1 for `/part-1-pictures`, the twelfth route, which
+arrived after revision 3. All twelve pass the same checks. The classic-search conclusions in §4 and §6 stand; §9 explains why the
 new evidence leaves them intact and changes only how editorial effort is ranked.
 
 ---
@@ -575,11 +581,6 @@ fetching the file when directed to it, not speculatively.
    is the analytics skip-list in `middleware.ts`. If one is ever added, it is an
    index for coding agents, not a citation lever, and it should be linked from
    the pages, because unlinked files go unread.
-4. **For a small property the larger levers are probably off-page.** In the
-   study, retrieval explained more of the variation than page features, though
-   not significantly. The inference, not a finding, is that being retrieved and
-   being named on other sites matter more here than on-page edits. Being
-   fetchable (§2.2) is the precondition, and that is already held closed.
 
 ### 9.3 Titles and leads, scored against the study
 
