@@ -1,0 +1,5 @@
+# Agent search skips build output and vendored libraries; read them by path.
+# Their sources stay searchable: scripts/build-site-b-charts.mjs builds the bundle,
+# and components/framework-charts/chart-specs.mjs is hand-written (the source of truth).
+public/site-b/site-b-charts.js
+public/site-b/vendor/
