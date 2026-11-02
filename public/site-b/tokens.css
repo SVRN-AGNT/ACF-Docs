@@ -126,7 +126,12 @@
   --text-4xl:  3.052rem;   /* ~58px    */
   --text-5xl:  4rem;       /* 76px     */
 
-  --weight-light:    300;
+  /* Schibsted Grotesk's lightest weight is 400, so "light" resolves to 400 on
+     purpose rather than asking for a 300 the face cannot draw (the browser
+     would clamp it to 400 anyway). Its two users, the part numerals and the
+     next-up numeral, keep their lighter reading through colour (accent /
+     ink-faint) against 600 titles. */
+  --weight-light:    400;
   --weight-normal:   400;
   --weight-medium:   500;
   --weight-semibold: 600;
