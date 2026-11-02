@@ -52,6 +52,10 @@ SOURCES = os.path.join(ROOT, 'assets', 'fonts-upstream')
 
 FACES = [
     'SchibstedGrotesk', 'SchibstedGrotesk-Italic',
+    # Inter stays as a fallback for the six corpus characters Schibsted Grotesk
+    # lacks (sigma, thin and narrow no-break spaces, three symbols). Pages declare it
+    # with a unicode-range, so a browser fetches it only when a page uses one.
+    'InterVariable', 'InterVariable-Italic',
     'JetBrainsMono-Regular', 'JetBrainsMono-Medium',
     'JetBrainsMono-SemiBold', 'JetBrainsMono-Bold',
 ]
