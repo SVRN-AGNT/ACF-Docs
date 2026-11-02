@@ -51,7 +51,7 @@ MANIFEST = os.path.join(FONT_DIR, 'subset-manifest.json')
 SOURCES = os.path.join(ROOT, 'assets', 'fonts-upstream')
 
 FACES = [
-    'InterVariable', 'InterVariable-Italic',
+    'SchibstedGrotesk', 'SchibstedGrotesk-Italic',
     'JetBrainsMono-Regular', 'JetBrainsMono-Medium',
     'JetBrainsMono-SemiBold', 'JetBrainsMono-Bold',
 ]

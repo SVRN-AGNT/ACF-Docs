@@ -1,10 +1,10 @@
 {
   "why": "Proof that the shipped subsets cover every character the site can render. Verified on every pull request by scripts/audit-fonts.mjs. Rebuild with npm run build:fonts.",
-  "corpusSize": 212,
+  "corpusSize": 210,
   "fonts": {
-    "InterVariable.woff2": {
-      "bytes": 93752,
-      "sha256": "3e0d65034a7fa0fe8b7fe8887ccf78773001527bacfd272cdedb3cf92164d726",
+    "SchibstedGrotesk.woff2": {
+      "bytes": 47624,
+      "sha256": "bb75d2f9f224deba6c530b45d40447a343ed48d452b2485db6387725d4e3f8eb",
       "covers": [
         [
           32,
@@ -71,14 +71,6 @@
           956
         ],
         [
-          963,
-          963
-        ],
-        [
-          8201,
-          8201
-        ],
-        [
           8211,
           8212
         ],
@@ -97,10 +89,6 @@
         [
           8230,
           8230
-        ],
-        [
-          8239,
-          8239
         ],
         [
           8242,
@@ -127,10 +115,6 @@
           8599
         ],
         [
-          8627,
-          8627
-        ],
-        [
           8721,
           8722
         ],
@@ -153,26 +137,22 @@
         [
           8804,
           8805
-        ],
-        [
-          9671,
-          9671
-        ],
-        [
-          10003,
-          10003
         ]
       ],
       "absentFromSource": [
+        963,
+        8201,
+        8239,
+        8627,
         9472,
         9552,
-        9676,
+        10003,
         10005
       ]
     },
-    "InterVariable-Italic.woff2": {
-      "bytes": 102684,
-      "sha256": "52df46d6afa3ba8bf6a4e7964ff414d2a9bfb404148452a014c7815158fbf541",
+    "SchibstedGrotesk-Italic.woff2": {
+      "bytes": 51004,
+      "sha256": "ae2f8ea83f1c812a172b7ef0c94e65ef0e1420ec02a714585fbafaa802085df5",
       "covers": [
         [
           32,
@@ -239,14 +219,6 @@
           956
         ],
         [
-          963,
-          963
-        ],
-        [
-          8201,
-          8201
-        ],
-        [
           8211,
           8212
         ],
@@ -265,10 +237,6 @@
         [
           8230,
           8230
-        ],
-        [
-          8239,
-          8239
         ],
         [
           8242,
@@ -295,10 +263,6 @@
           8599
         ],
         [
-          8627,
-          8627
-        ],
-        [
           8721,
           8722
         ],
@@ -321,20 +285,16 @@
         [
           8804,
           8805
-        ],
-        [
-          9671,
-          9671
-        ],
-        [
-          10003,
-          10003
         ]
       ],
       "absentFromSource": [
+        963,
+        8201,
+        8239,
+        8627,
         9472,
         9552,
-        9676,
+        10003,
         10005
       ]
     },

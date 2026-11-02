@@ -182,7 +182,7 @@ test('every resource the canonical pages need is fetchable by a compliant crawle
   // Assets are resources, not duplicates: a noindex here would take the social
   // cards out of image results and buy nothing.
   for (const url of ['/site-b/reading-system.css', '/site-b/reading-core.js', '/site-b/site-b-charts.js',
-    '/site-b/fonts/InterVariable.woff2', '/site-b/acf-glossary.json']) {
+    '/site-b/fonts/SchibstedGrotesk.woff2', '/site-b/acf-glossary.json']) {
     assert.ok(!noindexOn(url), `${url} is a resource, not a document — it should carry no noindex`);
   }
 });

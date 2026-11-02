@@ -5,13 +5,13 @@
 
    SURFACE SPLIT (intentional — do not "fix" toward consistency):
    ----------------------------------------------------------------------------
-   The dashboard surface uses  Inter (sans) on a dark app chrome (#08090b).
-   This editorial reading surface uses  Geist (sans) + Newsreader (serif)
-   on light paper. Two surfaces, two sans faces, on purpose:
-     • Inter   → dashboard / application chrome
-     • Geist   → editorial reading surface (matches the Phase 1 reports)
-   If you see Geist here and Inter in the dashboard, that is the designed
-   split, not drift.
+   Fonts are per-product skin (second-brain decision 0039 C8: no serif face,
+   a mono face for numbers). Owner pick, 2026-11-01 (ACFDashboard#5903):
+     • Inter               → ACF dashboard / application chrome
+     • Schibsted Grotesk   → this editorial reading surface
+     • JetBrains Mono      → numbers, tokens and labels on both
+   If you see Schibsted Grotesk here and Inter in the dashboard, that is the
+   designed split, not drift.
 
    ACCENT DERIVATION:
    The dashboard brand accent is emerald #10b981 (kept below as the brand
@@ -25,7 +25,7 @@
  * scripts/ink-dash/): they draw ONLY U+2014, the em dash an unknown value
  * shows, as one imperfect brush stroke sized and centred on the face it stands
  * in for. They lead --font-sans / --font-mono below; every other character
- * falls through to Inter / JetBrains Mono. ~700 bytes each, so no preload.
+ * falls through to Schibsted Grotesk / JetBrains Mono. ~700 bytes each, so no preload.
  * Decision 0039: "—" means unknown and nothing else, so prose carries none.  */
 @font-face {
   font-family: 'ACF Ink Dash';
@@ -102,13 +102,14 @@
   --trust-critical:   #b42318;
 
   /* ---- Typography — ACF design-system §08 -------------------------------- *
-   * Inter for everything that reads as language; JetBrains Mono for tokens,
+   * Schibsted Grotesk for everything that reads as language (owner pick
+   * 2026-11-01, ACFDashboard#5903; weights 400-900); JetBrains Mono for tokens,
    * labels, eyebrows, prices and tabular numerals. Weight ceiling 600.
    * The editorial serif reading face (Newsreader) was RETIRED here in favour of
-   * design-system alignment — `--font-serif` now aliases Inter so the existing
+   * design-system alignment — `--font-serif` now aliases the sans so the existing
    * title/prose rules need no per-rule changes.                                */
-  --font-sans:  'ACF Ink Dash', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --font-serif: var(--font-sans);   /* retired serif → Inter */
+  --font-sans:  'ACF Ink Dash', 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-sans);   /* retired serif → the sans */
   --font-mono:  'ACF Ink Dash Mono', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Type scale — major third (1.25), base 19px (set on html, see reading-system.css) */

@@ -116,7 +116,7 @@ test('the ink dash leads both stacks and draws only U+2014', () => {
     const src = face.match(/url\('\/site-b\/([^']+)'\)/)[1];
     assert.ok(fs.existsSync(path.join(ROOT, 'public/site-b', src)), `${src} ships`);
   }
-  assert.match(TOKENS, /--font-sans:\s*'ACF Ink Dash', 'Inter'/);
+  assert.match(TOKENS, /--font-sans:\s*'ACF Ink Dash', 'Schibsted Grotesk'/);
   assert.match(TOKENS, /--font-mono:\s*'ACF Ink Dash Mono', 'JetBrains Mono'/);
 });
 
