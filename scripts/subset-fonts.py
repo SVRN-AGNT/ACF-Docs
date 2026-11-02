@@ -56,6 +56,9 @@ FACES = [
     # lacks (sigma, thin and narrow no-break spaces, three symbols). Pages declare it
     # with a unicode-range, so a browser fetches it only when a page uses one.
     'InterVariable', 'InterVariable-Italic',
+    # Archivo, pinned to width 112 / weight 600: the cover's display headline
+    # only (owner pick 2026-11-01, ACFDashboard#5903).
+    'ArchivoDisplay-600',
     'JetBrainsMono-Regular', 'JetBrainsMono-Medium',
     'JetBrainsMono-SemiBold', 'JetBrainsMono-Bold',
 ]

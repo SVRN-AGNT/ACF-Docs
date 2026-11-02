@@ -57,6 +57,7 @@
   <!-- Fonts: Schibsted Grotesk (all language) + JetBrains Mono (tokens/labels/numerals) -->
   <!-- Self-hosted webfonts (OFL 1.1 — licenses in fonts/). Schibsted Grotesk (variable, 400-900) + JetBrains Mono v2.304; replaces the Google Fonts CDN load. -->
   <link rel="preload" href="/site-b/fonts/SchibstedGrotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/site-b/fonts/ArchivoDisplay-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/site-b/fonts/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <style>
     @font-face {
@@ -71,6 +72,15 @@
       src: url('/site-b/fonts/SchibstedGrotesk-Italic.woff2') format('woff2');
       font-weight: 400 900;
       font-style: italic;
+      font-display: swap;
+    }
+    /* The cover headline's display face: Archivo pinned to width 112 /
+       weight 600 (owner pick 2026-11-01, ACFDashboard#5903). This page only. */
+    @font-face {
+      font-family: 'Archivo Display';
+      src: url('/site-b/fonts/ArchivoDisplay-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
       font-display: swap;
     }
     /* Inter draws only the six characters Schibsted Grotesk lacks; the
