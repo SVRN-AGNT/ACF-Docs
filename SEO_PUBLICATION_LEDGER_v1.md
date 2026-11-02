@@ -1,6 +1,7 @@
 # SEO & Publication Ledger v1
 
 **Status of record for `docs.acfdashboard.com` · reconciled 2026-09-16 against `main` at `97261e3`.**
+**Revision 5 (2026-11-02)** — §8 closed: the six redirects were checked on production.
 **Revision 4 (2026-10-19, re-counted 2026-10-27)** — §9 adds AI-search citation (GEO) as a second axis
 beside classic search, weighed against new evidence, and §6.3 gains one owner
 decision. §1, §2.3, §4.5, §4.6, §5.1 and §6.1 are re-counted for the twelfth route
@@ -140,6 +141,8 @@ Page experience is a real ranking input and these were large:
 ## 3. STILL OPEN
 
 ### 3.1 — **Duplicate Framework content served from the dashboard origin**
+
+> **Fixed and verified on production 2026-11-02** (§8): `/part1`…`/part6` now 308 to the Docs routes. The text below is the 2026-09-16 finding.
 
 **The only technical SEO blocker on this list, and after revision 2 the only item
 in this section at all.** Filed but not fixed in #169; re-verified now and
@@ -373,8 +376,7 @@ them is ever done.
 
 ### 6.1 What is closed in the repositories
 
-> Repository-closed, not production-verified. See **§8** — the redirect retirement
-> still owes a production smoke test before the audit itself closes.
+> Repository-closed and, since 2026-11-02, production-verified (**§8**).
 The **publication plumbing**. A compliant crawler can fetch every resource the
 twelve pages need, renders the real documents, is told exactly which URLs are
 canonical, is given a sitemap derived from those same canonicals, and is kept out
@@ -460,7 +462,24 @@ new evidence leaves them intact and adds one editorial option, deferred.
 
 ---
 
-## 8. Post-promotion verification obligation — **OPEN**
+## 8. Post-promotion verification obligation — **CLOSED 2026-11-02**
+
+**Closed 2026-11-02 00:13 UTC, on production.** The redirects are in `ACFDashboard`
+`main`'s `vercel.json`, and `main` is production (the `preview` branch and its
+promotion lane were retired 2026-10-29). Checks run against `https://acfdashboard.com`
+and `https://docs.acfdashboard.com` through the Vercel connector's fetch:
+
+| # | result |
+|---|---|
+| 1 | `/part1`…`/part6` each answer **308 Permanent Redirect** |
+| 2 | each `Location` is the exact target below (the fetch tool appends its own `_vercel_share` query, which is not part of the redirect) |
+| 3 | one hop: the 308 points straight at the Docs route |
+| 4 | all six Docs destinations answer **200** |
+| 5 | `/` answers **200** with the SPA shell. The auth entry and an authenticated route were not checked: they are hash routes inside that same document, and there is no logged-in session here |
+
+The record below is kept as it stood on 2026-09-16.
+
+### As recorded 2026-09-16
 
 **The audit is NOT closed.** `ACFDashboard` [#5421](https://github.com/Tataku/ACFDashboard/pull/5421)
 retires `/part1`…`/part6` by permanent redirect, and landing it closes the SEO
