@@ -26,7 +26,7 @@
  * its own ground or it dissolves into whichever timeline is showing it. That is
  * also why the light card stays legible in a dark feed and vice versa.
  *
- * Type is the site's own self-hosted Inter and JetBrains Mono, loaded from
+ * Type is the site's own self-hosted Schibsted Grotesk and JetBrains Mono, loaded from
  * public/site-b/fonts, so the card is set in the same faces as the page it
  * previews rather than in whatever the renderer defaults to.
  *
@@ -76,7 +76,7 @@ function read(page) {
 }
 
 const b64 = (f) => fs.readFileSync(path.join(FONTS, f)).toString('base64');
-const INTER = b64('InterVariable.woff2');
+const SANS = b64('SchibstedGrotesk.woff2');
 const MONO = b64('JetBrainsMono-Medium.woff2');
 
 // The same geometry the nav marks and the favicon draw — the WHOLE figure:
@@ -99,11 +99,11 @@ function card({ eyebrow, headline, description }, t) {
   // lines plus a two-line description is what crowds the footer rule.
   const size = headline.length > 44 ? 56 : headline.length > 34 ? 66 : 76;
   return `<!doctype html><html><head><meta charset="utf-8"><style>
-    @font-face { font-family: Inter; src: url(data:font/woff2;base64,${INTER}) format('woff2'); font-weight: 100 900; }
+    @font-face { font-family: 'Schibsted Grotesk'; src: url(data:font/woff2;base64,${SANS}) format('woff2'); font-weight: 400 900; }
     @font-face { font-family: JBMono; src: url(data:font/woff2;base64,${MONO}) format('woff2'); font-weight: 500; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { width: 1200px; height: 630px; background: ${t.paper}; color: ${t.inkDisplay};
-           font-family: Inter, sans-serif; display: flex; flex-direction: column;
+           font-family: 'Schibsted Grotesk', sans-serif; display: flex; flex-direction: column;
            justify-content: space-between; padding: 72px 80px; -webkit-font-smoothing: antialiased; }
     .top { display: flex; align-items: center; gap: 22px; }
     .word { font-size: 30px; font-weight: 600; letter-spacing: .16em; }

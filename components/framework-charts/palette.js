@@ -10,7 +10,7 @@
 
 export const FONTS = {
   mono: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
-  sans: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  sans: "'Schibsted Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
 };
 
 export const ACCENTS = {

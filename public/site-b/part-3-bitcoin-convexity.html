@@ -53,17 +53,34 @@
     })();
   </script>
 
-  <!-- Fonts: Inter (all language) + JetBrains Mono (tokens/labels/numerals) — ACF design-system §08 -->
-  <!-- Self-hosted webfonts (OFL 1.1 — licenses in fonts/). Inter v4.1 + JetBrains Mono v2.304; replaces the Google Fonts CDN load. -->
-  <link rel="preload" href="/site-b/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Fonts: Schibsted Grotesk (all language) + JetBrains Mono (tokens/labels/numerals) — ACF design-system §08 -->
+  <!-- Self-hosted webfonts (OFL 1.1 — licenses in fonts/). Schibsted Grotesk (variable, 400-900) + JetBrains Mono v2.304; replaces the Google Fonts CDN load. -->
+  <link rel="preload" href="/site-b/fonts/SchibstedGrotesk.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/site-b/fonts/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <style>
+    @font-face {
+      font-family: 'Schibsted Grotesk';
+      src: url('/site-b/fonts/SchibstedGrotesk.woff2') format('woff2');
+      font-weight: 400 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Schibsted Grotesk';
+      src: url('/site-b/fonts/SchibstedGrotesk-Italic.woff2') format('woff2');
+      font-weight: 400 900;
+      font-style: italic;
+      font-display: swap;
+    }
+    /* Inter draws only the six characters Schibsted Grotesk lacks; the
+       unicode-range means it downloads only on a page that uses one. */
     @font-face {
       font-family: 'Inter';
       src: url('/site-b/fonts/InterVariable.woff2') format('woff2');
       font-weight: 100 900;
       font-style: normal;
       font-display: swap;
+      unicode-range: U+03C3, U+2009, U+202F, U+21B3, U+25C7, U+2713;
     }
     @font-face {
       font-family: 'Inter';
@@ -71,6 +88,7 @@
       font-weight: 100 900;
       font-style: italic;
       font-display: swap;
+      unicode-range: U+03C3, U+2009, U+202F, U+21B3, U+25C7, U+2713;
     }
     @font-face {
       font-family: 'JetBrains Mono';
