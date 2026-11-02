@@ -1159,6 +1159,15 @@ body {
 
 /* Framed by the ACF dashboard, the app owns the theme: one switch, not two. */
 html.is-framed .theme-toggle { display: none; }
+/* Inside the app on a phone, the app's own menu button sits at the frame's top
+   left, so the docs' contents button (Parts and "On this page") moves to the
+   top right: two menus side by side, never one stacked over the other. */
+@media (max-width: 1024px) {
+  html.is-framed .drawer-toggle {
+    left: auto;
+    right: calc(var(--space-4) + env(safe-area-inset-right));
+  }
+}
 .theme-toggle:hover, .theme-toggle:focus-visible {
   color: var(--accent);
 }
@@ -3418,6 +3427,42 @@ a.floatnav-next:hover, a.floatnav-next:focus-visible { background: var(--accent-
 /* Rest the float-bob while narration is open so the scrubber is a steady target
    (the pill still bobs as quick-nav; it settles the moment you engage the rail). */
 .floatnav[data-armed] .floatnav-inner { animation: none; }
+
+/* Wide screens: the dock leaves the reading column (owner delegation 2026-10-17,
+   shipped 2026-11-02). From 1440px the page has a clear right margin, so the
+   resting dock becomes a narrow vertical rail of marks on that edge and never
+   sits over a sentence. The words stay in the links for screen readers and as
+   a hover title (reading-core.js); the eye gets one mark per destination. When
+   narration plays the dock needs its scrub rail, so an armed dock returns to
+   the centred bar below the text, where the player has room. */
+@media (min-width: 1440px) {
+  .floatnav:not([data-armed]) {
+    left: auto;
+    right: calc(var(--space-6) + env(safe-area-inset-right));
+    top: 50%;
+    bottom: auto;
+    margin-inline: 0;
+    transform: translate(1.25rem, -50%);
+  }
+  .floatnav:not([data-armed])[data-visible] { transform: translate(0, -50%); }
+  .floatnav:not([data-armed]) .floatnav-inner:not(.is-dock),
+  .floatnav:not([data-armed]) .floatnav-main { flex-direction: column; }
+  .floatnav:not([data-armed]) .floatnav-inner.is-dock { border-radius: 999px; }
+  .floatnav:not([data-armed]) .floatnav-player { display: none; }   /* collapsed rail still holds width */
+  .floatnav:not([data-armed]) .floatnav-div { width: 1.4rem; height: 1px; margin: var(--space-1) 0; }
+  .floatnav:not([data-armed]) .floatnav-home,
+  .floatnav:not([data-armed]) .floatnav-prev,
+  .floatnav:not([data-armed]) .floatnav-next {
+    width: 2.3rem; height: 2.3rem; min-height: 0; padding: 0;
+    justify-content: center; gap: 0; font-size: 0; border-radius: 50%;
+  }
+  .floatnav:not([data-armed]) .fn-home-label {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .floatnav:not([data-armed]) .floatnav-prev::before { content: "\2190"; font-size: 1rem; }
+  .floatnav:not([data-armed]) .floatnav-next::before { content: "\2192"; font-size: 1rem; }
+}
 
 /* The rail: a subordinate lower lip, divided from the nav row, collapsed until
    armed. The dock is position:fixed, so opening it never reflows page content. */
