@@ -699,6 +699,11 @@
     var nav = document.querySelector('.floatnav');
     if (!nav) return;
     nav.hidden = false;
+    // On wide screens the resting dock is a rail of marks (reading-system.css),
+    // so each destination keeps its words as a hover title.
+    Array.prototype.forEach.call(nav.querySelectorAll('.floatnav-home, .floatnav-prev, .floatnav-next'), function (a) {
+      if (!a.title) a.title = a.textContent.replace(/\s+/g, ' ').trim();
+    });
     var threshold = 600, idle;
     function hideSoon() {
       clearTimeout(idle);

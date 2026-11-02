@@ -1159,6 +1159,15 @@ body {
 
 /* Framed by the ACF dashboard, the app owns the theme: one switch, not two. */
 html.is-framed .theme-toggle { display: none; }
+/* Inside the app on a phone, the app's own menu button sits at the frame's top
+   left, so the docs' contents button (Parts and "On this page") moves to the
+   top right: two menus side by side, never one stacked over the other. */
+@media (max-width: 1024px) {
+  html.is-framed .drawer-toggle {
+    left: auto;
+    right: calc(var(--space-4) + env(safe-area-inset-right));
+  }
+}
 .theme-toggle:hover, .theme-toggle:focus-visible {
   color: var(--accent);
 }
@@ -3418,6 +3427,37 @@ a.floatnav-next:hover, a.floatnav-next:focus-visible { background: var(--accent-
 /* Rest the float-bob while narration is open so the scrubber is a steady target
    (the pill still bobs as quick-nav; it settles the moment you engage the rail). */
 .floatnav[data-armed] .floatnav-inner { animation: none; }
+
+/* Desktop: the resting dock leaves the reading column (owner delegation
+   2026-10-17, shipped 2026-11-02). With the parts sidebar open it sits at the
+   foot of that sidebar, where navigation already lives, as a short row of
+   marks: back to top, home, previous, next. It never covers a sentence, a
+   table or an exhibit at any width. The words stay in the links for screen
+   readers and as hover titles (reading-core.js). A collapsed sidebar has no
+   room, and a playing narration needs its scrub rail, so in those two cases
+   the dock stays the centred bar below the text. */
+@media (min-width: 1025px) {
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) {
+    left: max(var(--space-6), calc((100vw - var(--shell-max)) / 2 + var(--space-6)));
+    right: auto;
+    margin-inline: 0;
+  }
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) .floatnav-player { display: none; }   /* a collapsed rail still holds width */
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) .floatnav-home,
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) .floatnav-prev,
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) .floatnav-next {
+    width: 2.3rem; height: 2.3rem; min-height: 0; padding: 0;
+    justify-content: center; gap: 0; font-size: 0; border-radius: 50%;
+  }
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) .fn-home-label {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) .floatnav-prev::before { content: "\2190"; font-size: 1rem; }
+  body:not(:has(.shell[data-sidebar="collapsed"])) .floatnav:not([data-armed]) .floatnav-next::before { content: "\2192"; font-size: 1rem; }
+  /* Room at the foot of the sidebar so its last link never sits under the dock. */
+  body:has(.floatnav) .shell:not([data-sidebar="collapsed"]) .sidebar { padding-bottom: calc(var(--space-12) + 3.5rem); }
+}
 
 /* The rail: a subordinate lower lip, divided from the nav row, collapsed until
    armed. The dock is position:fixed, so opening it never reflows page content. */

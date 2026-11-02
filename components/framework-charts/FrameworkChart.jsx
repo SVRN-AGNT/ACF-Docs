@@ -2019,7 +2019,10 @@ function ExplainerBlock({ spec, pal, accent }) {
             ? <a href={CONCEPT_LINKS[spec.explainerConcept]} className="acf-fx-focusable" style={{ fontFamily: pal.mono, fontSize: 10.5, letterSpacing: '0.04em', color: pal.text3, borderBottom: `1px dotted ${pal.borderHi}`, paddingBottom: 1, textDecoration: 'none' }}>↳ {spec.explainerConcept}</a>
             : <span style={{ fontFamily: pal.mono, fontSize: 10.5, letterSpacing: '0.04em', color: pal.text3, borderBottom: `1px dotted ${pal.borderHi}`, paddingBottom: 1 }}>↳ {spec.explainerConcept}</span>}</span>}
         </p>
-        {spec.readerTakeaway && <div style={{ marginTop: 9, fontFamily: pal.sans, fontSize: 13, fontStyle: 'italic', color: pal.text3 }}>{spec.readerTakeaway}</div>}
+        {/* The italic readerTakeaway line used to sit here as a third text layer
+            under the headline and body, which already carry the point. Cut on
+            2026-11-02 ("more to see, less to read"); the spec keeps the field
+            for authoring and validation. */}
       </div>
     </div>
   );

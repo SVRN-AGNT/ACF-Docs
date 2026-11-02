@@ -378,8 +378,40 @@
       <div class="measure prose">
         <p>Regime fit, not forecasting. Three sub-scores sum to 100: regime fit (40 points), carry direction (30) and policy and flow (30), read against the macro thesis of <a class="part-ref" href="/part-2-lineage-macro-thesis#macro-thesis">Part 2</a>.</p>
         <p>Carry is dividend-neutral: yield is not scored as quality. Without a supplied carry score it sits at a neutral baseline of 20 for equities and preferreds (22 for income funds), plus a +3 for a return-of-capital preferred held as <button type="button" class="gloss" data-gloss="ballast" aria-expanded="false">Ballast</button> outside a known tax-advantaged account, and a macro adjustment of at most 2 points. Where the dashboard has beta or drawdown data but no yield, it supplies a stability proxy instead (10 to 27 points, from beta and one-year drawdown), and the bump and the macro adjustment do not apply.</p>
-        <p>Regime fit and policy are written upstream. Your sector preferences (the over, neutral or underweight tilt you set for each sector) set the base: regime fit 32, 22 or 10; policy 24, 16 or 7. Theme overlap with the thesis adds up to 6 and 4 points, and extracted policy evidence can add up to 5. The live macro regime then moves regime fit by at most 4 and policy by at most 3. A macro read can tilt these sub-scores; your own sector preferences move them much further.</p>
-        <p>The live macro regime is one of four labels (hawkish, dovish, stagflationary, neutral) set by the direction of three series: the Fed funds rate, CPI inflation and the unemployment rate. At least two must show a confirmed trend, or the label stays neutral. Rates, inflation and unemployment all rising read stagflationary; rising rates, or rising inflation without falling rates, read hawkish; falling rates without rising inflation read dovish; anything else is neutral. A new label must repeat across two consecutive syncs before it replaces the old one, and data more than 48 hours old leaves scores unadjusted. The yield curve is recorded but does not enter the label, and unemployment decides only the stagflationary case; there is no direct measure of output growth. By sector group, the label moves regime fit by at most 4 points, policy by at most 3 and carry by at most 2, a few CIS points at most. A second, portfolio-level reading (risk-on, selective, transition, defensive) combines this label with the VIX, high-yield spreads, tripwire alerts and how broadly your holdings are leading; it shapes the Next Dollar Score, not CIS.</p>
+        <p>Regime fit and policy are written upstream. Your sector preferences (the tilt you set for each sector) set the base in the table below. Theme overlap with the thesis adds up to 6 and 4 points, and extracted policy evidence can add up to 5. The live macro regime then moves regime fit by at most 4 and policy by at most 3. A macro read can tilt these sub-scores; your own sector preferences move them much further.</p>
+      </div>
+      <div class="compare compare-wrap">
+        <table>
+          <caption>Base points by your sector tilt</caption>
+          <thead>
+            <tr><th scope="col">Your tilt</th><th scope="col">Regime fit (of 40)</th><th scope="col">Policy (of 30)</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Overweight</th><td data-label="Regime fit (of 40)">32</td><td data-label="Policy (of 30)">24</td></tr>
+            <tr><th scope="row">Neutral</th><td data-label="Regime fit (of 40)">22</td><td data-label="Policy (of 30)">16</td></tr>
+            <tr><th scope="row">Underweight</th><td data-label="Regime fit (of 40)">10</td><td data-label="Policy (of 30)">7</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="measure prose">
+        <p>The live macro regime is one of four labels, set by the direction of three series: the Fed funds rate, CPI inflation and the unemployment rate. At least two must show a confirmed trend, or the label stays neutral.</p>
+      </div>
+      <div class="compare compare-wrap">
+        <table>
+          <caption>How the live regime label is read</caption>
+          <thead>
+            <tr><th scope="col">Label</th><th scope="col">When</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Stagflationary</th><td data-label="When">Rates, inflation and unemployment all rising</td></tr>
+            <tr><th scope="row">Hawkish</th><td data-label="When">Rates rising, or inflation rising without rates falling</td></tr>
+            <tr><th scope="row">Dovish</th><td data-label="When">Rates falling without inflation rising</td></tr>
+            <tr><th scope="row">Neutral</th><td data-label="When">Anything else</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="measure prose">
+        <p>A new label must repeat across two consecutive syncs before it replaces the old one, and data more than 48 hours old leaves scores unadjusted. The yield curve is recorded but does not enter the label, and unemployment decides only the stagflationary case; there is no direct measure of output growth. By sector group, the label moves regime fit by at most 4 points, policy by at most 3 and carry by at most 2, a few CIS points at most. A second, portfolio-level reading (risk-on, selective, transition, defensive) combines this label with the VIX, high-yield spreads, tripwire alerts and how broadly your holdings are leading; it shapes the Next Dollar Score, not CIS.</p>
       </div>
 
       <div class="measure">
