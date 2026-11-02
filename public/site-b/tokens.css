@@ -112,6 +112,9 @@
    * title/prose rules need no per-rule changes.                                */
   --font-sans:  'ACF Ink Dash', 'Schibsted Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-serif: var(--font-sans);   /* retired serif → the sans */
+  /* Threshold display face: the cover headline only. Declared on the cover
+     page, so anywhere else this resolves to the sans. */
+  --font-display: 'ACF Ink Dash', 'Archivo Display', 'Schibsted Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-mono:  'ACF Ink Dash Mono', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Type scale — major third (1.25), base 19px (set on html, see reading-system.css) */
