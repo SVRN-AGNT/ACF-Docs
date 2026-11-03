@@ -28,7 +28,7 @@ jobs:
     if: >-
       (github.event_name == 'workflow_dispatch' && github.ref_name == github.event.repository.default_branch)
       || (github.event.action == 'created' && startsWith(github.event.comment.body, 'HANDOFF:'))
-      || (github.event.comment.user.login == 'chatgpt-codex-connector[bot]' && (contains(github.event.comment.body, 'codex-review-state:v1') || contains(github.event.comment.body, 'codex-review-receipt:v1')))
+      || (github.event.comment.user.login == 'chatgpt-codex-connector[bot]' && (contains(github.event.comment.body, 'codex-review-state:v1') || contains(github.event.comment.body, 'codex-review-receipt:v1') || contains(github.event.comment.body, 'reached your Codex usage limits')))
     # One run at a time per PR (comment events and dispatches share the key), so a HANDOFF and Codex
     # finishing never post two rulings. Job-level, so the PR's other comments never take the pending slot.
     concurrency:
@@ -40,11 +40,16 @@ jobs:
       pull-requests: write
       checks: write
       actions: read
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@e43239ebb6cb5f9fce64b29aeb18f965e13ba2fc
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@b2ed72bfa77a18607452b72f073a973ef64862ff
     with:
-      ref: e43239ebb6cb5f9fce64b29aeb18f965e13ba2fc
+      ref: b2ed72bfa77a18607452b72f073a973ef64862ff
       comment_id: ${{ github.event.comment.id || inputs.comment_id }}
       expected_pr: ${{ inputs.pr }}
       # CI and the PM's own caller are held: a PR that edits them gets the high bar.
       held_paths: '^(\.github/workflows/|CLAUDE\.md$|middleware\.ts$|pages/api/)'
       provider: chatgpt
+      # Owner, 2026-11-03: when Codex refuses at its 5-hour or weekly limit, a fresh read-only Claude
+      # rules instead (Dale-OS ci/README.md "Claude fallback"). Codex stays first.
+      fallback: claude
+    secrets:
+      claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
