@@ -109,9 +109,9 @@ jobs:
 
   # Shared CI floor from Dale-OS (ci/README.md). Report-only.
   hygiene:
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-hygiene.yml@e43239ebb6cb5f9fce64b29aeb18f965e13ba2fc
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-hygiene.yml@b2ed72bfa77a18607452b72f073a973ef64862ff
     with:
-      ref: e43239ebb6cb5f9fce64b29aeb18f965e13ba2fc
+      ref: b2ed72bfa77a18607452b72f073a973ef64862ff
 
   # Keeps one issue open while CI on main is red; closes it when green.
   alert:
@@ -119,6 +119,6 @@ jobs:
     if: ${{ always() && github.event_name == 'push' }}
     permissions:
       issues: write
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-red-alert.yml@e43239ebb6cb5f9fce64b29aeb18f965e13ba2fc
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-red-alert.yml@b2ed72bfa77a18607452b72f073a973ef64862ff
     with:
       result: ${{ needs.verify.result }}
