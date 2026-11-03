@@ -40,9 +40,9 @@ jobs:
       pull-requests: write
       checks: write
       actions: read
-    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@b2ed72bfa77a18607452b72f073a973ef64862ff
+    uses: SVRN-AGNT/Dale-OS/.github/workflows/ci-pm-review.yml@d4bc085f27ff3fc31f0c4eb148d815731b7236ea
     with:
-      ref: b2ed72bfa77a18607452b72f073a973ef64862ff
+      ref: d4bc085f27ff3fc31f0c4eb148d815731b7236ea
       comment_id: ${{ github.event.comment.id || inputs.comment_id }}
       expected_pr: ${{ inputs.pr }}
       # CI and the PM's own caller are held: a PR that edits them gets the high bar.
