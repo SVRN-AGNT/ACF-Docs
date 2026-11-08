@@ -1133,30 +1133,30 @@ export const FRAMEWORK_CHART_SPECS = [
     chartId: 'dl-regime-map', idx: 'L1', group: 'docs-landing', intendedPlacement: 'docs-landing',
     claimStack: {
       primaryClaim: 'The same portfolio behaves differently in different macro regimes',
-      visualProof: 'A growth × inflation quadrant (stagflation, reflation, deflation, goldilocks), each labeled with the leadership the framework associates with it, crossed by one illustrative path: disinflation boom → deflation scare → reflation → inflation shock → an illustrative “Now” marker near the center',
+      visualProof: 'A growth × inflation quadrant (stagflation, reflation, deflation, goldilocks), each labeled with the leadership the framework associates with it, crossed by one illustrative path: disinflation boom → deflation scare → reflation → inflation shock → a “Now” marker the dashboard\'s live macro read places (the hand-placed illustration until it loads)',
       interactionRole: 'Hover or tap a waypoint to read that regime\'s weather and which assets tend to lead there',
-      readerAction: 'Trace the path quadrant to quadrant and end on the illustrative Now marker',
-      caution: 'Illustrative regime path; every waypoint, including “Now”, is placed by hand. Leadership in each quadrant is the framework\'s reading of common market experience, not a measured result. Quadrant names follow common market usage, not any one published model.',
+      readerAction: 'Trace the path quadrant to quadrant and end on the Now marker, then read where it was placed from',
+      caution: 'Illustrative regime path; the four path waypoints are placed by hand. “Now” is the dashboard\'s own macro read when it loads (the direction of CPI up the map and of unemployment across it, from FRED, through the dashboard\'s regime classifier), and the hand-placed illustration otherwise. Leadership in each quadrant is the framework\'s reading of common market experience, not a measured result. Quadrant names follow common market usage, not any one published model.',
     },
     status: 'implemented', wiredPublic: true,
     title: 'Capital Has Weather', setupLine:'Same assets, different regime, different behavior',
     claimLabel: 'REGIME MAP · CAPITAL WEATHER',
     frameworkClaim: 'The same holdings behave differently as growth and inflation shift, so where you stand gets re-read at every review.',
     readerTakeaway: 'You are not allocating in a vacuum; you are allocating into weather.',
-    chartType: 'Growth × inflation quadrant with an illustrative regime path.',
+    chartType: 'Growth × inflation quadrant with an illustrative regime path and a live “Now” mark.',
     visualDataMode: 'conceptual',
     disclosure: `${DISCLOSURE.conceptual} · Leadership labels are the framework's judgment`, footerCta: 'View framework basis',
     sources: [
       { provider: 'ACF · Part 2', label: 'Rule stated in Part 2 · Identification, evaluation, and governance', role: 'verifies-concept', url: '/part-2-lineage-macro-thesis#macro-thesis' },
       { provider: 'ACF · Part 1', label: 'Rule stated in Part 1 · The traditional playbook was built for a regime that has ended', role: 'verifies-concept', url: '/part-1-foundation#manifesto' },
-      { provider: 'ACF dashboard', label: 'Regime reading from the direction of rates, inflation and unemployment (software behavior as of September 2026)', role: 'verifies-concept', url: '/framework-in-math#cis-math' },
+      { provider: 'ACF dashboard', label: 'Regime reading from the direction of rates, inflation and unemployment (software behavior as of September 2026); the “Now” mark reads it live', role: 'verifies-concept', url: '/framework-in-math#cis-math' },
     ],
     explainerHeadline: 'The same portfolio behaves differently in different weather.',
-    explainerBody: 'Each quadrant is one mix of growth and inflation, and a different group of assets leads in each. The dashboard\'s own regime reading uses different signals (the direction of rates, inflation and unemployment, as of September 2026).',
+    explainerBody: 'Each quadrant is one mix of growth and inflation, and a different group of assets leads in each. The “Now” mark is the dashboard\'s own read of the latest FRED prints, inflation up the map and unemployment across it, through the same classifier it scores with; the path through the quadrants is illustrative.',
     explainerConcept: 'Macro regime',
     concepts: [{ label: 'Macro regime', link: '/part-1-foundation#manifesto' }, { label: 'Regime fit', link: '/part-1-foundation#manifesto' }],
     layout: 'quadrant',
-    ariaSummary: 'A conceptual four-quadrant map of growth versus inflation, with quadrants labeled stagflation, reflation, deflation and goldilocks. An illustrative path traces capital from a disinflation boom through a deflation scare, reflation and an inflation shock, and ends at an illustrative “Now” marker near the center.',
+    ariaSummary: 'A four-quadrant map of growth versus inflation, with quadrants labeled stagflation, reflation, deflation and goldilocks. An illustrative path traces capital from a disinflation boom through a deflation scare, reflation and an inflation shock, and ends at a “Now” marker that the dashboard\'s live macro read places when it loads, and that sits near the center as an illustration otherwise.',
     quadrant: {
       xAxis: { neg: 'WEAK GROWTH', pos: 'STRONG GROWTH' },
       yAxis: { neg: 'LOW INFLATION', pos: 'HIGH INFLATION' },
@@ -1172,6 +1172,20 @@ export const FRAMEWORK_CHART_SPECS = [
       },
     },
     primaryKey: 'wp5',
+    // The "Now" waypoint is live: the chart asks the dashboard's public read
+    // (the dashboard's own macro regime classifier over FRED, projected onto
+    // these axes: CPI direction up, unemployment direction across) and moves
+    // wp5 to it. Until it answers, or when it cannot, wp5 keeps the hand-placed
+    // coordinate above and the hand-placed words below, so the fallback never
+    // claims to be live. The reading line the chart draws comes from the read.
+    liveNow: {
+      url: 'https://acfdashboard.com/api/macro-weather',
+      waypoint: 'wp5',
+      name: 'Where you stand (live)',
+      why: 'Placed by the dashboard\'s own macro read: the direction of CPI up the map and of unemployment across it, from the latest FRED prints, through the same classifier the dashboard scores with. It moves as the prints land; the habit is to re-read it at every review.',
+      claim: 'Where you stand is read, not assumed.',
+      unavailableLine: 'NOW · ILLUSTRATIVE · THE LIVE READ DID NOT LOAD',
+    },
     hoverTargets: [
       { id: 'wp1', kind: 'waypoint', label: 'Disinflation boom', name: 'Disinflation boom', why: 'Strong growth, low inflation. Growth and risk assets tend to lead; it is the easiest regime to mistake for permanent.', claim: 'Goldilocks rewards risk-on.', concept: 'Regime fit', link: '/part-1-foundation#manifesto' },
       { id: 'wp2', kind: 'waypoint', label: 'Deflation scare', name: 'Deflation scare', why: 'Weak growth, low inflation. Long-duration bonds and quality balance sheets tend to lead while riskier assets lag.', claim: 'Different weather, different leaders.', concept: 'Macro regime', link: '/part-1-foundation#manifesto' },
@@ -1180,7 +1194,7 @@ export const FRAMEWORK_CHART_SPECS = [
       { id: 'wp5', kind: 'waypoint', label: 'Now', persistentLabel: true, name: 'Where you stand (illustrative)', why: 'Illustrative position. The habit is to re-read it at every review instead of assuming last season persists.', claim: 'Where you stand gets re-read, not assumed.', concept: 'Adaptation', link: '/part-1-foundation#order-of-operations' },
     ],
     mobileTapTargets: ['wp1', 'wp2', 'wp3', 'wp4', 'wp5'],
-    implementationNotes: 'Bespoke quadrant layout. Every waypoint, the "Now" marker included, is a hard-coded illustrative coordinate; nothing on the page reads macro data. Quadrant leadership labels are the framework\'s judgment. The axes are levels (weak or strong growth, low or high inflation), and the waypoint copy uses the same level semantics.',
+    implementationNotes: 'Bespoke quadrant layout. The four path waypoints are hard-coded illustrative coordinates. The "Now" marker is live: `liveNow.url` is the dashboard\'s public /api/macro-weather read (its regime classifier over FRED, projected onto these axes), fetched once per page by the chart engine; without an answer the marker keeps its hand-placed coordinate and words. Quadrant leadership labels are the framework\'s judgment. The axes are levels (weak or strong growth, low or high inflation), and the waypoint copy uses the same level semantics.',
   },
 
   {

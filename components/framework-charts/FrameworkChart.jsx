@@ -111,6 +111,63 @@ function useInViewOnce(ref, reduce) {
   return seen;
 }
 
+/* Live "Now": a spec may name a public read (`liveNow.url`) that places one
+ * waypoint from live data. The chart asks it once per page (the promise is
+ * shared across every chart and re-render), never on the server, and draws
+ * the hand-placed spec until it answers. `unavailable` keeps the hand-placed
+ * coordinate and says so on the chart, so a missing read never looks live. */
+const LIVE_NOW = new Map();                                   // url -> { status, data, promise }
+function requestLiveNow(url) {
+  const held = LIVE_NOW.get(url);
+  if (held) return held.promise;
+  const promise = fetch(url, { headers: { Accept: 'application/json' } })
+    .then((r) => r.json())
+    .then((body) => {
+      if (!body || body.ok !== true || !body.data) throw new Error('live read unavailable');
+      const next = { status: 'ready', data: body.data };
+      LIVE_NOW.set(url, { ...next, promise });
+      return next;
+    })
+    .catch(() => {
+      const next = { status: 'unavailable', data: null };
+      LIVE_NOW.set(url, { ...next, promise });
+      return next;
+    });
+  LIVE_NOW.set(url, { status: 'loading', data: null, promise });
+  return promise;
+}
+function useLiveNow(spec) {
+  const url = spec?.liveNow?.url || null;
+  const [state, setState] = useState(() => {
+    const held = url ? LIVE_NOW.get(url) : null;
+    return held && held.status !== 'loading' ? { status: held.status, data: held.data } : { status: url ? 'loading' : 'off', data: null };
+  });
+  useEffect(() => {
+    if (!url || typeof window === 'undefined' || typeof fetch !== 'function') return undefined;
+    let alive = true;
+    requestLiveNow(url).then((next) => { if (alive) setState(next); });
+    return () => { alive = false; };
+  }, [url]);
+  return state;
+}
+const LIVE_CLAMP = 0.9;
+const clampLive = (v) => Math.max(-LIVE_CLAMP, Math.min(LIVE_CLAMP, Number.isFinite(v) ? v : 0));
+/* The spec the chart draws: the live waypoint moved to the read and its words
+ * swapped for the live ones, or the spec as authored (plus the read's status,
+ * so the quadrant can say the read did not load). Pure; no spec is mutated. */
+function withLiveNow(spec, live) {
+  if (!spec || !spec.liveNow || !spec.quadrant) return spec;
+  const wp = spec.liveNow.waypoint || spec.primaryKey;
+  const data = live && live.status === 'ready' && live.data && live.data.placed ? live.data : null;
+  if (!data) return { ...spec, _liveStatus: live ? live.status : 'off', _liveNow: null };
+  const waypoints = { ...spec.quadrant.waypoints, [wp]: { x: clampLive(data.x), y: clampLive(data.y) } };
+  const hoverTargets = spec.hoverTargets.map((t) => (t.id === wp
+    ? { ...t, name: spec.liveNow.name || t.name, why: `${spec.liveNow.why || t.why}${data.reading ? ` ${data.reading}.` : ''}`, claim: spec.liveNow.claim || t.claim }
+    : t));
+  const ariaSummary = data.reading ? `${spec.ariaSummary} Live read: ${data.reading}.` : spec.ariaSummary;
+  return { ...spec, quadrant: { ...spec.quadrant, waypoints }, hoverTargets, ariaSummary, _liveStatus: 'ready', _liveNow: data };
+}
+
 const halo = (pal, size, color, w = 500) => ({
   fontFamily: pal.mono, fontSize: size, fontWeight: w, letterSpacing: '0.1em',
   paintOrder: 'stroke', stroke: pal.scrim, strokeWidth: 3.4, strokeLinejoin: 'round', fill: color,
@@ -572,11 +629,14 @@ function QuadrantSvg({ spec, width, height, pal, accent, reduce, entered, coarse
   // only (off-path waypoints are standalone diagnostic cells, e.g. the CIS×FIS
   // matrix). Charts whose waypoints all sit on the path are byte-identical.
   const wps = [...q.path, ...Object.keys(q.waypoints).filter((id) => !q.path.includes(id))].map((id) => ({ id, ...q.waypoints[id], onPath: q.path.includes(id) }));
+  // The waypoints are part of the geometry's identity: a live read moves one
+  // of them after the first render, and the path must follow it.
+  const wpKey = wps.map((w) => `${w.id}:${w.x}:${w.y}`).join('|');
   const geom = useMemo(() => {
     const px = wps.map((w) => ({ x: x(w.x), y: y(w.y), id: w.id, onPath: w.onPath }));
     return { px, line: Brush.brushLine(px.filter((p) => p.onPath), { seed: 19, weight: M ? 1.2 : 0.8, intensity: 0.7 }) };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [VW, VH, M]);
+  }, [VW, VH, M, wpKey]);
   const HITR = touch ? 34 : 26;
 
   const anchorOf = (a) => { const p = geom.px.find((pp) => pp.id === a.id); return p ? { x: p.x, y: p.y } : null; };
@@ -607,12 +667,42 @@ function QuadrantSvg({ spec, width, height, pal, accent, reduce, entered, coarse
         <text x={VW - pad.r + 6} y={cy - 6} textAnchor="end" style={halo(pal, F.axis, pal.text4)}>{q.xAxis.pos}</text>
         <text x={cx + 8} y={pad.t + 4} style={halo(pal, F.axis, pal.text4)}>{q.yAxis.pos}</text>
         <text x={cx + 8} y={VH - pad.b} style={halo(pal, F.axis, pal.text4)}>{q.yAxis.neg}</text>
+        {/* the live read, in the data's own words, or the plain fact that it did
+            not load; nothing while it is still being asked */}
+        {spec._liveNow && spec._liveNow.reading && (
+          <text data-live-now="ready" x={pad.l - 6} y={VH - 10} style={halo(pal, F.axis, pal.text3)}>{String(spec._liveNow.reading).toUpperCase()}</text>
+        )}
+        {spec.liveNow && spec._liveStatus === 'unavailable' && (
+          <text data-live-now="unavailable" x={pad.l - 6} y={VH - 10} style={halo(pal, F.axis, pal.text4)}>{spec.liveNow.unavailableLine || 'NOW · ILLUSTRATIVE'}</text>
+        )}
         {/* quadrant labels — per-cell vertical anchors keep each name block clear
             of the waypoints travelling through its quadrant (the path is data;
             the label yields): reflation sits high above wp3, goldilocks low
             below wp1; the left cells hold the original line. */}
         {q.cells.map((c, i) => {
-          const ay = c.qy > 0 ? (c.qx > 0 ? 0.72 : 0.62) : (c.qx > 0 ? (M ? -0.8 : -0.78) : -0.62);
+          let ay = c.qy > 0 ? (c.qx > 0 ? 0.72 : 0.62) : (c.qx > 0 ? (M ? -0.8 : -0.78) : -0.62);
+          // A live "Now" that lands near this cell's name block moves the block
+          // to whichever of the cell's other anchors is farthest from the mark,
+          // the waypoints and the path: the mark is data, the name yields.
+          const ln = spec._liveNow;
+          if (ln && Math.abs(clampLive(ln.y) - ay) < 0.3 && Math.abs(clampLive(ln.x) - c.qx * 0.55) < 0.5) {
+            const ccx = c.qx * 0.55;
+            const pts = q.path.map((id) => q.waypoints[id]);
+            const score = (a) => {
+              let d = Infinity;
+              for (const w of pts) d = Math.min(d, Math.hypot((w.x - ccx) * 0.8, w.y - a));
+              for (let k = 1; k < pts.length; k++) {
+                const A = pts[k - 1], B = pts[k];
+                const dx = B.x - A.x, dy = B.y - A.y, l2 = dx * dx + dy * dy || 1;
+                const t = Math.max(0, Math.min(1, ((ccx - A.x) * dx + (a - A.y) * dy) / l2));
+                d = Math.min(d, 1.4 * Math.hypot(ccx - (A.x + t * dx), a - (A.y + t * dy)));
+              }
+              return d;
+            };
+            let best = ay, bestScore = score(ay);
+            for (const a of (c.qy > 0 ? [0.3, 0.92] : [-0.14, -0.9])) { const sc = score(a); if (sc > bestScore + 0.02) { best = a; bestScore = sc; } }
+            ay = best;
+          }
           return (
             <g key={`cell${i}`}>
               <text x={x(c.qx * 0.55)} y={y(ay)} textAnchor="middle" style={haloSans(pal, F.cell, pal.text2, 600)}>{c.label}</text>
@@ -3053,7 +3143,9 @@ function RangeStepsSvg({ spec, width, height, pal, accent, reduce, entered, coar
 
 /* ── FrameworkChart (orchestrator) ──────────────────────────────────────────*/
 export default function FrameworkChart({ id, spec: specProp, theme = 'dark', accent: accentName = 'green', className, readerContext }) {
-  const spec = specProp || getChartSpec(id);
+  const authoredSpec = specProp || getChartSpec(id);
+  const live = useLiveNow(authoredSpec);
+  const spec = useMemo(() => withLiveNow(authoredSpec, live), [authoredSpec, live]);
   const pal = getPalette(theme);
   const accent = getAccent(pal, accentName);
   const reduce = useMqFlag('(prefers-reduced-motion: reduce)');
