@@ -117,26 +117,35 @@ function useInViewOnce(ref, reduce) {
  * the hand-placed spec until it answers. `unavailable` keeps the hand-placed
  * coordinate and says so on the chart, so a missing read never looks live.
  *
- * No copy outlives the reading it was taken from. A reading is live for six
- * hours, or ten minutes when the read says `partial` (an axis unread), from
- * its own `readAt` (never later than when it arrived), as the route itself
- * keeps it; the shared copy and every mounted chart's copy expire by that one
- * clock and the read is asked again, a minute on at the least so a reading
- * that arrives already past its life is never re-asked in a loop. An
- * `unavailable` answer is asked again after a partial reading's ten minutes. */
+ * No copy outlives the reading it was taken from. A reading is live for the
+ * life the route stamps on it (`lifeMs`: six hours, or ten minutes when the
+ * read says `partial`, an axis unread; the numbers here are the fallback for
+ * a reading without the stamp), from its own `readAt` (never later than when
+ * it arrived); the shared copy and every mounted chart's copy expire by that
+ * one clock and the read is asked again, a minute on at the least so a
+ * reading that arrives already past its life is never re-asked in a loop. An
+ * `unavailable` answer, a request that never answers included (15s), is asked
+ * again after a partial reading's ten minutes. */
 const LIVE_LIFE_MS = { full: 6 * 60 * 60 * 1000, partial: 10 * 60 * 1000 };
 const LIVE_REASK_FLOOR_MS = 60 * 1000;
+const LIVE_REQUEST_TIMEOUT_MS = 15 * 1000;
+function liveLifeMs(data) {
+  const stamped = Number(data && data.lifeMs);
+  if (Number.isFinite(stamped) && stamped > 0) return stamped;
+  return data && data.partial ? LIVE_LIFE_MS.partial : LIVE_LIFE_MS.full;
+}
 function liveExpiresAt(data, takenAt) {
   const readAt = Date.parse((data && data.readAt) || '');
   const at = Number.isFinite(readAt) ? Math.min(readAt, takenAt) : takenAt;
-  return at + (data && data.partial ? LIVE_LIFE_MS.partial : LIVE_LIFE_MS.full);
+  return at + liveLifeMs(data);
 }
 const LIVE_NOW = new Map();                                   // url -> { status, data, expiresAt, promise }
 function requestLiveNow(url) {
   const held = LIVE_NOW.get(url);
   if (held && (held.status === 'loading' || Date.now() < held.expiresAt)) return held.promise;
   const askedAt = Date.now();
-  const promise = fetch(url, { headers: { Accept: 'application/json' } })
+  const signal = typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(LIVE_REQUEST_TIMEOUT_MS) : undefined;
+  const promise = fetch(url, { headers: { Accept: 'application/json' }, signal })
     .then((r) => r.json())
     .then((body) => {
       if (!body || body.ok !== true || !body.data) throw new Error('live read unavailable');
