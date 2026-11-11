@@ -2952,7 +2952,7 @@
       ],
       "wave": 4,
       "category": "scoring",
-      "definition": "The CIS component for fit with the current regime, read against your Part 2 thesis: regime fit (40 points), carry direction (30) and policy and flow (30). It carries 25 percent of CIS at the reference weights (20 to 30 percent across thesis profiles), less when the macro evidence is thin. Your own sector preferences move it most; the dashboard's reading of rates, inflation and unemployment shifts it by a few points at most.",
+      "definition": "The CIS component for fit with the current regime, read against your Part 2 thesis: regime fit (40 points), carry direction (30) and policy and flow (30). It carries 25 percent of CIS at the reference weights (20 to 30 percent across thesis profiles), less when the macro evidence is thin. Your own sector preferences move it most; the dashboard's reading of rates, the CPI price level and unemployment shifts it by a few points at most.",
       "length": "medium",
       "source": {
         "kind": "internal",
