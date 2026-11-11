@@ -117,27 +117,35 @@ function useInViewOnce(ref, reduce) {
  * the hand-placed spec until it answers. `unavailable` keeps the hand-placed
  * coordinate and says so on the chart, so a missing read never looks live.
  *
- * No copy outlives the reading it was taken from. A reading is live for the
- * life the route stamps on it (`lifeMs`: six hours, or ten minutes when the
- * read says `partial`, an axis unread; the numbers here are the fallback for
- * a reading without the stamp), from its own `readAt` (never later than when
- * it arrived); the shared copy and every mounted chart's copy expire by that
- * one clock and the read is asked again, a minute on at the least so a
- * reading that arrives already past its life is never re-asked in a loop. An
- * `unavailable` answer, a request that never answers included (15s), is asked
- * again after a partial reading's ten minutes. */
+ * No copy outlives the reading it was taken from. A reading is live for what
+ * the route said was left of its life when it served the copy (`remainingMs`,
+ * measured on the server's own clock: six hours at most, or ten minutes when
+ * the read says `partial`, an axis unread; the numbers here are the fallback
+ * for a reading without the stamp), less the seconds the CDN held the body
+ * (the `Age` header the route exposes), counted down here from when the copy
+ * arrived. The route's `readAt` is never held against this device's clock, so
+ * a clock hours behind or ahead of the server's moves nothing. The shared
+ * copy and every mounted chart's copy expire by that one rule and the read is
+ * asked again, a minute on at the least so a reading that arrives with nothing
+ * left is never re-asked in a loop. An `unavailable` answer, a request that
+ * never answers included (15s), is asked again after a partial reading's ten
+ * minutes; a route answering that another instance is reading it now
+ * (`MACRO_WEATHER_FILLING`) keeps the chart loading and is asked again after
+ * its `Retry-After`. */
 const LIVE_LIFE_MS = { full: 6 * 60 * 60 * 1000, partial: 10 * 60 * 1000 };
 const LIVE_REASK_FLOOR_MS = 60 * 1000;
+const LIVE_FILLING_REASK_MS = 10 * 1000;
 const LIVE_REQUEST_TIMEOUT_MS = 15 * 1000;
 function liveLifeMs(data) {
   const stamped = Number(data && data.lifeMs);
   if (Number.isFinite(stamped) && stamped > 0) return stamped;
   return data && data.partial ? LIVE_LIFE_MS.partial : LIVE_LIFE_MS.full;
 }
-function liveExpiresAt(data, takenAt) {
-  const readAt = Date.parse((data && data.readAt) || '');
-  const at = Number.isFinite(readAt) ? Math.min(readAt, takenAt) : takenAt;
-  return at + liveLifeMs(data);
+function liveExpiresAt(data, arrivedAt, ageSeconds) {
+  const life = liveLifeMs(data);
+  const stamped = Number(data && data.remainingMs);
+  const remaining = Number.isFinite(stamped) ? Math.max(0, stamped - (Number.isFinite(ageSeconds) && ageSeconds > 0 ? ageSeconds * 1000 : 0)) : life;
+  return arrivedAt + Math.min(remaining, life);
 }
 const LIVE_NOW = new Map();                                   // url -> { status, data, expiresAt, promise }
 function requestLiveNow(url) {
@@ -146,15 +154,25 @@ function requestLiveNow(url) {
   const askedAt = Date.now();
   const signal = typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(LIVE_REQUEST_TIMEOUT_MS) : undefined;
   const promise = fetch(url, { headers: { Accept: 'application/json' }, signal })
-    .then((r) => r.json())
-    .then((body) => {
-      if (!body || body.ok !== true || !body.data) throw new Error('live read unavailable');
-      const next = { status: 'ready', data: body.data, expiresAt: liveExpiresAt(body.data, askedAt) };
+    .then((r) => r.json().then((body) => ({ body, ageSeconds: Number(r.headers && r.headers.get && r.headers.get('age')) })))
+    .then(({ body, ageSeconds }) => {
+      if (!body || body.ok !== true || !body.data) {
+        const err = new Error('live read unavailable');
+        err.code = body && body.error && body.error.code;
+        err.retryAfterSeconds = Number(body && body.error && body.error.retryAfterSeconds) || 0;
+        throw err;
+      }
+      const next = { status: 'ready', data: body.data, expiresAt: liveExpiresAt(body.data, askedAt, ageSeconds) };
       LIVE_NOW.set(url, { ...next, promise });
       return next;
     })
-    .catch(() => {
-      const next = { status: 'unavailable', data: null, expiresAt: askedAt + LIVE_LIFE_MS.partial };
+    .catch((err) => {
+      // A fill in progress on another of the route's instances is not a
+      // failure: stay loading and ask again after its Retry-After.
+      const filling = err && err.code === 'MACRO_WEATHER_FILLING';
+      const next = filling
+        ? { status: 'filling', data: null, expiresAt: askedAt + Math.max(LIVE_FILLING_REASK_MS, (err.retryAfterSeconds || 0) * 1000) }
+        : { status: 'unavailable', data: null, expiresAt: askedAt + LIVE_LIFE_MS.partial };
       LIVE_NOW.set(url, { ...next, promise });
       return next;
     });
@@ -179,16 +197,18 @@ function useLiveNow(spec) {
   // This chart's own copy runs out on the reading's clock while the page stays
   // open: it goes back to loading (the hand-placed spec, no live line) and asks
   // again; the shared copy expired by the same rule, so the route is read.
-  const expiresAt = state.status === 'ready' || state.status === 'unavailable' ? state.expiresAt : null;
+  const expiresAt = state.status === 'ready' || state.status === 'unavailable' || state.status === 'filling' ? state.expiresAt : null;
+  const floorMs = state.status === 'filling' ? LIVE_FILLING_REASK_MS : LIVE_REASK_FLOOR_MS;
   useEffect(() => {
     if (expiresAt == null) return undefined;
     const timer = setTimeout(() => {
       setState({ status: 'loading', data: null, expiresAt: null });
       setTick((t) => t + 1);
-    }, Math.max(LIVE_REASK_FLOOR_MS, expiresAt - Date.now()));
+    }, Math.max(floorMs, expiresAt - Date.now()));
     return () => clearTimeout(timer);
-  }, [expiresAt]);
-  return state;
+  }, [expiresAt, floorMs]);
+  // A fill in progress elsewhere draws as loading: the hand-placed spec, no live line, no "did not load".
+  return state.status === 'filling' ? { ...state, status: 'loading' } : state;
 }
 const LIVE_CLAMP = 0.9;
 const clampLive = (v) => Math.max(-LIVE_CLAMP, Math.min(LIVE_CLAMP, Number.isFinite(v) ? v : 0));
