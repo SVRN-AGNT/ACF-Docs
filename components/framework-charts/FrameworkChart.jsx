@@ -128,14 +128,24 @@ function useInViewOnce(ref, reduce) {
  * copy and every mounted chart's copy expire by that one rule and the read is
  * asked again, a minute on at the least so a reading that arrives with nothing
  * left is never re-asked in a loop. An `unavailable` answer, a request that
- * never answers included (15s), is asked again after a partial reading's ten
- * minutes; a route answering that another instance is reading it now
+ * never answers included (45s, above the route's own worst case), is asked
+ * again after its `Retry-After` when it gives one (an unanswered fill lock: a
+ * minute), else after a partial reading's ten minutes; a route answering that another instance is reading it now
  * (`MACRO_WEATHER_FILLING`) keeps the chart loading and is asked again after
  * its `Retry-After`. */
 const LIVE_LIFE_MS = { full: 6 * 60 * 60 * 1000, partial: 10 * 60 * 1000 };
 const LIVE_REASK_FLOOR_MS = 60 * 1000;
 const LIVE_FILLING_REASK_MS = 10 * 1000;
-const LIVE_REQUEST_TIMEOUT_MS = 15 * 1000;
+// Above the route's own worst case (34s, under its 40s maxDuration), so giving
+// up means the route could not answer, never that it was still filling.
+const LIVE_REQUEST_TIMEOUT_MS = 45 * 1000;
+function liveTimeoutSignal(ms) {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') return AbortSignal.timeout(ms);
+  if (typeof AbortController === 'undefined') return undefined;
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+}
 function liveLifeMs(data) {
   const stamped = Number(data && data.lifeMs);
   if (Number.isFinite(stamped) && stamped > 0) return stamped;
@@ -152,7 +162,7 @@ function requestLiveNow(url) {
   const held = LIVE_NOW.get(url);
   if (held && (held.status === 'loading' || Date.now() < held.expiresAt)) return held.promise;
   const askedAt = Date.now();
-  const signal = typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(LIVE_REQUEST_TIMEOUT_MS) : undefined;
+  const signal = liveTimeoutSignal(LIVE_REQUEST_TIMEOUT_MS);
   const promise = fetch(url, { headers: { Accept: 'application/json' }, signal })
     .then((r) => r.json().then((body) => ({ body, ageSeconds: Number(r.headers && r.headers.get && r.headers.get('age')) })))
     .then(({ body, ageSeconds }) => {
@@ -172,7 +182,7 @@ function requestLiveNow(url) {
       const filling = err && err.code === 'MACRO_WEATHER_FILLING';
       const next = filling
         ? { status: 'filling', data: null, expiresAt: askedAt + Math.max(LIVE_FILLING_REASK_MS, (err.retryAfterSeconds || 0) * 1000) }
-        : { status: 'unavailable', data: null, expiresAt: askedAt + LIVE_LIFE_MS.partial };
+        : { status: 'unavailable', data: null, expiresAt: askedAt + (err && err.retryAfterSeconds > 0 ? Math.min(err.retryAfterSeconds * 1000, LIVE_LIFE_MS.partial) : LIVE_LIFE_MS.partial) };
       LIVE_NOW.set(url, { ...next, promise });
       return next;
     });
