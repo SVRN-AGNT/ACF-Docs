@@ -229,13 +229,29 @@ function withLiveNow(spec, live) {
   if (!spec || !spec.liveNow || !spec.quadrant) return spec;
   const wp = spec.liveNow.waypoint || spec.primaryKey;
   const data = live && live.status === 'ready' && live.data && live.data.placed ? live.data : null;
-  if (!data) return { ...spec, _liveStatus: live ? live.status : 'off', _liveNow: null };
+  // A read that answered but could not place the mark is not live either:
+  // it keeps the authored spec and says so, like one that did not load.
+  const status = !live ? 'off' : (live.status === 'ready' && !data ? 'unplaced' : live.status);
+  if (!data) return { ...spec, _liveStatus: status, _liveNow: null };
   const waypoints = { ...spec.quadrant.waypoints, [wp]: { x: clampLive(data.x), y: clampLive(data.y) } };
   const hoverTargets = spec.hoverTargets.map((t) => (t.id === wp
     ? { ...t, name: spec.liveNow.name || t.name, why: `${spec.liveNow.why || t.why}${data.reading ? ` ${data.reading}.` : ''}`, claim: spec.liveNow.claim || t.claim }
     : t));
   const ariaSummary = data.reading ? `${spec.ariaSummary} Live read: ${data.reading}.` : spec.ariaSummary;
   return { ...spec, quadrant: { ...spec.quadrant, waypoints }, hoverTargets, ariaSummary, _liveStatus: 'ready', _liveNow: data };
+}
+
+/* What the line under a live-Now map says, for each state of the read. A
+ * placed read shows its own words; every other state, the hand-placed mark's
+ * status. Null only for a spec with no live read. */
+function liveNowLine(spec) {
+  if (!spec || !spec.liveNow) return null;
+  if (spec._liveNow) return spec._liveNow.reading ? { state: 'ready', live: true, text: String(spec._liveNow.reading).toUpperCase() } : { state: 'ready', live: true, text: 'NOW · LIVE' };
+  const L = spec.liveNow;
+  if (spec._liveStatus === 'unavailable') return { state: 'unavailable', live: false, text: L.unavailableLine || 'NOW · ILLUSTRATIVE' };
+  if (spec._liveStatus === 'unplaced') return { state: 'unplaced', live: false, text: L.unplacedLine || 'NOW · ILLUSTRATIVE' };
+  if (spec._liveStatus === 'loading') return { state: 'loading', live: false, text: L.loadingLine || 'NOW · ILLUSTRATIVE' };
+  return { state: 'off', live: false, text: 'NOW · ILLUSTRATIVE' };
 }
 
 const halo = (pal, size, color, w = 500) => ({
@@ -737,14 +753,13 @@ function QuadrantSvg({ spec, width, height, pal, accent, reduce, entered, coarse
         <text x={VW - pad.r + 6} y={cy - 6} textAnchor="end" style={halo(pal, F.axis, pal.text4)}>{q.xAxis.pos}</text>
         <text x={cx + 8} y={pad.t + 4} style={halo(pal, F.axis, pal.text4)}>{q.yAxis.pos}</text>
         <text x={cx + 8} y={VH - pad.b} style={halo(pal, F.axis, pal.text4)}>{q.yAxis.neg}</text>
-        {/* the live read, in the data's own words, or the plain fact that it did
-            not load; nothing while it is still being asked */}
-        {spec._liveNow && spec._liveNow.reading && (
-          <text data-live-now="ready" x={pad.l - 6} y={VH - 10} style={halo(pal, F.axis, pal.text3)}>{String(spec._liveNow.reading).toUpperCase()}</text>
-        )}
-        {spec.liveNow && spec._liveStatus === 'unavailable' && (
-          <text data-live-now="unavailable" x={pad.l - 6} y={VH - 10} style={halo(pal, F.axis, pal.text4)}>{spec.liveNow.unavailableLine || 'NOW · ILLUSTRATIVE'}</text>
-        )}
+        {/* one line for the mark's status: the live read in the data's own
+            words, or, for every state that is not a placed read (loading,
+            no direction yet, did not load), that the mark is an illustration */}
+        {(() => {
+          const line = liveNowLine(spec);
+          return line ? <text data-live-now={line.state} x={pad.l - 6} y={VH - 10} style={halo(pal, F.axis, line.live ? pal.text3 : pal.text4)}>{line.text}</text> : null;
+        })()}
         {/* quadrant labels — per-cell vertical anchors keep each name block clear
             of the waypoints travelling through its quadrant (the path is data;
             the label yields): reflation sits high above wp3, goldilocks low

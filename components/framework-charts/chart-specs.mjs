@@ -1152,14 +1152,17 @@ export const FRAMEWORK_CHART_SPECS = [
       { provider: 'ACF dashboard', label: 'Regime reading from the direction of rates, inflation and unemployment (software behavior as of September 2026); the “Now” mark reads it live', role: 'verifies-concept', url: '/framework-in-math#cis-math' },
     ],
     explainerHeadline: 'The same portfolio behaves differently in different weather.',
-    explainerBody: 'Each quadrant is one mix of growth and inflation, and a different group of assets leads in each. The “Now” mark is the dashboard\'s own read of the latest FRED prints, the inflation rate\'s direction up the map and unemployment\'s across it, through the same classifier it scores with; the path through the quadrants is illustrative.',
+    explainerBody: 'Each quadrant is one way growth and inflation can be moving, rising or falling, and a different group of assets leads in each. The “Now” mark is the dashboard\'s own read of the latest FRED prints, the inflation rate\'s direction up the map and unemployment\'s across it, through the same classifier it scores with; the path through the quadrants is illustrative.',
     explainerConcept: 'Macro regime',
     concepts: [{ label: 'Macro regime', link: '/part-1-foundation#manifesto' }, { label: 'Regime fit', link: '/part-1-foundation#manifesto' }],
     layout: 'quadrant',
     ariaSummary: 'A four-quadrant map of growth versus inflation, with quadrants labeled stagflation, reflation, deflation and goldilocks. An illustrative path traces capital from a disinflation boom through a deflation scare, reflation and an inflation shock, and ends at a “Now” marker that the dashboard\'s live macro read places when it loads, and that sits near the center as an illustration otherwise.',
     quadrant: {
-      xAxis: { neg: 'WEAK GROWTH', pos: 'STRONG GROWTH' },
-      yAxis: { neg: 'LOW INFLATION', pos: 'HIGH INFLATION' },
+      // Every axis is a DIRECTION (rising or falling), the same quantity the
+      // live "Now" is placed by, so a mark and the words around it never mean
+      // two different things.
+      xAxis: { neg: 'GROWTH FALLING', pos: 'GROWTH RISING' },
+      yAxis: { neg: 'INFLATION FALLING', pos: 'INFLATION RISING' },
       cells: [
         { qx: -1, qy: 1, label: 'Stagflation', sub: 'hard assets · defense' },
         { qx: 1, qy: 1, label: 'Reflation', sub: 'real assets · energy' },
@@ -1184,17 +1187,21 @@ export const FRAMEWORK_CHART_SPECS = [
       name: 'Where you stand (live)',
       why: 'Placed by the dashboard\'s own macro read: the direction of the inflation rate up the map (year over year, from the CPI index) and of unemployment across it, from the latest FRED prints, through the same classifier the dashboard scores with. It moves as the prints land; the habit is to re-read it at every review.',
       claim: 'Where you stand is read, not assumed.',
+      // One line for every state that is not a placed live read, so the
+      // hand-placed mark is never on show without saying it is an illustration.
+      loadingLine: 'NOW · ILLUSTRATIVE · READING THE LIVE DATA',
+      unplacedLine: 'NOW · ILLUSTRATIVE · THE LIVE READ HAS NO DIRECTION YET',
       unavailableLine: 'NOW · ILLUSTRATIVE · THE LIVE READ DID NOT LOAD',
     },
     hoverTargets: [
-      { id: 'wp1', kind: 'waypoint', label: 'Disinflation boom', name: 'Disinflation boom', why: 'Strong growth, low inflation. Growth and risk assets tend to lead; it is the easiest regime to mistake for permanent.', claim: 'Goldilocks rewards risk-on.', concept: 'Regime fit', link: '/part-1-foundation#manifesto' },
-      { id: 'wp2', kind: 'waypoint', label: 'Deflation scare', name: 'Deflation scare', why: 'Weak growth, low inflation. Long-duration bonds and quality balance sheets tend to lead while riskier assets lag.', claim: 'Different weather, different leaders.', concept: 'Macro regime', link: '/part-1-foundation#manifesto' },
-      { id: 'wp3', kind: 'waypoint', label: 'Reflation', name: 'Reflation', why: 'Strong growth, high inflation. Real assets and energy tend to lead, and bonds stop helping.', claim: 'Real assets earn their keep.', concept: 'Macro regime', link: '/part-1-foundation#manifesto' },
-      { id: 'wp4', kind: 'waypoint', label: 'Inflation shock', name: 'Inflation shock', why: 'Weak growth, high inflation. Stocks and bonds can fall together here, while hard assets and defense tend to lead.', claim: 'The regime that breaks the old hedge.', concept: 'Fragility', link: '/part-1-foundation#manifesto' },
+      { id: 'wp1', kind: 'waypoint', label: 'Disinflation boom', name: 'Disinflation boom', why: 'Growth rising, inflation falling. Growth and risk assets tend to lead; it is the easiest regime to mistake for permanent.', claim: 'Goldilocks rewards risk-on.', concept: 'Regime fit', link: '/part-1-foundation#manifesto' },
+      { id: 'wp2', kind: 'waypoint', label: 'Deflation scare', name: 'Deflation scare', why: 'Growth and inflation both falling. Long-duration bonds and quality balance sheets tend to lead while riskier assets lag.', claim: 'Different weather, different leaders.', concept: 'Macro regime', link: '/part-1-foundation#manifesto' },
+      { id: 'wp3', kind: 'waypoint', label: 'Reflation', name: 'Reflation', why: 'Growth and inflation both rising. Real assets and energy tend to lead, and bonds stop helping.', claim: 'Real assets earn their keep.', concept: 'Macro regime', link: '/part-1-foundation#manifesto' },
+      { id: 'wp4', kind: 'waypoint', label: 'Inflation shock', name: 'Inflation shock', why: 'Growth falling, inflation rising. Stocks and bonds can fall together here, while hard assets and defense tend to lead.', claim: 'The regime that breaks the old hedge.', concept: 'Fragility', link: '/part-1-foundation#manifesto' },
       { id: 'wp5', kind: 'waypoint', label: 'Now', persistentLabel: true, name: 'Where you stand (illustrative)', why: 'Illustrative position. The habit is to re-read it at every review instead of assuming last season persists.', claim: 'Where you stand gets re-read, not assumed.', concept: 'Adaptation', link: '/part-1-foundation#order-of-operations' },
     ],
     mobileTapTargets: ['wp1', 'wp2', 'wp3', 'wp4', 'wp5'],
-    implementationNotes: 'Bespoke quadrant layout. The four path waypoints are hard-coded illustrative coordinates. The "Now" marker is live: `liveNow.url` is the dashboard\'s public /api/macro-weather read (its regime classifier over FRED, projected onto these axes), fetched by the chart engine once per page and again when what the route said was left of the reading\'s life runs out (`remainingMs`, measured on the route\'s own clock at the serve, six hours at most, ten minutes when the read is partial, less the seconds the CDN held the body; counted down here, so the route\'s `readAt` is never compared with this device\'s clock); while another of the route\'s instances is reading it (`MACRO_WEATHER_FILLING`) the chart stays loading and asks again after its Retry-After; without an answer the marker keeps its hand-placed coordinate and words. Quadrant leadership labels are the framework\'s judgment. The quadrant names and the hand-placed waypoint copy speak of levels (weak or strong growth, low or high inflation); the live mark is placed by DIRECTION (the year-over-year inflation rate\'s, derived from the CPI index, up; unemployment\'s, inverted, across), so a cooling rate still above its usual level sits below the axis, and the reading line says which directions were read.',
+    implementationNotes: 'Bespoke quadrant layout. The four path waypoints are hard-coded illustrative coordinates. The "Now" marker is live: `liveNow.url` is the dashboard\'s public /api/macro-weather read (its regime classifier over FRED, projected onto these axes), fetched by the chart engine once per page and again when what the route said was left of the reading\'s life runs out (`remainingMs`, measured on the route\'s own clock at the serve, six hours at most, ten minutes when the read is partial, less the seconds the CDN held the body; counted down here, so the route\'s `readAt` is never compared with this device\'s clock); while another of the route\'s instances is reading it (`MACRO_WEATHER_FILLING`) the chart stays loading and asks again after its Retry-After; without a placed answer the marker keeps its hand-placed coordinate and words, and one line under the map says it is an illustration (while the read loads, when it has no direction yet, and when it did not load). Quadrant leadership labels are the framework\'s judgment. The whole map is read by DIRECTION: the axes are growth and inflation rising or falling, the waypoint copy says the same, and the live mark is placed by the year-over-year inflation rate\'s direction (derived from the CPI index) up and unemployment\'s, inverted, across, so a cooling rate still above its usual level sits below the axis, and the reading line says which directions were read.',
   },
 
   {
