@@ -115,39 +115,70 @@ function useInViewOnce(ref, reduce) {
  * waypoint from live data. The chart asks it once per page (the promise is
  * shared across every chart and re-render), never on the server, and draws
  * the hand-placed spec until it answers. `unavailable` keeps the hand-placed
- * coordinate and says so on the chart, so a missing read never looks live. */
-const LIVE_NOW = new Map();                                   // url -> { status, data, promise }
+ * coordinate and says so on the chart, so a missing read never looks live.
+ *
+ * No copy outlives the reading it was taken from. A reading is live for six
+ * hours, or ten minutes when the read says `partial` (an axis unread), from
+ * its own `readAt` (never later than when it arrived), as the route itself
+ * keeps it; the shared copy and every mounted chart's copy expire by that one
+ * clock and the read is asked again, a minute on at the least so a reading
+ * that arrives already past its life is never re-asked in a loop. An
+ * `unavailable` answer is asked again after a partial reading's ten minutes. */
+const LIVE_LIFE_MS = { full: 6 * 60 * 60 * 1000, partial: 10 * 60 * 1000 };
+const LIVE_REASK_FLOOR_MS = 60 * 1000;
+function liveExpiresAt(data, takenAt) {
+  const readAt = Date.parse((data && data.readAt) || '');
+  const at = Number.isFinite(readAt) ? Math.min(readAt, takenAt) : takenAt;
+  return at + (data && data.partial ? LIVE_LIFE_MS.partial : LIVE_LIFE_MS.full);
+}
+const LIVE_NOW = new Map();                                   // url -> { status, data, expiresAt, promise }
 function requestLiveNow(url) {
   const held = LIVE_NOW.get(url);
-  if (held) return held.promise;
+  if (held && (held.status === 'loading' || Date.now() < held.expiresAt)) return held.promise;
+  const askedAt = Date.now();
   const promise = fetch(url, { headers: { Accept: 'application/json' } })
     .then((r) => r.json())
     .then((body) => {
       if (!body || body.ok !== true || !body.data) throw new Error('live read unavailable');
-      const next = { status: 'ready', data: body.data };
+      const next = { status: 'ready', data: body.data, expiresAt: liveExpiresAt(body.data, askedAt) };
       LIVE_NOW.set(url, { ...next, promise });
       return next;
     })
     .catch(() => {
-      const next = { status: 'unavailable', data: null };
+      const next = { status: 'unavailable', data: null, expiresAt: askedAt + LIVE_LIFE_MS.partial };
       LIVE_NOW.set(url, { ...next, promise });
       return next;
     });
-  LIVE_NOW.set(url, { status: 'loading', data: null, promise });
+  LIVE_NOW.set(url, { status: 'loading', data: null, expiresAt: askedAt + LIVE_LIFE_MS.full, promise });
   return promise;
 }
 function useLiveNow(spec) {
   const url = spec?.liveNow?.url || null;
   const [state, setState] = useState(() => {
     const held = url ? LIVE_NOW.get(url) : null;
-    return held && held.status !== 'loading' ? { status: held.status, data: held.data } : { status: url ? 'loading' : 'off', data: null };
+    return held && held.status !== 'loading' && Date.now() < held.expiresAt
+      ? { status: held.status, data: held.data, expiresAt: held.expiresAt }
+      : { status: url ? 'loading' : 'off', data: null, expiresAt: null };
   });
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     if (!url || typeof window === 'undefined' || typeof fetch !== 'function') return undefined;
     let alive = true;
     requestLiveNow(url).then((next) => { if (alive) setState(next); });
     return () => { alive = false; };
-  }, [url]);
+  }, [url, tick]);
+  // This chart's own copy runs out on the reading's clock while the page stays
+  // open: it goes back to loading (the hand-placed spec, no live line) and asks
+  // again; the shared copy expired by the same rule, so the route is read.
+  const expiresAt = state.status === 'ready' || state.status === 'unavailable' ? state.expiresAt : null;
+  useEffect(() => {
+    if (expiresAt == null) return undefined;
+    const timer = setTimeout(() => {
+      setState({ status: 'loading', data: null, expiresAt: null });
+      setTick((t) => t + 1);
+    }, Math.max(LIVE_REASK_FLOOR_MS, expiresAt - Date.now()));
+    return () => clearTimeout(timer);
+  }, [expiresAt]);
   return state;
 }
 const LIVE_CLAMP = 0.9;

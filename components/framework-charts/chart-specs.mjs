@@ -1194,7 +1194,7 @@ export const FRAMEWORK_CHART_SPECS = [
       { id: 'wp5', kind: 'waypoint', label: 'Now', persistentLabel: true, name: 'Where you stand (illustrative)', why: 'Illustrative position. The habit is to re-read it at every review instead of assuming last season persists.', claim: 'Where you stand gets re-read, not assumed.', concept: 'Adaptation', link: '/part-1-foundation#order-of-operations' },
     ],
     mobileTapTargets: ['wp1', 'wp2', 'wp3', 'wp4', 'wp5'],
-    implementationNotes: 'Bespoke quadrant layout. The four path waypoints are hard-coded illustrative coordinates. The "Now" marker is live: `liveNow.url` is the dashboard\'s public /api/macro-weather read (its regime classifier over FRED, projected onto these axes), fetched once per page by the chart engine; without an answer the marker keeps its hand-placed coordinate and words. Quadrant leadership labels are the framework\'s judgment. The axes are levels (weak or strong growth, low or high inflation), and the waypoint copy uses the same level semantics.',
+    implementationNotes: 'Bespoke quadrant layout. The four path waypoints are hard-coded illustrative coordinates. The "Now" marker is live: `liveNow.url` is the dashboard\'s public /api/macro-weather read (its regime classifier over FRED, projected onto these axes), fetched by the chart engine once per page and again when the reading runs out its own life (six hours; ten minutes when the read is partial, from its `readAt`); without an answer the marker keeps its hand-placed coordinate and words. Quadrant leadership labels are the framework\'s judgment. The axes are levels (weak or strong growth, low or high inflation), and the waypoint copy uses the same level semantics.',
   },
 
   {
