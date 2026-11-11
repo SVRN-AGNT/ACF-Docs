@@ -111,6 +111,155 @@ function useInViewOnce(ref, reduce) {
   return seen;
 }
 
+/* Live "Now": a spec may name a public read (`liveNow.url`) that places one
+ * waypoint from live data. The chart asks it once per page (the promise is
+ * shared across every chart and re-render), never on the server, and draws
+ * the hand-placed spec until it answers. `unavailable` keeps the hand-placed
+ * coordinate and says so on the chart, so a missing read never looks live.
+ *
+ * No copy outlives the reading it was taken from. A reading is live for what
+ * the route said was left of its life when it served the copy (`remainingMs`,
+ * measured on the server's own clock: six hours at most, or ten minutes when
+ * the read says `partial`, an axis unread; the numbers here are the fallback
+ * for a reading without the stamp), less the seconds the CDN held the body
+ * (the `Age` header the route exposes), counted down here from when the copy
+ * arrived. The route's `readAt` is never held against this device's clock, so
+ * a clock hours behind or ahead of the server's moves nothing. The shared
+ * copy and every mounted chart's copy expire by that one rule and the read is
+ * asked again, a minute on at the least so a reading that arrives with nothing
+ * left is never re-asked in a loop. An `unavailable` answer, a request that
+ * never answers included (45s, above the route's own worst case), is asked
+ * again after its `Retry-After` when it gives one (an unanswered fill lock: a
+ * minute), else after a partial reading's ten minutes; a route answering that another instance is reading it now
+ * (`MACRO_WEATHER_FILLING`) keeps the chart loading and is asked again after
+ * its `Retry-After`. */
+const LIVE_LIFE_MS = { full: 6 * 60 * 60 * 1000, partial: 10 * 60 * 1000 };
+const LIVE_REASK_FLOOR_MS = 60 * 1000;
+const LIVE_FILLING_REASK_MS = 10 * 1000;
+// Above the route's own worst case (34s, under its 40s maxDuration), so giving
+// up means the route could not answer, never that it was still filling.
+const LIVE_REQUEST_TIMEOUT_MS = 45 * 1000;
+function liveTimeoutSignal(ms) {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') return AbortSignal.timeout(ms);
+  if (typeof AbortController === 'undefined') return undefined;
+  const controller = new AbortController();
+  setTimeout(() => controller.abort(), ms);
+  return controller.signal;
+}
+function liveLifeMs(data) {
+  const stamped = Number(data && data.lifeMs);
+  if (Number.isFinite(stamped) && stamped > 0) return stamped;
+  return data && data.partial ? LIVE_LIFE_MS.partial : LIVE_LIFE_MS.full;
+}
+function liveExpiresAt(data, arrivedAt, ageSeconds) {
+  const life = liveLifeMs(data);
+  const stamped = Number(data && data.remainingMs);
+  const remaining = Number.isFinite(stamped) ? Math.max(0, stamped - (Number.isFinite(ageSeconds) && ageSeconds > 0 ? ageSeconds * 1000 : 0)) : life;
+  return arrivedAt + Math.min(remaining, life);
+}
+const LIVE_NOW = new Map();                                   // url -> { status, data, expiresAt, promise }
+function requestLiveNow(url) {
+  const held = LIVE_NOW.get(url);
+  if (held && (held.status === 'loading' || Date.now() < held.expiresAt)) return held.promise;
+  const askedAt = Date.now();
+  const signal = liveTimeoutSignal(LIVE_REQUEST_TIMEOUT_MS);
+  const promise = fetch(url, { headers: { Accept: 'application/json' }, signal })
+    .then((r) => r.json().then((body) => ({ body, ageSeconds: Number(r.headers && r.headers.get && r.headers.get('age')) })))
+    .then(({ body, ageSeconds }) => {
+      if (!body || body.ok !== true || !body.data) {
+        const err = new Error('live read unavailable');
+        err.code = body && body.error && body.error.code;
+        err.retryAfterSeconds = Number(body && body.error && body.error.retryAfterSeconds) || 0;
+        throw err;
+      }
+      const next = { status: 'ready', data: body.data, expiresAt: liveExpiresAt(body.data, askedAt, ageSeconds) };
+      LIVE_NOW.set(url, { ...next, promise });
+      return next;
+    })
+    .catch((err) => {
+      // A fill in progress on another of the route's instances is not a
+      // failure: stay loading and ask again after its Retry-After.
+      const filling = err && err.code === 'MACRO_WEATHER_FILLING';
+      const next = filling
+        ? { status: 'filling', data: null, expiresAt: askedAt + Math.max(LIVE_FILLING_REASK_MS, (err.retryAfterSeconds || 0) * 1000) }
+        : { status: 'unavailable', data: null, expiresAt: askedAt + (err && err.retryAfterSeconds > 0 ? Math.min(err.retryAfterSeconds * 1000, LIVE_LIFE_MS.partial) : LIVE_LIFE_MS.partial) };
+      LIVE_NOW.set(url, { ...next, promise });
+      return next;
+    });
+  LIVE_NOW.set(url, { status: 'loading', data: null, expiresAt: askedAt + LIVE_LIFE_MS.full, promise });
+  return promise;
+}
+function useLiveNow(spec) {
+  const url = spec?.liveNow?.url || null;
+  const [state, setState] = useState(() => {
+    const held = url ? LIVE_NOW.get(url) : null;
+    return held && held.status !== 'loading' && Date.now() < held.expiresAt
+      ? { status: held.status, data: held.data, expiresAt: held.expiresAt }
+      : { status: url ? 'loading' : 'off', data: null, expiresAt: null };
+  });
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (!url || typeof window === 'undefined' || typeof fetch !== 'function') return undefined;
+    let alive = true;
+    requestLiveNow(url).then((next) => { if (alive) setState(next); });
+    return () => { alive = false; };
+  }, [url, tick]);
+  // This chart's own copy runs out on the reading's clock while the page stays
+  // open: it goes back to loading (the hand-placed spec and its loading line) and asks
+  // again; the shared copy expired by the same rule, so the route is read.
+  const expiresAt = state.status === 'ready' || state.status === 'unavailable' || state.status === 'filling' ? state.expiresAt : null;
+  const floorMs = state.status === 'filling' ? LIVE_FILLING_REASK_MS : LIVE_REASK_FLOOR_MS;
+  useEffect(() => {
+    if (expiresAt == null) return undefined;
+    const timer = setTimeout(() => {
+      setState({ status: 'loading', data: null, expiresAt: null });
+      setTick((t) => t + 1);
+    }, Math.max(floorMs, expiresAt - Date.now()));
+    return () => clearTimeout(timer);
+  }, [expiresAt, floorMs]);
+  // A fill in progress elsewhere draws as loading: the hand-placed spec and its loading line, no "did not load".
+  return state.status === 'filling' ? { ...state, status: 'loading' } : state;
+}
+const LIVE_CLAMP = 0.9;
+const clampLive = (v) => Math.max(-LIVE_CLAMP, Math.min(LIVE_CLAMP, Number.isFinite(v) ? v : 0));
+/* The spec the chart draws: the live waypoint moved to the read and its words
+ * swapped for the live ones, or the spec as authored (plus the read's status,
+ * so the quadrant can say the read did not load). Pure; no spec is mutated. */
+function withLiveNow(spec, live) {
+  if (!spec || !spec.liveNow || !spec.quadrant) return spec;
+  const wp = spec.liveNow.waypoint || spec.primaryKey;
+  const data = live && live.status === 'ready' && live.data && live.data.placed ? live.data : null;
+  // A read that answered but could not place the mark is not live either:
+  // it keeps the authored spec and says so, like one that did not load.
+  const status = !live ? 'off' : (live.status === 'ready' && !data ? 'unplaced' : live.status);
+  // An unplaced read may still say what it read on the axis it has (one axis
+  // directed, the other not): the line carries that, never a mark.
+  const unplacedReading = status === 'unplaced' && live.data && live.data.reading ? String(live.data.reading) : null;
+  if (!data) return { ...spec, _liveStatus: status, _liveNow: null, _liveUnplacedReading: unplacedReading };
+  const waypoints = { ...spec.quadrant.waypoints, [wp]: { x: clampLive(data.x), y: clampLive(data.y) } };
+  const hoverTargets = spec.hoverTargets.map((t) => (t.id === wp
+    ? { ...t, name: spec.liveNow.name || t.name, why: `${spec.liveNow.why || t.why}${data.reading ? ` ${data.reading}.` : ''}`, claim: spec.liveNow.claim || t.claim }
+    : t));
+  const ariaSummary = data.reading ? `${spec.ariaSummary} Live read: ${data.reading}.` : spec.ariaSummary;
+  return { ...spec, quadrant: { ...spec.quadrant, waypoints }, hoverTargets, ariaSummary, _liveStatus: 'ready', _liveNow: data };
+}
+
+/* What the line under a live-Now map says, for each state of the read. A
+ * placed read shows its own words; every other state, the hand-placed mark's
+ * status. Null only for a spec with no live read. */
+function liveNowLine(spec) {
+  if (!spec || !spec.liveNow) return null;
+  if (spec._liveNow) return spec._liveNow.reading ? { state: 'ready', live: true, text: String(spec._liveNow.reading).toUpperCase() } : { state: 'ready', live: true, text: 'NOW · LIVE' };
+  const L = spec.liveNow;
+  if (spec._liveStatus === 'unavailable') return { state: 'unavailable', live: false, text: L.unavailableLine || 'NOW · ILLUSTRATIVE' };
+  if (spec._liveStatus === 'unplaced') {
+    const read = spec._liveUnplacedReading ? spec._liveUnplacedReading.replace(/^now\s*·\s*/i, '') : '';
+    return { state: 'unplaced', live: false, text: read ? `NOW · ILLUSTRATIVE · ${read.toUpperCase()}` : (L.unplacedLine || 'NOW · ILLUSTRATIVE') };
+  }
+  if (spec._liveStatus === 'loading') return { state: 'loading', live: false, text: L.loadingLine || 'NOW · ILLUSTRATIVE' };
+  return { state: 'off', live: false, text: 'NOW · ILLUSTRATIVE' };
+}
+
 const halo = (pal, size, color, w = 500) => ({
   fontFamily: pal.mono, fontSize: size, fontWeight: w, letterSpacing: '0.1em',
   paintOrder: 'stroke', stroke: pal.scrim, strokeWidth: 3.4, strokeLinejoin: 'round', fill: color,
@@ -566,17 +715,20 @@ function QuadrantSvg({ spec, width, height, pal, accent, reduce, entered, coarse
   const DOT = M ? { wp: 6, now: 8, ring: 14 } : { wp: 3.4, now: 4.4, ring: 9 };
   const pad = { l: 80, r: 80, t: 34, b: 40 };
   const x = (v) => pad.l + ((v + 1) / 2) * (VW - pad.l - pad.r);
-  const y = (v) => pad.t + (1 - (v + 1) / 2) * (VH - pad.t - pad.b);     // +1 (high inflation) at top
+  const y = (v) => pad.t + (1 - (v + 1) / 2) * (VH - pad.t - pad.b);     // +1 (inflation rising) at top
   const cx = x(0), cy = y(0);
   // All declared waypoints render + hover; the brush path runs through q.path
   // only (off-path waypoints are standalone diagnostic cells, e.g. the CIS×FIS
   // matrix). Charts whose waypoints all sit on the path are byte-identical.
   const wps = [...q.path, ...Object.keys(q.waypoints).filter((id) => !q.path.includes(id))].map((id) => ({ id, ...q.waypoints[id], onPath: q.path.includes(id) }));
+  // The waypoints are part of the geometry's identity: a live read moves one
+  // of them after the first render, and the path must follow it.
+  const wpKey = wps.map((w) => `${w.id}:${w.x}:${w.y}`).join('|');
   const geom = useMemo(() => {
     const px = wps.map((w) => ({ x: x(w.x), y: y(w.y), id: w.id, onPath: w.onPath }));
     return { px, line: Brush.brushLine(px.filter((p) => p.onPath), { seed: 19, weight: M ? 1.2 : 0.8, intensity: 0.7 }) };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [VW, VH, M]);
+  }, [VW, VH, M, wpKey]);
   const HITR = touch ? 34 : 26;
 
   const anchorOf = (a) => { const p = geom.px.find((pp) => pp.id === a.id); return p ? { x: p.x, y: p.y } : null; };
@@ -607,12 +759,41 @@ function QuadrantSvg({ spec, width, height, pal, accent, reduce, entered, coarse
         <text x={VW - pad.r + 6} y={cy - 6} textAnchor="end" style={halo(pal, F.axis, pal.text4)}>{q.xAxis.pos}</text>
         <text x={cx + 8} y={pad.t + 4} style={halo(pal, F.axis, pal.text4)}>{q.yAxis.pos}</text>
         <text x={cx + 8} y={VH - pad.b} style={halo(pal, F.axis, pal.text4)}>{q.yAxis.neg}</text>
+        {/* one line for the mark's status: the live read in the data's own
+            words, or, for every state that is not a placed read (loading,
+            no direction yet, did not load), that the mark is an illustration */}
+        {(() => {
+          const line = liveNowLine(spec);
+          return line ? <text data-live-now={line.state} x={pad.l - 6} y={VH - 10} style={halo(pal, F.axis, line.live ? pal.text3 : pal.text4)}>{line.text}</text> : null;
+        })()}
         {/* quadrant labels — per-cell vertical anchors keep each name block clear
             of the waypoints travelling through its quadrant (the path is data;
             the label yields): reflation sits high above wp3, goldilocks low
             below wp1; the left cells hold the original line. */}
         {q.cells.map((c, i) => {
-          const ay = c.qy > 0 ? (c.qx > 0 ? 0.72 : 0.62) : (c.qx > 0 ? (M ? -0.8 : -0.78) : -0.62);
+          let ay = c.qy > 0 ? (c.qx > 0 ? 0.72 : 0.62) : (c.qx > 0 ? (M ? -0.8 : -0.78) : -0.62);
+          // A live "Now" that lands near this cell's name block moves the block
+          // to whichever of the cell's other anchors is farthest from the mark,
+          // the waypoints and the path: the mark is data, the name yields.
+          const ln = spec._liveNow;
+          if (ln && Math.abs(clampLive(ln.y) - ay) < 0.3 && Math.abs(clampLive(ln.x) - c.qx * 0.55) < 0.5) {
+            const ccx = c.qx * 0.55;
+            const pts = q.path.map((id) => q.waypoints[id]);
+            const score = (a) => {
+              let d = Infinity;
+              for (const w of pts) d = Math.min(d, Math.hypot((w.x - ccx) * 0.8, w.y - a));
+              for (let k = 1; k < pts.length; k++) {
+                const A = pts[k - 1], B = pts[k];
+                const dx = B.x - A.x, dy = B.y - A.y, l2 = dx * dx + dy * dy || 1;
+                const t = Math.max(0, Math.min(1, ((ccx - A.x) * dx + (a - A.y) * dy) / l2));
+                d = Math.min(d, 1.4 * Math.hypot(ccx - (A.x + t * dx), a - (A.y + t * dy)));
+              }
+              return d;
+            };
+            let best = ay, bestScore = score(ay);
+            for (const a of (c.qy > 0 ? [0.3, 0.92] : [-0.14, -0.9])) { const sc = score(a); if (sc > bestScore + 0.02) { best = a; bestScore = sc; } }
+            ay = best;
+          }
           return (
             <g key={`cell${i}`}>
               <text x={x(c.qx * 0.55)} y={y(ay)} textAnchor="middle" style={haloSans(pal, F.cell, pal.text2, 600)}>{c.label}</text>
@@ -3053,7 +3234,9 @@ function RangeStepsSvg({ spec, width, height, pal, accent, reduce, entered, coar
 
 /* ── FrameworkChart (orchestrator) ──────────────────────────────────────────*/
 export default function FrameworkChart({ id, spec: specProp, theme = 'dark', accent: accentName = 'green', className, readerContext }) {
-  const spec = specProp || getChartSpec(id);
+  const authoredSpec = specProp || getChartSpec(id);
+  const live = useLiveNow(authoredSpec);
+  const spec = useMemo(() => withLiveNow(authoredSpec, live), [authoredSpec, live]);
   const pal = getPalette(theme);
   const accent = getAccent(pal, accentName);
   const reduce = useMqFlag('(prefers-reduced-motion: reduce)');

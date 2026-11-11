@@ -76,7 +76,7 @@ const mountOffset = (c) => {
 
 const charts = [...homes.values()].map((c) => {
   const s = specs.get(c.chartId);
-  return { ...c, idx: s.idx, title: s.title, mode: s.visualDataMode, offset: mountOffset(c) };
+  return { ...c, idx: s.idx, title: s.title, mode: s.visualDataMode, live: Boolean(s.liveNow), offset: mountOffset(c) };
 });
 
 // ---- groups: shared labels and titles, the gallery's own anchors ---------------
@@ -164,6 +164,12 @@ const plottedLinks = plotted.map((c) => `<a class="part-ref" href="#pic-${esc(c.
 const plottedSentence = plotted.length
   ? `${capital(word(plotted.length))} of the ${total} ${plotted.length === 1 ? 'is' : 'are'} plotted from public data: ${listOf(plottedLinks)}.`
   : `None of the ${total} is plotted from public data.`;
+// A conceptual exhibit with a live mark says so here too, so the count above
+// never reads as "everything else is illustration".
+const live = charts.filter((c) => c.live && c.mode !== 'historical');
+const liveSentence = live.length
+  ? ` ${live.map((c) => `<a class="part-ref" href="#pic-${esc(c.chartId)}">${esc(c.idx)} &middot; ${typo(c.title)}</a>`).join(', ')} ${live.length === 1 ? 'is a conceptual map whose' : 'are conceptual maps whose'} &ldquo;Now&rdquo; mark is read live from FRED by the dashboard.`
+  : '';
 
 const main = `<main class="shell-main">
 
@@ -175,7 +181,7 @@ const main = `<main class="shell-main">
       </div>
       <div class="measure prose">
         <p class="prose-lead">All of the framework&rsquo;s exhibits, grouped by the page that teaches them and shown in the order the book presents them. Each chart makes one claim and shows the mechanism behind it. Hover over or tap any part of a chart for its explanation (on a desktop, a click pins it in place), and open Details at the foot of the chart for its sources and methodology.</p>
-        <p>The marker beside each title tells you what you are looking at: a square is plotted from a public data series, a diamond is a representative exhibit (an illustrative shape) or a simulation (computed from stated inputs), and a circle is a conceptual diagram of framework logic. ${plottedSentence}</p>
+        <p>The marker beside each title tells you what you are looking at: a square is plotted from a public data series, a diamond is a representative exhibit (an illustrative shape) or a simulation (computed from stated inputs), and a circle is a conceptual diagram of framework logic. ${plottedSentence}${liveSentence}</p>
         <p>L marks the framework&rsquo;s three lenses and S its two signature shapes; they appear on the home page and in Part 1. Numbered exhibits belong to their Part.</p>
       </div>
       <p class="measure gl-jump">${jump}</p>
