@@ -205,7 +205,7 @@ function useLiveNow(spec) {
     return () => { alive = false; };
   }, [url, tick]);
   // This chart's own copy runs out on the reading's clock while the page stays
-  // open: it goes back to loading (the hand-placed spec, no live line) and asks
+  // open: it goes back to loading (the hand-placed spec and its loading line) and asks
   // again; the shared copy expired by the same rule, so the route is read.
   const expiresAt = state.status === 'ready' || state.status === 'unavailable' || state.status === 'filling' ? state.expiresAt : null;
   const floorMs = state.status === 'filling' ? LIVE_FILLING_REASK_MS : LIVE_REASK_FLOOR_MS;
@@ -217,7 +217,7 @@ function useLiveNow(spec) {
     }, Math.max(floorMs, expiresAt - Date.now()));
     return () => clearTimeout(timer);
   }, [expiresAt, floorMs]);
-  // A fill in progress elsewhere draws as loading: the hand-placed spec, no live line, no "did not load".
+  // A fill in progress elsewhere draws as loading: the hand-placed spec and its loading line, no "did not load".
   return state.status === 'filling' ? { ...state, status: 'loading' } : state;
 }
 const LIVE_CLAMP = 0.9;
@@ -232,7 +232,10 @@ function withLiveNow(spec, live) {
   // A read that answered but could not place the mark is not live either:
   // it keeps the authored spec and says so, like one that did not load.
   const status = !live ? 'off' : (live.status === 'ready' && !data ? 'unplaced' : live.status);
-  if (!data) return { ...spec, _liveStatus: status, _liveNow: null };
+  // An unplaced read may still say what it read on the axis it has (one axis
+  // directed, the other not): the line carries that, never a mark.
+  const unplacedReading = status === 'unplaced' && live.data && live.data.reading ? String(live.data.reading) : null;
+  if (!data) return { ...spec, _liveStatus: status, _liveNow: null, _liveUnplacedReading: unplacedReading };
   const waypoints = { ...spec.quadrant.waypoints, [wp]: { x: clampLive(data.x), y: clampLive(data.y) } };
   const hoverTargets = spec.hoverTargets.map((t) => (t.id === wp
     ? { ...t, name: spec.liveNow.name || t.name, why: `${spec.liveNow.why || t.why}${data.reading ? ` ${data.reading}.` : ''}`, claim: spec.liveNow.claim || t.claim }
@@ -249,7 +252,10 @@ function liveNowLine(spec) {
   if (spec._liveNow) return spec._liveNow.reading ? { state: 'ready', live: true, text: String(spec._liveNow.reading).toUpperCase() } : { state: 'ready', live: true, text: 'NOW · LIVE' };
   const L = spec.liveNow;
   if (spec._liveStatus === 'unavailable') return { state: 'unavailable', live: false, text: L.unavailableLine || 'NOW · ILLUSTRATIVE' };
-  if (spec._liveStatus === 'unplaced') return { state: 'unplaced', live: false, text: L.unplacedLine || 'NOW · ILLUSTRATIVE' };
+  if (spec._liveStatus === 'unplaced') {
+    const read = spec._liveUnplacedReading ? spec._liveUnplacedReading.replace(/^now\s*·\s*/i, '') : '';
+    return { state: 'unplaced', live: false, text: read ? `NOW · ILLUSTRATIVE · ${read.toUpperCase()}` : (L.unplacedLine || 'NOW · ILLUSTRATIVE') };
+  }
   if (spec._liveStatus === 'loading') return { state: 'loading', live: false, text: L.loadingLine || 'NOW · ILLUSTRATIVE' };
   return { state: 'off', live: false, text: 'NOW · ILLUSTRATIVE' };
 }
@@ -709,7 +715,7 @@ function QuadrantSvg({ spec, width, height, pal, accent, reduce, entered, coarse
   const DOT = M ? { wp: 6, now: 8, ring: 14 } : { wp: 3.4, now: 4.4, ring: 9 };
   const pad = { l: 80, r: 80, t: 34, b: 40 };
   const x = (v) => pad.l + ((v + 1) / 2) * (VW - pad.l - pad.r);
-  const y = (v) => pad.t + (1 - (v + 1) / 2) * (VH - pad.t - pad.b);     // +1 (high inflation) at top
+  const y = (v) => pad.t + (1 - (v + 1) / 2) * (VH - pad.t - pad.b);     // +1 (inflation rising) at top
   const cx = x(0), cy = y(0);
   // All declared waypoints render + hover; the brush path runs through q.path
   // only (off-path waypoints are standalone diagnostic cells, e.g. the CIS×FIS

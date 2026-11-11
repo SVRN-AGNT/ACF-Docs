@@ -1136,7 +1136,7 @@ export const FRAMEWORK_CHART_SPECS = [
       visualProof: 'A growth × inflation quadrant (stagflation, reflation, deflation, goldilocks), each labeled with the leadership the framework associates with it, crossed by one illustrative path: disinflation boom → deflation scare → reflation → inflation shock → a “Now” marker the dashboard\'s live macro read places (the hand-placed illustration until it loads)',
       interactionRole: 'Hover or tap a waypoint to read that regime\'s weather and which assets tend to lead there',
       readerAction: 'Trace the path quadrant to quadrant and end on the Now marker, then read where it was placed from',
-      caution: 'Illustrative regime path; the four path waypoints are placed by hand. “Now” is the dashboard\'s own macro read when it loads (the direction of the inflation rate up the map and of unemployment across it, from FRED, through the dashboard\'s regime classifier), and the hand-placed illustration otherwise. Leadership in each quadrant is the framework\'s reading of common market experience, not a measured result. Quadrant names follow common market usage, not any one published model.',
+      caution: 'Illustrative regime path; the four path waypoints are placed by hand. “Now” is the dashboard\'s own macro read when it loads (unemployment\'s direction across the map from the dashboard\'s regime classifier, falling unemployment read as growth rising, and the year-over-year inflation rate\'s direction up it, computed from the same FRED CPI prints under the classifier\'s persistence rule), placed only when both axes have a direction, and the hand-placed illustration otherwise. Each quadrant\'s name is where that pair of directions leads if it persists, not a reading of today\'s level. Leadership in each quadrant is the framework\'s reading of common market experience, not a measured result. Quadrant names follow common market usage, not any one published model.',
     },
     status: 'implemented', wiredPublic: true,
     title: 'Capital Has Weather', setupLine:'Same assets, different regime, different behavior',
@@ -1145,14 +1145,14 @@ export const FRAMEWORK_CHART_SPECS = [
     readerTakeaway: 'You are not allocating in a vacuum; you are allocating into weather.',
     chartType: 'Growth × inflation quadrant with an illustrative regime path and a live “Now” mark.',
     visualDataMode: 'conceptual',
-    disclosure: `${DISCLOSURE.conceptual} · Leadership labels are the framework's judgment`, footerCta: 'View framework basis',
+    disclosure: `${DISCLOSURE.conceptual}, save the “Now” mark, read live from FRED · Leadership labels are the framework's judgment`, footerCta: 'View framework basis',
     sources: [
       { provider: 'ACF · Part 2', label: 'Rule stated in Part 2 · Identification, evaluation, and governance', role: 'verifies-concept', url: '/part-2-lineage-macro-thesis#macro-thesis' },
       { provider: 'ACF · Part 1', label: 'Rule stated in Part 1 · The traditional playbook was built for a regime that has ended', role: 'verifies-concept', url: '/part-1-foundation#manifesto' },
-      { provider: 'ACF dashboard', label: 'Regime reading from the direction of rates, inflation and unemployment (software behavior as of September 2026); the “Now” mark reads it live', role: 'verifies-concept', url: '/framework-in-math#cis-math' },
+      { provider: 'ACF dashboard', label: 'Regime reading from the direction of rates, the CPI price level and unemployment (software behavior as of September 2026); the “Now” mark reads unemployment\'s direction from it and the inflation rate\'s direction from the same CPI prints, live', role: 'verifies-concept', url: '/framework-in-math#cis-math' },
     ],
     explainerHeadline: 'The same portfolio behaves differently in different weather.',
-    explainerBody: 'Each quadrant is one way growth and inflation can be moving, rising or falling, and a different group of assets leads in each. The “Now” mark is the dashboard\'s own read of the latest FRED prints, the inflation rate\'s direction up the map and unemployment\'s across it, through the same classifier it scores with; the path through the quadrants is illustrative.',
+    explainerBody: 'Each quadrant is one way growth and inflation can be moving, rising or falling, and a different group of assets leads in each; its name is where that pair of directions leads if it persists. The “Now” mark is the dashboard\'s own read of the latest FRED prints: unemployment\'s direction across the map from the classifier it scores with (falling unemployment is growth rising), and the inflation rate\'s direction up it, from the same CPI prints under the classifier\'s persistence rule. The path through the quadrants is illustrative.',
     explainerConcept: 'Macro regime',
     concepts: [{ label: 'Macro regime', link: '/part-1-foundation#manifesto' }, { label: 'Regime fit', link: '/part-1-foundation#manifesto' }],
     layout: 'quadrant',
@@ -1176,8 +1176,8 @@ export const FRAMEWORK_CHART_SPECS = [
     },
     primaryKey: 'wp5',
     // The "Now" waypoint is live: the chart asks the dashboard's public read
-    // (the dashboard's own macro regime classifier over FRED, projected onto
-    // these axes: the inflation rate's direction up, unemployment's across) and moves
+    // (unemployment's direction from the dashboard's macro regime classifier
+    // across, the inflation rate's direction from the same CPI prints up) and moves
     // wp5 to it. Until it answers, or when it cannot, wp5 keeps the hand-placed
     // coordinate above and the hand-placed words below, so the fallback never
     // claims to be live. The reading line the chart draws comes from the read.
@@ -1185,7 +1185,7 @@ export const FRAMEWORK_CHART_SPECS = [
       url: 'https://acfdashboard.com/api/macro-weather',
       waypoint: 'wp5',
       name: 'Where you stand (live)',
-      why: 'Placed by the dashboard\'s own macro read: the direction of the inflation rate up the map (year over year, from the CPI index) and of unemployment across it, from the latest FRED prints, through the same classifier the dashboard scores with. It moves as the prints land; the habit is to re-read it at every review.',
+      why: 'Placed by the dashboard\'s own macro read of the latest FRED prints: unemployment\'s direction across the map, from the classifier the dashboard scores with (falling unemployment is growth rising), and the inflation rate\'s direction up it (year over year, from the CPI index, under the classifier\'s persistence rule). It moves as the prints land; the habit is to re-read it at every review.',
       claim: 'Where you stand is read, not assumed.',
       // One line for every state that is not a placed live read, so the
       // hand-placed mark is never on show without saying it is an illustration.
