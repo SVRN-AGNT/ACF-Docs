@@ -210,7 +210,7 @@ const main = `<main class="shell-main">
         </table>
       </div>
       <div class="measure prose">
-        <p>The live macro regime is one of four labels, set by the direction of three series: the Fed funds rate, CPI inflation and the unemployment rate. At least two must show a confirmed trend, or the label stays neutral.</p>
+        <p>The live macro regime is one of four labels, set by the direction of three series: the Fed funds rate, the CPI price index and the unemployment rate. At least two must show a confirmed trend, or the label stays neutral. In the table, &ldquo;inflation rising&rdquo; means the CPI index itself is climbing (prices going up), not the inflation rate speeding up; the &ldquo;Now&rdquo; mark on the regime map reads the other quantity, the inflation rate&rsquo;s own direction, from the same prints.</p>
       </div>
       <div class="compare compare-wrap">
         <table>
