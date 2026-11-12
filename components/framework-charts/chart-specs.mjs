@@ -1231,12 +1231,14 @@ export const FRAMEWORK_CHART_SPECS = [
     explainerConcept: 'Governed response',
     concepts: [{ label: 'Tripwire', link: '/part-5-portfolio-construction-position-management#management' }, { label: 'CIS', link: '/part-6-convexity-framework-integrity-scoring#cis' }],
     layout: 'governanceLoop',
-    ariaSummary: 'A simple left-to-right path: thesis, exposure, risk, a tripwire checkpoint and a governed response, with a return arc showing that evidence updates the thesis. The tripwire triggers a check before any response is chosen.',
+    ariaSummary: 'A simple left-to-right path: thesis, exposure, risk, a tripwire checkpoint and a governed response, with a return arc showing that evidence updates the thesis. The thesis, drawn open, is the part that changes; the steps after it stay fixed. The tripwire triggers a check before any response is chosen.',
     governanceLoop: {
       governorId: 'tripwire',
+      // The one part that moves: drawn open (dashed); the steps after it are the fixed engine.
+      variableId: 'thesis',
       returnLabel: 'evidence updates the thesis',
       nodes: [
-        { id: 'thesis', label: 'Thesis', sub: 'the view' },
+        { id: 'thesis', label: 'Thesis', sub: 'can change' },
         { id: 'exposure', label: 'Exposure', sub: 'capital placed' },
         { id: 'risk', label: 'Risk', sub: 'fragility created' },
         { id: 'tripwire', label: 'Tripwire', sub: 'the guardrail' },
