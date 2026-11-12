@@ -1225,7 +1225,7 @@ function GovernanceLoopSvg({ spec, width, height, pal, accent, reduce, entered, 
             <g key={n.id} style={{ opacity: entered ? (focusId && !on ? 0.4 : 1) : 0, transformOrigin: `${n.x}px ${n.y}px`, transform: entered ? 'none' : 'scale(0.92)', transition: reduce ? 'opacity 300ms ease' : `opacity 460ms ease ${110 + n.i * 90}ms, transform 460ms cubic-bezier(0.2,0.7,0.2,1) ${110 + n.i * 90}ms` }}>
               {/* checkpoint gate posts — a quiet brush guardrail, not an alarm */}
               {n.gov && [-1, 1].map((s) => <path key={s} d={Brush.brushSegment(n.x + s * (n.W / 2), top - 8, n.x + s * (n.W / 2), bot + 8, { seed: 77 + (s + 1) * 5, weight: 1.05, intensity: 0.55, waver: 0.16 })} fill={pal.bandRegime} opacity={on ? 0.95 : 0.75} />)}
-              <rect x={n.x - n.W / 2} y={top} width={n.W} height={n.h} rx={8} fill={pal.surface} stroke={stroke} strokeWidth={on ? 1.7 : n.gov ? 1.4 : 1} style={{ transition: trans('stroke') }} />
+              <rect x={n.x - n.W / 2} y={top} width={n.W} height={n.h} rx={8} fill={pal.surface} stroke={stroke} strokeWidth={on ? 1.7 : n.gov ? 1.4 : 1} strokeDasharray={n.id === gl.variableId ? '5 4' : undefined} style={{ transition: trans('stroke') }} />
               <text x={n.x} y={n.y - (n.sub ? (M ? 6 : 4) + extra / 2 : -4)} textAnchor="middle" style={haloSans(pal, F.label, isP ? accent : pal.text1, 600)}>{n.label}</text>
               {n.subLines.map((ln, k) => <text key={k} x={n.x} y={n.y + (M ? 16 : 13) - extra / 2 + k * SUB_LH} textAnchor="middle" style={halo(pal, F.sub, n.gov ? pal.bandRegimeText : pal.text4)}>{ln}</text>)}
               {/* connection anchors: gap ports on every card edge; the return's
